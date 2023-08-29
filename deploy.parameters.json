@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deployAMAPolicies": {
+      "value": false
+    },
+    "deployMainSolution": {
+      "value": false
+    },
+    "deployPacks": {
+      "value": true
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "appInsightsLocation": {
+      "value": "eastus"
+    },
+    "currentUserIdObject": {
+      "value": "1d880356-72e3-4f13-8038-96f587ea49da"
+    },
+    "grafanaLocation": {
+      "value": "eastus"
+    },
+    "lawresourceId": {
+      "value": "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/amonstarterpacks3/providers/Microsoft.OperationalInsights/workspaces/ws-amonstar"
+    },
+    "storageAccountName": {
+      "value": "azmonstarpackssnfg"
+    },
+    "ExistingActionGroupName": {
+      "value": "VMAdmins"
+    }
+  }
+}
