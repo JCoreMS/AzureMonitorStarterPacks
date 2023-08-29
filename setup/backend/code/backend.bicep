@@ -463,3 +463,4 @@ module functionUserManagedIdentity 'modules/userManagedIdentity.bicep' = {
 //output functionkey string = listKeys(resourceId('Microsoft.Web/sites/host', azfunctionsite.name, 'default'), azfunctionsite.apiVersion).functionKeys.monitoringKey
 output packsUserManagedIdentityId string = packsUserManagedIdentity.outputs.userManagedIdentityPrincipalId
 output packsUserManagedResourceId string = packsUserManagedIdentity.outputs.userManagedIdentityResourceId
+output dceId string = dataCollectionEndpoint.outputs.dceId
