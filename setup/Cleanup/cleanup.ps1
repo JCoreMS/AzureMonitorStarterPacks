@@ -37,13 +37,23 @@ if ($RemoveAMAPolicySet -or $RemoveAll) {
     $inits=Get-AzPolicySetDefinition | where-object {$_.properties.Metadata.MonitorStarterPacks -ne $null}
     foreach ($init in $inits) {
         "Removing policy set $($init.PolicySetDefinitionId)"
-        $assignments=Get-AzPolicyAssignment -PolicyDefinitionId $init.PolicySetDefinitionId
+        #$assignments=Get-AzPolicyAssignment -PolicyDefinitionId $init.PolicySetDefinitionId
+        $query=@"
+        policyresources
+        | where type == "microsoft.authorization/policyassignments"
+        | extend AssignmentDisplayName=properties.displayName,scope=properties.scope,PolicyId=tostring(properties.policyDefinitionId)
+        | where PolicyId == '$($init.PolicySetDefinitionId)'
+"@
+        $assignments=Search-AzGraph -Query $query
         if ($assignments.count -ne 0)
         {
-            "Removing assignments for $($init.PolicySetDefinitionId)"
-            $assignments | Remove-AzPolicyAssignment 
+            "Removing assignments for $($pol.PolicyDefinitionId)"
+            foreach ($assignment in $assignments) {
+                "Removing assignment for $($assignment.name)"
+                Remove-AzPolicyAssignment -Id $assignment.id
+            }
         }
-        Remove-AzPolicySetDefinition -Id $init.PolicySetDefinitionId
+        Remove-AzPolicySetDefinition -Id $init.PolicySetDefinitionId -Force
     }
 }
 else {
@@ -72,7 +82,14 @@ if ($RemovePacks  -or $RemoveAll) {
         }
         if ($remove) {
             "Removing policy $($pol.PolicyDefinitionId) and assignments for pack $($pol.properties.Metadata.MonitorStarterPacks)"
-            $assignments=Get-AzPolicyAssignment -PolicyDefinitionId $pol.PolicyDefinitionId
+            #$assignments=Get-AzPolicyAssignment -PolicyDefinitionId $pol.PolicyDefinitionId # Only works for the current subscription. Need to use resource graph.
+            $query=@"
+            policyresources
+            | where type == "microsoft.authorization/policyassignments"
+            | extend AssignmentDisplayName=properties.displayName,scope=properties.scope,PolicyId=tostring(properties.policyDefinitionId)
+            | where PolicyId == '$($pol.PolicyDefinitionId)'
+"@
+            $assignments=Search-AzGraph -Query $query
             
             if ($assignments.count -ne 0)
             {
@@ -83,8 +100,8 @@ if ($RemovePacks  -or $RemoveAll) {
                     # Get-AzRoleAssignment | where-object {$_.Scope -eq "/subscriptions/$((Get-AzContext).Subscription)" -and $_.ObjectId -eq $assignmentObjectId.Id} | Remove-AzRoleAssignment
                     # #$ras=Get-AzRoleAssignment | where-object {$_.Scope -eq "/subscriptions/$((Get-AzContext).Subscription)" -and $_.ObjectId -eq $assignmentObjectId.Id}
                     # -and $_. -eq $assignments.Identity.PrincipalId} | Remove-AzRoleAssignment
-                    "Removing assignment for $($assignment.Identity.PrincipalId)"
-                    Remove-AzPolicyAssignment -Id $assignment.PolicyAssignmentId
+                    "Removing assignment for $($assignment.name)"
+                    Remove-AzPolicyAssignment -Id $assignment.id
                 }
                 "Removing policy definition for $($pol.PolicyDefinitionId)"
                 Remove-AzPolicyDefinition -Id $pol.PolicyDefinitionId -Force
@@ -105,7 +122,7 @@ insightsresources
 | project rulename=split(properties.dataCollectionRuleId,"/")[8],resourceName=split(resourceId,"/")[8],resourceId, ruleId=properties.dataCollectionRuleId, name
 | where ruleId =~
 '@
-    $DCRs=Get-AzDataCollectionRule -ResourceGroupName $RG
+    $DCRs=Get-AzDataCollectionRule -ResourceGroupName $RG | where-object {$_.Tags.MonitorStarterPacks -ne $null}
     if ($RemoveTag) {
         $DCRs=$DCRs | where-object {$_.Tags.MonitorStarterPacks -eq $RemoveTag}
     }
@@ -163,8 +180,8 @@ if ($RemoveMainSolution  -or $RemoveAll) {
     "Removing app insights default alerts."
     get-azresource -ResourceType 'microsoft.alertsmanagement/smartDetectorAlertRules' -ResourceGroupName $RG | Remove-AzResource -Force
     # Remove grafana
-    "Removing grafana."
-    Get-AzResource -ResourceType 'Microsoft.Dashboard/grafana' -ResourceGroupName $RG | Remove-AzResource -Force
+    "Removing grafana. This removes the grafana dashboard and the grafana resource. It takes a while to complete. Make sure it has been removed before running the script again."
+    Get-AzResource -ResourceType 'Microsoft.Dashboard/grafana' -ResourceGroupName $RG | Remove-AzResource -Force -asJob
     #delete data collection endpoints
     "Removing data collection endpoints."
     get-azresource -ResourceType 'Microsoft.Insights/dataCollectionEndpoints' -ResourceGroupName $RG | Remove-AzResource -Force
