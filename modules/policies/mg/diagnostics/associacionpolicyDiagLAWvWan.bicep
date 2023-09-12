@@ -1,10 +1,10 @@
 targetScope = 'managementGroup'
-param resourceName string
 param policyName string
 param policyDisplayName string
 param policyDescription string
 param packtag string
 param solutionTag string
+param lawId string
 param roledefinitionIds array =[
   '/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa' 
   '/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293'
@@ -39,6 +39,26 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         }
         defaultValue: packtag
       }
+      categoryGroup: {
+        type: 'String'
+        metadata: {
+          displayName: 'Category Group'
+          description: 'Diagnostic category group - none, audit, or allLogs.'
+        }
+        allowedValues: [
+          'audit'
+          'allLogs'
+        ]
+        defaultValue: 'allLogs'
+      }
+      diagnosticSettingName: {
+        type: 'String'
+        metadata: {
+          displayName: 'Diagnostic Setting Name'
+          description: 'Diagnostic Setting Name'
+        }
+        defaultValue: 'setByPolicy-LogAnalytics'
+      }
       effect: {
         type: 'String'
         metadata: {
@@ -51,13 +71,13 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         ]
         defaultValue: 'DeployIfNotExists'
       }
-      resourceName: {
+      lawId: {
         type: 'String'
         metadata: {
-          displayName: 'ResourceName'
-          description: 'The value of the Resource.'
+          displayName: 'LAW Id'
+          description: 'The Id of the Log Analytics workspace.'
         }
-        defaultValue: DCRId
+        defaultValue: lawId
       }
     }
     policyRule: {
@@ -69,7 +89,7 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
           }
           {
             field: 'type'
-            equals: 'Microsoft'
+            equals: 'Microsoft.Network/virtualHubs'
           }
         ]
       }
@@ -77,8 +97,33 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         effect: '[parameters(\'effect\')]'
         details: {
           type: 'Microsoft.Network/virtualHubs/providers/diagnosticSettings'
-          name: 'MonStar-${packtag}-vWan-diag' 
-          roleDefinitionIds: roledefinitionIds
+          existenceCondition: {
+            allOf: [
+              {
+                count: {
+                  field: 'Microsoft.Insights/diagnosticSettings/logs[*]'
+                  where: {
+                    allOf: [
+                      {
+                        field: 'Microsoft.Insights/diagnosticSettings/logs[*].enabled'
+                        equals: ('categoryGroup' == 'allLogs')
+                      }
+                      {
+                        field: 'microsoft.insights/diagnosticSettings/logs[*].categoryGroup'
+                        equals: 'allLogs'
+                      }
+                    ]
+                  }
+                }
+                equals: 1
+              }
+              {
+                field: 'Microsoft.Insights/diagnosticSettings/workspaceId'
+                equals: lawId
+              }
+            ]
+          }
+          //roleDefinitionIds: roledefinitionIds
           deployment: {
             properties: {
               mode: 'incremental'
@@ -86,63 +131,63 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
                 '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
                 contentVersion: '1.0.0.0'
                 parameters: {
-                  resourceGroup: {
+                  diagnosticSettingName: {
                     type: 'string'
                   }
-                  vmName: {
+                  logAnalytics: {
                     type: 'string'
                   }
-                  DCRId2: {
+                  categoryGroup: {
                     type: 'string'
                   }
                   packTag: {
                     type: 'string'
                   }
-
+                  resourceName: {
+                    type: 'string'
+                  }
                 }
                 variables: {
-                  locationLongNameToShortMap: {
-                    canadacentral: 'CCA'
-                    canadaeast: 'CCA'
-                    centralus: 'CUS'
-                    eastus2euap: 'eus2p'
-                    eastus: 'EUS'
-                    eastus2: 'EUS2'
-                    southcentralus: 'SCUS'
-                    westcentralus: 'WCUS'
-                    westus: 'WUS'
-                    westus2: 'WUS2'
-                  }
-                  DCRName: '[split(parameters(\'DCRId2\'),\'/\')[8]]' //'AzMonPacks-IISBasicIISMonitoring'
-                  //dcrId: '[concat(\'/subscriptions/\', variables(\'subscriptionId\'), \'/resourceGroups\', variables('defaultRGName'), '/providers/Microsoft.Insights/dataCollectionRules/', variables('dcrName'))]'
-                  //DcrId: '[resourceId(\'Microsoft.Insights/dataCollectionRules\', variables (\'DCRName\'))]'
-                  subscriptionId: '[subscription().subscriptionId]'
-                  dcraName: '[concat(parameters(\'vmName\'),\'/Microsoft.Insights/MonStar-\',parameters(\'packTag\'),\'-\',split(parameters(\'DCRId2\'),\'/\')[8])]'
                 }
                 resources: [
                   {
-                    type: 'Microsoft.Compute/virtualMachines/providers/dataCollectionRuleAssociations'
-                    name: '[variables(\'dcraName\')]'
-                    apiVersion: '2021-04-01'
-                    properties: {
-                      description: 'Association of data collection rule for Azure Monitor Starter Packs for VMs'
-                      dataCollectionRuleId: '[parameters(\'DCRId2\')]'
-                    }
+                  type: 'microsoft.network/virtualnetworkgateways/providers/diagnosticSettings'
+                  name: '[concat(parameters(\'resourceName\'), \'/\', \'Microsoft.Insights/\', parameters(\'diagnosticSettingName\'))]'
+                  properties: {
+                    workspaceId: '[parameters(\'logAnalytics\')]'
+                    logs: [
+                      {
+                        categoryGroup: 'allLogs'
+                        enabled: '[equals(parameters(\'categoryGroup\'), \'allLogs\')]'
+                      }
+                    ]
+                    metrics: [
+                      {
+                        timeGrain: null
+                        enabled: true
+                        retentionPolicy: {
+                          days: 0
+                          enabled: false
+                        }
+                        category: 'AllMetrics'
+                      }
+                    ]
                   }
+                }
                 ]
               }
               parameters: {
-                resourceGroup: {
-                  value: '[resourceGroup().name]'
+                diagnosticSettingName: {
+                  value: '[parameters(\'diagnosticSettingName\')]'
                 }
-                vmName: {
+                logAnalytics: {
+                  value: '[parameters(\'logAnalytics\')]'
+                }
+                categoryGroup: {
+                  value: '[parameters(\'categoryGroup\')]'
+                }
+                resourceName: {
                   value: '[field(\'name\')]'
-                }
-                DCRId2: {
-                  value: '[parameters(\'DCRId\')]'
-                }
-                packTag: {
-                  value: '[parameters(\'tagValue\')]'
                 }
               }
             }
