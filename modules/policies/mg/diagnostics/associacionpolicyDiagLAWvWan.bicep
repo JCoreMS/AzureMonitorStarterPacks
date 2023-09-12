@@ -1,5 +1,5 @@
 targetScope = 'managementGroup'
-param DCRId string
+param resourceName string
 param policyName string
 param policyDisplayName string
 param policyDescription string
@@ -51,11 +51,11 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         ]
         defaultValue: 'DeployIfNotExists'
       }
-      DCRid: {
+      resourceName: {
         type: 'String'
         metadata: {
-          displayName: 'DCRId'
-          description: 'The value of the DCRId.'
+          displayName: 'ResourceName'
+          description: 'The value of the Resource.'
         }
         defaultValue: DCRId
       }
@@ -76,8 +76,8 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
       then: {
         effect: '[parameters(\'effect\')]'
         details: {
-          type: 'Microsoft.Insights/dataCollectionRuleAssociations'
-          name: 'MonStar-${packtag}-${split(DCRId,'/')[8]}' 
+          type: 'Microsoft.Network/virtualHubs/providers/diagnosticSettings'
+          name: 'MonStar-${packtag}-vWan-diag' 
           roleDefinitionIds: roledefinitionIds
           deployment: {
             properties: {
