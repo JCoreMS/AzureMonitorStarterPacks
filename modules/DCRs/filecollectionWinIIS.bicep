@@ -30,6 +30,9 @@ module table '../LAW/table.bicep' = {
 
 resource fileCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' = {
   name: ruleName
+  dependsOn: [
+    table
+  ]
   location: location
   tags: {
     '${solutionTag}': packtag

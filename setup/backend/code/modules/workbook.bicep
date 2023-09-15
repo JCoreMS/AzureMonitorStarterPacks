@@ -131,15 +131,23 @@ var wbConfig='''
             "id": "15f0fa97-4286-48d6-9dea-26a956197d26",
             "cellValue": "tabSelection",
             "linkTarget": "parameter",
-            "linkLabel": "Setup",
+            "linkLabel": "IaaS Resources",
             "subTarget": "discovery",
+            "style": "link"
+          },
+          {
+            "id": "9dc796d0-69e4-4687-9055-b451a8beaf74",
+            "cellValue": "tabSelection",
+            "linkTarget": "parameter",
+            "linkLabel": "PaaS Resources",
+            "subTarget": "paas",
             "style": "link"
           },
           {
             "id": "7499a88f-a536-41d7-9b58-9ebae1b5290e",
             "cellValue": "tabSelection",
             "linkTarget": "parameter",
-            "linkLabel": "Alert Info",
+            "linkLabel": "Alert Setup",
             "subTarget": "alertmanagement",
             "style": "link"
           },
@@ -204,288 +212,586 @@ var wbConfig='''
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "IaaS Resources",
         "items": [
           {
-            "type": 3,
+            "type": 12,
             "content": {
-              "version": "KqlItem/1.0",
-              "query": "resources | where type =~ 'microsoft.hybridcompute/machines' \n| where isnotempty(tolower(tags.MonitorStarterPacks))\n| project Server=id,['Resource Group']=resourceGroup,Packs=tags.MonitorStarterPacks, OS=properties.osType, subscriptionId\n| union (resources | where type =~ 'microsoft.compute/virtualmachines' \n| where isnotempty(tolower(tags.MonitorStarterPacks))\n| project Server=id,['Resource Group']=resourceGroup,Packs=tags.MonitorStarterPacks, OS=properties.storageProfile.osDisk.osType, subscriptionId)\n| join kind= leftouter   (resourcecontainers\n| where type =~ 'microsoft.resources/subscriptions'\n| project Subscription=name,subscriptionId) on subscriptionId\n| project-away subscriptionId, subscriptionId1",
-              "size": 0,
-              "title": "Monitored Machines",
-              "exportMultipleValues": true,
-              "exportedParameters": [
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
                 {
-                  "fieldName": "",
-                  "parameterName": "taggedVMs",
-                  "parameterType": 5,
-                  "quote": ""
-                }
-              ],
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources",
-              "crossComponentResources": [
-                "{Subscriptions}"
-              ],
-              "visualization": "table",
-              "gridSettings": {
-                "filter": true
-              },
-              "sortBy": []
-            },
-            "name": "Monitored Machines",
-            "styleSettings": {
-              "margin": "400",
-              "padding": "400",
-              "showBorder": true
-            }
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "crossComponentResources": [
-                "{Workspace}"
-              ],
-              "parameters": [
-                {
-                  "id": "54f2c7fb-7251-43b6-aa4d-fd94647cac4a",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "PackTagsLeft",
-                  "label": "Add/Remove",
-                  "type": 2,
-                  "isGlobal": true,
-                  "query": "resources\n| where type == \"microsoft.insights/datacollectionrules\"\n| where isnotempty(tags.MonitorStarterPacks)\n| project MPs=tostring(tags.MonitorStarterPacks)\n| summarize by MPs\n",
-                  "crossComponentResources": [
-                    "{Workspace}"
-                  ],
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "queryType": 1,
-                  "resourceType": "microsoft.resourcegraph/resources",
-                  "value": "IIS"
-                }
-              ],
-              "style": "pills",
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources"
-            },
-            "customWidth": "25",
-            "name": "parameters - 5 - Copy"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "paragraph",
-              "links": [
-                {
-                  "id": "36b65f94-1c3d-4e7a-b771-677a2081d288",
-                  "cellValue": "",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "Remove Monitoring for {PackTagsLeft} Pack ",
-                  "preText": "",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
-                    "headers": [],
-                    "params": [
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "resources | where type =~ 'microsoft.hybridcompute/machines' \n| where isnotempty(tolower(tags.MonitorStarterPacks))\n| project Resource=id,['Resource Group']=resourceGroup,Packs=tags.MonitorStarterPacks, OS=properties.osType, subscriptionId\n| union (resources | where type =~ 'microsoft.compute/virtualmachines' \n| where isnotempty(tolower(tags.MonitorStarterPacks))\n| project Resource=id,['Resource Group']=resourceGroup,Packs=tags.MonitorStarterPacks, OS=properties.storageProfile.osDisk.osType, subscriptionId)\n| join kind= leftouter   (resourcecontainers\n| where type =~ 'microsoft.resources/subscriptions'\n| project Subscription=name,subscriptionId) on subscriptionId\n| project-away subscriptionId, subscriptionId1",
+                    "size": 0,
+                    "title": "Monitored Machines",
+                    "exportMultipleValues": true,
+                    "exportedParameters": [
                       {
-                        "key": "action",
-                        "value": "removeTag"
+                        "fieldName": "",
+                        "parameterName": "taggedVMs",
+                        "parameterType": 5,
+                        "quote": ""
                       }
                     ],
-                    "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"RemoveTag\",\n    \"Servers\": [{taggedVMs}],\n    \"Pack\": \"{PackTagsLeft}\"\n  }\n}",
-                    "httpMethod": "POST",
-                    "title": "Remove Monitoring",
-                    "description": "# Please confirm the change.\n\nRemove Monitoring for {PackTagsLeft} Pack \n\nServers:\n\n{taggedVMs}",
-                    "runLabel": "Confirm"
+                    "queryType": 1,
+                    "resourceType": "microsoft.resourcegraph/resources",
+                    "crossComponentResources": [
+                      "{Subscriptions}"
+                    ],
+                    "visualization": "table",
+                    "gridSettings": {
+                      "filter": true
+                    },
+                    "sortBy": []
+                  },
+                  "name": "Monitored Machines",
+                  "styleSettings": {
+                    "margin": "400",
+                    "padding": "400",
+                    "showBorder": true
                   }
                 },
                 {
-                  "id": "550df977-06a8-4c40-9cd3-aba6286ebcdf",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "Add Monitoring for {PackTagsLeft} Pack",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
-                    "headers": [],
-                    "params": [],
-                    "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"AddTag\",\n    \"Servers\": [{taggedVMs}],\n    \"Pack\": \"{PackTagsLeft}\"\n  }\n}",
-                    "httpMethod": "POST",
-                    "title": "Add Monitoring",
-                    "description": "# Please confirm the change.\n\nAdd Monitoring for {PackTagsLeft} Pack ",
-                    "actionName": "AddMonitoringPack",
-                    "runLabel": "Confirm"
-                  }
+                  "type": 9,
+                  "content": {
+                    "version": "KqlParameterItem/1.0",
+                    "crossComponentResources": [
+                      "{Workspace}"
+                    ],
+                    "parameters": [
+                      {
+                        "id": "54f2c7fb-7251-43b6-aa4d-fd94647cac4a",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "PackTagsLeft",
+                        "label": "Add/Remove",
+                        "type": 2,
+                        "isGlobal": true,
+                        "query": "resources\n| where type == \"microsoft.insights/datacollectionrules\"\n| where isnotempty(tags.MonitorStarterPacks)\n| project MPs=tostring(tags.MonitorStarterPacks)\n| summarize by MPs\n",
+                        "crossComponentResources": [
+                          "{Workspace}"
+                        ],
+                        "typeSettings": {
+                          "additionalResourceOptions": [],
+                          "showDefault": false
+                        },
+                        "timeContext": {
+                          "durationMs": 86400000
+                        },
+                        "queryType": 1,
+                        "resourceType": "microsoft.resourcegraph/resources",
+                        "value": null
+                      }
+                    ],
+                    "style": "pills",
+                    "queryType": 1,
+                    "resourceType": "microsoft.resourcegraph/resources"
+                  },
+                  "customWidth": "25",
+                  "name": "parameters - 5 - Copy"
                 },
                 {
-                  "id": "3b1af630-47ab-43e9-a5b2-d2f2e21880d0",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "Remove All Monitoring for VM",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
-                    "headers": [],
-                    "params": [],
-                    "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"RemoveTag\",\n    \"Servers\": [{taggedVMs}],\n    \"Pack\": \"All\"\n  }\n}",
-                    "httpMethod": "POST",
-                    "title": "Remove All Monitoring",
-                    "description": "# Please confirm the change.\n\nRemove All Monitoring for {PackTagsLeft} Pack ",
-                    "actionName": "RemoveAllMonitoring",
-                    "runLabel": "Confirm"
-                  }
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "paragraph",
+                    "links": [
+                      {
+                        "id": "36b65f94-1c3d-4e7a-b771-677a2081d288",
+                        "cellValue": "",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "Remove Monitoring for {PackTagsLeft} Pack ",
+                        "preText": "",
+                        "style": "primary",
+                        "linkIsContextBlade": true,
+                        "armActionContext": {
+                          "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
+                          "headers": [],
+                          "params": [
+                            {
+                              "key": "action",
+                              "value": "removeTag"
+                            }
+                          ],
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"RemoveTag\",\n    \"Resources\": [{taggedVMs}],\n    \"Pack\": \"{PackTagsLeft}\"\n  }\n}",
+                          "httpMethod": "POST",
+                          "title": "Remove Monitoring",
+                          "description": "# Please confirm the change.\n\nRemove Monitoring for {PackTagsLeft} Pack \n\nServers:\n\n{taggedVMs}",
+                          "runLabel": "Confirm"
+                        }
+                      },
+                      {
+                        "id": "550df977-06a8-4c40-9cd3-aba6286ebcdf",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "Add Monitoring for {PackTagsLeft} Pack",
+                        "style": "primary",
+                        "linkIsContextBlade": true,
+                        "armActionContext": {
+                          "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
+                          "headers": [],
+                          "params": [],
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"AddTag\",\n    \"Resources\": [{taggedVMs}],\n    \"Pack\": \"{PackTagsLeft}\"\n  }\n}",
+                          "httpMethod": "POST",
+                          "title": "Add Monitoring",
+                          "description": "# Please confirm the change.\n\nAdd Monitoring for {PackTagsLeft} Pack ",
+                          "actionName": "AddMonitoringPack",
+                          "runLabel": "Confirm"
+                        }
+                      },
+                      {
+                        "id": "3b1af630-47ab-43e9-a5b2-d2f2e21880d0",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "Remove All Monitoring for VM",
+                        "style": "primary",
+                        "linkIsContextBlade": true,
+                        "armActionContext": {
+                          "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
+                          "headers": [],
+                          "params": [],
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"RemoveTag\",\n    \"Resources\": [{taggedVMs}],\n    \"Pack\": \"All\"\n  }\n}",
+                          "httpMethod": "POST",
+                          "title": "Remove All Monitoring",
+                          "description": "# Please confirm the change.\n\nRemove All Monitoring for {PackTagsLeft} Pack ",
+                          "actionName": "RemoveAllMonitoring",
+                          "runLabel": "Confirm"
+                        }
+                      }
+                    ]
+                  },
+                  "customWidth": "75",
+                  "name": "links - 1"
                 }
-              ]
+              ],
+              "exportParameters": true
             },
-            "customWidth": "75",
-            "name": "links - 1"
+            "customWidth": "50",
+            "conditionalVisibility": {
+              "parameterName": "tabSelection",
+              "comparison": "isEqualTo",
+              "value": "discovery"
+            },
+            "name": "TaggedGroup"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "resources | where type =~ 'microsoft.hybridcompute/machines' \n| where isempty(tolower(tags.MonitorStarterPacks)) //and subscriptionId in split('{Subscriptions:subscriptionId}',',')\n| project Resource=id,['Resource Group']=resourceGroup, OS=properties.osType, subscriptionId\n| union (resources | where type =~ 'microsoft.compute/virtualmachines' \n| where isempty(tolower(tags.MonitorStarterPacks)) //and subscriptionId in split('{Subscriptions:subscriptionId}',',')\n| project Resource=id,['Resource Group']=resourceGroup, OS=properties.storageProfile.osDisk.osType, subscriptionId)\n| join kind= leftouter   (resourcecontainers\n| where type =~ 'microsoft.resources/subscriptions'\n| project Subscription=name,subscriptionId) on subscriptionId\n| project-away subscriptionId, subscriptionId1",
+                    "size": 0,
+                    "title": "Non-monitored Machines",
+                    "exportMultipleValues": true,
+                    "exportedParameters": [
+                      {
+                        "parameterName": "vmstotag",
+                        "parameterType": 1,
+                        "quote": ""
+                      }
+                    ],
+                    "queryType": 1,
+                    "resourceType": "microsoft.resourcegraph/resources",
+                    "crossComponentResources": [
+                      "{Subscriptions}"
+                    ],
+                    "visualization": "table",
+                    "gridSettings": {
+                      "filter": true
+                    },
+                    "sortBy": []
+                  },
+                  "name": "Non Discoverable Machines",
+                  "styleSettings": {
+                    "margin": "400",
+                    "padding": "400",
+                    "showBorder": true
+                  }
+                },
+                {
+                  "type": 9,
+                  "content": {
+                    "version": "KqlParameterItem/1.0",
+                    "parameters": [
+                      {
+                        "id": "8a177eab-edac-41cc-84f9-a5b7de931bea",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "PackTags",
+                        "label": "Select Pack to Enable",
+                        "type": 2,
+                        "isGlobal": true,
+                        "query": "resources\n| where type == \"microsoft.insights/datacollectionrules\"\n| where isnotempty(tags.MonitorStarterPacks)\n| project MPs=tostring(tags.MonitorStarterPacks)\n| summarize by MPs",
+                        "typeSettings": {
+                          "additionalResourceOptions": [],
+                          "showDefault": false
+                        },
+                        "timeContext": {
+                          "durationMs": 86400000
+                        },
+                        "queryType": 1,
+                        "resourceType": "microsoft.resourcegraph/resources",
+                        "value": null
+                      }
+                    ],
+                    "style": "pills",
+                    "queryType": 1,
+                    "resourceType": "microsoft.resourcegraph/resources"
+                  },
+                  "customWidth": "50",
+                  "name": "parameters - 5"
+                },
+                {
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "paragraph",
+                    "links": [
+                      {
+                        "id": "91fb0fed-0e4f-41ce-9024-98a3cc4432a7",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "Enable Monitoring for {PackTags} Pack",
+                        "preText": "",
+                        "style": "primary",
+                        "linkIsContextBlade": true,
+                        "armActionContext": {
+                          "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
+                          "headers": [],
+                          "params": [
+                            {
+                              "key": "action",
+                              "value": "addTag"
+                            }
+                          ],
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"AddTag\",\n    \"Resources\": [{vmstotag}],\n    \"Pack\": \"{PackTags}\"\n  }\n}",
+                          "httpMethod": "POST",
+                          "title": "Enable Monitoring Packs",
+                          "description": "# This will enable the pack for the following servers:\n{vmstotag}\n\nby adding the {PackTags} to the server.",
+                          "actionName": "EnableMonitoring",
+                          "runLabel": "Confirm"
+                        }
+                      }
+                    ]
+                  },
+                  "customWidth": "50",
+                  "name": "links - 1 - Copy"
+                }
+              ],
+              "exportParameters": true
+            },
+            "customWidth": "50",
+            "conditionalVisibility": {
+              "parameterName": "tabSelection",
+              "comparison": "isEqualTo",
+              "value": "discovery"
+            },
+            "name": "NonTaggedGroup"
           }
-        ],
-        "exportParameters": true
+        ]
       },
       "conditionalVisibility": {
         "parameterName": "tabSelection",
         "comparison": "isEqualTo",
         "value": "discovery"
       },
-      "customWidth": "50",
-      "name": "TaggedGroup"
+      "name": "IaaS",
+      "styleSettings": {
+        "showBorder": true
+      }
     },
     {
       "type": 12,
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "PaaS Resources",
         "items": [
           {
-            "type": 3,
+            "type": 12,
             "content": {
-              "version": "KqlItem/1.0",
-              "query": "resources | where type =~ 'microsoft.hybridcompute/machines' \n| where isempty(tolower(tags.MonitorStarterPacks)) //and subscriptionId in split('{Subscriptions:subscriptionId}',',')\n| project Server=id,['Resource Group']=resourceGroup, OS=properties.osType, subscriptionId\n| union (resources | where type =~ 'microsoft.compute/virtualmachines' \n| where isempty(tolower(tags.MonitorStarterPacks)) //and subscriptionId in split('{Subscriptions:subscriptionId}',',')\n| project Server=id,['Resource Group']=resourceGroup, OS=properties.storageProfile.osDisk.osType, subscriptionId)\n| join kind= leftouter   (resourcecontainers\n| where type =~ 'microsoft.resources/subscriptions'\n| project Subscription=name,subscriptionId) on subscriptionId\n| project-away subscriptionId, subscriptionId1",
-              "size": 0,
-              "title": "Non-monitored Machines",
-              "exportMultipleValues": true,
-              "exportedParameters": [
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
                 {
-                  "parameterName": "vmstotag",
-                  "parameterType": 1,
-                  "quote": ""
-                }
-              ],
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources",
-              "crossComponentResources": [
-                "{Subscriptions}"
-              ],
-              "visualization": "table",
-              "gridSettings": {
-                "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "$gen_link_Server_0",
-                    "sortOrder": 1
-                  }
-                ]
-              },
-              "sortBy": [
-                {
-                  "itemKey": "$gen_link_Server_0",
-                  "sortOrder": 1
-                }
-              ]
-            },
-            "name": "Non Discoverable Machines",
-            "styleSettings": {
-              "margin": "400",
-              "padding": "400",
-              "showBorder": true
-            }
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "8a177eab-edac-41cc-84f9-a5b7de931bea",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "PackTags",
-                  "label": "Select Pack to Enable",
-                  "type": 2,
-                  "isGlobal": true,
-                  "query": "resources\n| where type == \"microsoft.insights/datacollectionrules\"\n| where isnotempty(tags.MonitorStarterPacks)\n| project MPs=tostring(tags.MonitorStarterPacks)\n| summarize by MPs",
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "queryType": 1,
-                  "resourceType": "microsoft.resourcegraph/resources",
-                  "value": null
-                }
-              ],
-              "style": "pills",
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources"
-            },
-            "customWidth": "50",
-            "name": "parameters - 5"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "paragraph",
-              "links": [
-                {
-                  "id": "91fb0fed-0e4f-41ce-9024-98a3cc4432a7",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "Enable Monitoring for {PackTags} Pack",
-                  "preText": "",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
-                    "headers": [],
-                    "params": [
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "resources\n| where tolower(type) in ('microsoft.network/vpngateways','microsoft.network/virtualnetworkgateways')\n| where isnotempty(tags.MonitorStarterPacks)\n| project Resource=id, name, subscriptionId, location, resourceGroup, type",
+                    "size": 0,
+                    "title": "Monitored PaaS Resources",
+                    "exportMultipleValues": true,
+                    "exportedParameters": [
                       {
-                        "key": "action",
-                        "value": "addTag"
+                        "fieldName": "",
+                        "parameterName": "taggedResources",
+                        "parameterType": 5,
+                        "quote": ""
                       }
                     ],
-                    "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"AddTag\",\n    \"Servers\": [{vmstotag}],\n    \"Pack\": \"{PackTags}\"\n  }\n}",
-                    "httpMethod": "POST",
-                    "title": "Enable Monitoring Packs",
-                    "description": "# This will enable the pack for the following servers:\n{vmstotag}\n\nby adding the {PackTags} to the server.",
-                    "actionName": "EnableMonitoring",
-                    "runLabel": "Confirm"
+                    "queryType": 1,
+                    "resourceType": "microsoft.resources/tenants",
+                    "crossComponentResources": [
+                      "value::tenant"
+                    ],
+                    "visualization": "table",
+                    "gridSettings": {
+                      "filter": true
+                    },
+                    "sortBy": []
+                  },
+                  "name": "Monitored PaaS Resources",
+                  "styleSettings": {
+                    "margin": "400",
+                    "padding": "400",
+                    "showBorder": true
                   }
+                },
+                {
+                  "type": 9,
+                  "content": {
+                    "version": "KqlParameterItem/1.0",
+                    "crossComponentResources": [
+                      "value::tenant"
+                    ],
+                    "parameters": [
+                      {
+                        "id": "54f2c7fb-7251-43b6-aa4d-fd94647cac4a",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "PackTagsLeftPaaS",
+                        "label": "Add/Remove",
+                        "type": 2,
+                        "isGlobal": true,
+                        "query": "policyresources\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\n| where Pack in ('vWan')\n| summarize by Pack",
+                        "crossComponentResources": [
+                          "value::tenant"
+                        ],
+                        "typeSettings": {
+                          "additionalResourceOptions": [],
+                          "showDefault": false
+                        },
+                        "timeContext": {
+                          "durationMs": 86400000
+                        },
+                        "queryType": 1,
+                        "resourceType": "microsoft.resources/tenants",
+                        "value": "vWan"
+                      }
+                    ],
+                    "style": "pills",
+                    "queryType": 1,
+                    "resourceType": "microsoft.resources/tenants"
+                  },
+                  "customWidth": "25",
+                  "name": "parameters - 5 - Copy"
+                },
+                {
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "paragraph",
+                    "links": [
+                      {
+                        "id": "36b65f94-1c3d-4e7a-b771-677a2081d288",
+                        "cellValue": "",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "Remove Monitoring for {PackTagsLeftPaaS} Pack ",
+                        "preText": "",
+                        "style": "primary",
+                        "linkIsContextBlade": true,
+                        "armActionContext": {
+                          "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
+                          "headers": [],
+                          "params": [
+                            {
+                              "key": "action",
+                              "value": "removeTag"
+                            }
+                          ],
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"RemoveTag\",\n    \"Resources\": [{taggedResources}],\n    \"Pack\": \"{PackTagsLeftPaaS}\",\n    \"PackType\": \"PaaS\"\n  }\n}",
+                          "httpMethod": "POST",
+                          "title": "Remove Monitoring",
+                          "description": "# Please confirm the change.\n\nRemove Monitoring for {PackTagsLeftPaaS} Pack \n\nResources:\n\n{taggedResources}",
+                          "actionName": "RemovePaaSPackMonitoring",
+                          "runLabel": "Confirm"
+                        }
+                      },
+                      {
+                        "id": "550df977-06a8-4c40-9cd3-aba6286ebcdf",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "Add Monitoring for {PackTagsLeftPaaS} Pack",
+                        "style": "primary",
+                        "linkIsContextBlade": true,
+                        "armActionContext": {
+                          "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
+                          "headers": [],
+                          "params": [],
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"AddTag\",\n    \"Resources\": [{taggedResources}],\n    \"Pack\": \"{PackTagsLeftPaaS}\",\n    \"PackType\": \"PaaS\"\n  }\n}",
+                          "httpMethod": "POST",
+                          "title": "Add Monitoring",
+                          "description": "# Please confirm the change.\n\nAdd Monitoring for {PackTagsLeftPaaS} Pack \n\nResources:\n\n{taggedResources}",
+                          "actionName": "AddMonitoringPackPaas",
+                          "runLabel": "Confirm"
+                        }
+                      },
+                      {
+                        "id": "3b1af630-47ab-43e9-a5b2-d2f2e21880d0",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "Remove All Monitoring for Resource",
+                        "style": "primary",
+                        "linkIsContextBlade": true,
+                        "armActionContext": {
+                          "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
+                          "headers": [],
+                          "params": [],
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"RemoveTag\",\n    \"Resources\": [{taggedResources}],\n    \"Pack\": \"All\",\n    \"PackType\": \"PaaS\"\n  }\n}",
+                          "httpMethod": "POST",
+                          "title": "Remove All Monitoring",
+                          "description": "# Please confirm the change.\n\nRemove All Monitoring for All Packs\n\nResources:\n\n{taggedResources}",
+                          "actionName": "RemoveAllMonitoring",
+                          "runLabel": "Confirm"
+                        }
+                      }
+                    ]
+                  },
+                  "customWidth": "75",
+                  "name": "links - 1"
                 }
-              ]
+              ],
+              "exportParameters": true
             },
             "customWidth": "50",
-            "name": "links - 1 - Copy"
+            "name": "TaggedGroup"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "resources\n| where tolower(type) in ('microsoft.network/vpngateways','microsoft.network/virtualnetworkgateways')\n| where isempty(tags.MonitorStarterPacks)\n| project Resource=id, name, subscriptionId, location, resourceGroup, type",
+                    "size": 0,
+                    "title": "Non-monitored Machines",
+                    "exportMultipleValues": true,
+                    "exportedParameters": [
+                      {
+                        "parameterName": "servicestotag",
+                        "parameterType": 1,
+                        "quote": ""
+                      }
+                    ],
+                    "queryType": 1,
+                    "resourceType": "microsoft.resources/tenants",
+                    "crossComponentResources": [
+                      "value::tenant"
+                    ],
+                    "visualization": "table",
+                    "gridSettings": {
+                      "filter": true
+                    },
+                    "sortBy": []
+                  },
+                  "name": "Non Discoverable Machines",
+                  "styleSettings": {
+                    "margin": "400",
+                    "padding": "400",
+                    "showBorder": true
+                  }
+                },
+                {
+                  "type": 9,
+                  "content": {
+                    "version": "KqlParameterItem/1.0",
+                    "crossComponentResources": [
+                      "value::tenant"
+                    ],
+                    "parameters": [
+                      {
+                        "id": "8a177eab-edac-41cc-84f9-a5b7de931bea",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "PackTagsPaaS",
+                        "label": "Select Pack to Enable",
+                        "type": 2,
+                        "isGlobal": true,
+                        "query": "policyresources\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\n| where Pack in ('vWan')\n| summarize by Pack",
+                        "crossComponentResources": [
+                          "value::tenant"
+                        ],
+                        "typeSettings": {
+                          "additionalResourceOptions": [],
+                          "showDefault": false
+                        },
+                        "timeContext": {
+                          "durationMs": 86400000
+                        },
+                        "queryType": 1,
+                        "resourceType": "microsoft.resources/tenants",
+                        "value": "vWan"
+                      }
+                    ],
+                    "style": "pills",
+                    "queryType": 1,
+                    "resourceType": "microsoft.resources/tenants"
+                  },
+                  "customWidth": "50",
+                  "name": "parameters - 5"
+                },
+                {
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "paragraph",
+                    "links": [
+                      {
+                        "id": "91fb0fed-0e4f-41ce-9024-98a3cc4432a7",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "Enable Monitoring for {PackTagsPaaS} Pack",
+                        "preText": "",
+                        "style": "primary",
+                        "linkIsContextBlade": true,
+                        "armActionContext": {
+                          "path": "{logicAppResource}/triggers/manual/run?api-version=2016-06-01",
+                          "headers": [],
+                          "params": [
+                            {
+                              "key": "action",
+                              "value": "addTag"
+                            }
+                          ],
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"AddTag\",\n    \"Resources\": [{servicestotag}],\n    \"Pack\": \"{PackTagsPaaS}\"\n  }\n}",
+                          "httpMethod": "POST",
+                          "title": "Enable Monitoring Packs",
+                          "description": "# This will enable the pack for the following services:\n\n{servicestotag}\n\n\nby adding the {PackTagsPaaS} tag to the resource.",
+                          "actionName": "EnableMonitoring",
+                          "runLabel": "Confirm"
+                        }
+                      }
+                    ]
+                  },
+                  "customWidth": "50",
+                  "name": "links - 1 - Copy"
+                }
+              ],
+              "exportParameters": true
+            },
+            "customWidth": "50",
+            "name": "NonTaggedGroup"
           }
-        ],
-        "exportParameters": true
+        ]
       },
       "conditionalVisibility": {
         "parameterName": "tabSelection",
         "comparison": "isEqualTo",
-        "value": "discovery"
+        "value": "paas"
       },
-      "customWidth": "50",
-      "name": "NonTaggedGroup"
+      "name": "PaaS"
     },
     {
       "type": 12,
@@ -1313,7 +1619,7 @@ var wbConfig='''
                     "body": "{ \n  \"function\": \"policymgmt\",\n  \"functionBody\" : {\n    \"SolutionTag\":\"MonitorStarterPacks\",\n    \"Action\": \"Remediate\"\n  }\n}",
                     "httpMethod": "POST",
                     "title": "Rmediate policies",
-                    "description": "# Please confirm remediation\n\nThis button will trigger a global policy remeadiation.",
+                    "description": "# Please confirm remediation\n\nThis button will trigger a global policy remeadiation. \n\nThe backend script will go through the policies and initiatives, finding the ones that are not compliant, and will trigger remediation. \n\nIt is not restricted to the ones in this screen.",
                     "actionName": "Remediate",
                     "runLabel": "Confirm"
                   }
@@ -1844,8 +2150,7 @@ var wbConfig='''
     "Azure Monitor"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
-}
-'''
+}'''
 // var wbConfig2='"/subscriptions/${subscriptionId}/resourceGroups/${rg}/providers/Microsoft.OperationalInsights/workspaces/${logAnalyticsWorkspaceName}"]}'
 // //var wbConfig3='''
 // //'''

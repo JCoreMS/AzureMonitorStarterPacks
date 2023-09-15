@@ -12,7 +12,7 @@ module vmmetricalertcpu '../../../modules/alerts/vmmetricalert.bicep' = [for (vm
     metricName: 'Percentage CPU'
     operator: 'GreaterThan' //default
     threshold: 80
-    vmId: vmID
+    scope: vmID
     evaluationFrequency: 'PT5M' //default
     windowSize: 'PT5M' //default
     metricNamespace: 'Microsoft.Compute/virtualMachines' //default
@@ -29,7 +29,7 @@ module vmmetricalertOSDiskIOPS '../../../modules/alerts/vmmetricalert.bicep' = [
     metricName: 'OS Disk IOPS Consumed Percentage'
     operator: 'GreaterThan' //default
     threshold: 95
-    vmId: vmID
+    scope: vmID
     evaluationFrequency: 'PT5M' //default
     windowSize: 'PT5M' //default
     metricNamespace: 'Microsoft.Compute/virtualMachines' //default
@@ -45,7 +45,7 @@ module NetworkOutTotal '../../../modules/alerts/vmmetricalert.bicep' = [for (vmI
     metricName: 'Network Out Total'
     operator: 'GreaterThan' //default
     threshold: 200000000000
-    vmId: vmID
+    scope: vmID
     evaluationFrequency: 'PT5M' //default
     windowSize: 'PT5M' //default
     metricNamespace: 'Microsoft.Compute/virtualMachines' //default
@@ -62,7 +62,7 @@ module NetworkInTotal '../../../modules/alerts/vmmetricalert.bicep' = [for (vmID
     metricName: 'Network In Total'
     operator: 'GreaterThan' //default
     threshold: 500000000000
-    vmId: vmID
+    scope: vmID
     evaluationFrequency: 'PT5M' //default
     windowSize: 'PT5M' //default
     metricNamespace: 'Microsoft.Compute/virtualMachines' //default
@@ -79,7 +79,7 @@ module AvailableMemoryBytes '../../../modules/alerts/vmmetricalert.bicep' = [for
     metricName: 'Available Memory Bytes'
     operator: 'GreaterThan' //default
     threshold: 1000000000
-    vmId: vmID
+    scope: vmID
     evaluationFrequency: 'PT5M' //default
     windowSize: 'PT5M' //default
     metricNamespace: 'Microsoft.Compute/virtualMachines' //default
@@ -96,7 +96,7 @@ module VMAvailability '../../../modules/alerts/vmmetricalert.bicep' = [for (vmID
     metricName: 'VmAvailabilityMetric'
     operator: 'LessThan' //default is GreaterThan
     threshold: 1
-    vmId: vmID
+    scope: vmID
     evaluationFrequency: 'PT5M' //default
     windowSize: 'PT5M' //default
     metricNamespace: 'Microsoft.Compute/virtualMachines' //default

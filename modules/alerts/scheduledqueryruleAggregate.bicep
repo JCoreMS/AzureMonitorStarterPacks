@@ -16,6 +16,7 @@ param solutionTag string
 param solutionVersion string
 param threshold int
 param metricMeasureColumn string
+param timeAggregation string = 'Average'
 
 @allowed([
   'GreaterThan'
@@ -54,7 +55,7 @@ resource rule 'Microsoft.Insights/scheduledQueryRules@2023-03-15-preview' = {
       allOf: [
           {
               query: query
-              timeAggregation: 'Average'
+              timeAggregation: timeAggregation
               metricMeasureColumn: metricMeasureColumn
               dimensions: [
                 {

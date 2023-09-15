@@ -1,22 +1,31 @@
 param settingName string
-param vWanName string
-param storageSyncName string
-param workspaceId string
+param vpnGWName string
+param logAnalyticsWSId string
 
-resource vWan 'Microsoft.Network/virtualHubs@2023-04-01' existing = {
-  name: vWanName
+resource vpnGW 'Microsoft.Network/vpnGateways@2023-04-01' existing = {
+  name: vpnGWName
 }
 
 resource diagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: settingName
-  scope: vWan
+  scope: vpnGW
   properties: {
-    workspaceId: workspaceId
-    storageAccountId: resourceId('Microsoft.Network/virtualHubs/', storageSyncName)
+    workspaceId: logAnalyticsWSId
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
     metrics: [
       {
-        category: 'AllMetrics'
+        timeGrain: null
         enabled: true
+        retentionPolicy: {
+          days: 0
+          enabled: false
+        }
+        category: 'AllMetrics'
       }
     ]
   }

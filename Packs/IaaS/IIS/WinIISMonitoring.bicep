@@ -26,6 +26,7 @@ var kind= 'Windows'
 
 // the xpathqueries define which counters are collected
 var xPathQueries=[
+  'Application!*[Application[Provider[@Name=\'Microsoft-Windows-Perflib\'] and (EventID=1023)]]'
   'Application!*[Application[Provider[@Name=\'Microsoft-Windows-IIS-W3SVC-WP\'] and (EventID=2216)]]'
   'Application!*[Application[Provider[@Name=\'Microsoft-Windows-IIS-W3SVC-WP\'] and (EventID=2221)]]'
   'System!*[System[Provider[@Name=\'Microsoft-Windows-WAS\'] and (EventID=5152)]]'
@@ -61,7 +62,7 @@ var xPathQueries=[
 ]
 // The performance counters define which counters are collected
 var performanceCounters=[
-  '\\Web Service(_Total)\\Bytes Received/sec'
+  '\\DNS(_Total)\\Recursive Queries/sec'
   '\\Web Service(_Total)\\Bytes Sent/sec'
   '\\Web Service(_Total)\\Bytes Total/sec'
   '\\Web Service(_Total)\\Connection Attempts/sec'
@@ -129,7 +130,7 @@ module dcrbasicvmMonitoring '../../../modules/DCRs/dcr-basicWinVM.bicep' = {
     dceId: dceId
   }
 }
-module policysetup '../../../modules/policies/mg/policies.bicep' = {
+module policysetup '../../../modules/policies/mg/policiesDCR.bicep' = {
   name: 'policysetup-${packtag}'
   params: {
     dcrId: dcrbasicvmMonitoring.outputs.dcrId
@@ -158,7 +159,7 @@ module dcrIISLogsMonitoring '../../../modules/DCRs/filecollectionWinIIS.bicep' =
     tableName: 'IISLogs'
   }
 }
-module policysetupIISLogs '../../../modules/policies/mg/policies.bicep' = {
+module policysetupIISLogs '../../../modules/policies/mg/policiesDCR.bicep' = {
   name: 'policysetup-${packtag}-IISLogs'
   scope: managementGroup(mgname)
   params: {

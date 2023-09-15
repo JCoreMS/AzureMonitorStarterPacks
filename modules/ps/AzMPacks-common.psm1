@@ -466,6 +466,7 @@ function deploy-pack {
     # if ($serverListLocal.Count) {
     #     # Use Existing Action Group 
     #     #$useExistingAG=$true
+    if ($packinfo.ModuleType -eq 'IaaS') {
         $parameters=@{
             location=$location
             rulename=$packinfo.ruleName
@@ -479,70 +480,84 @@ function deploy-pack {
             mgname=$managementGroupName
             #assignmentlevel=$assignmentlevel
         }
-        if ($useExistingAG) {
-            $parameters+=@{
-                actionGroupName=$AGInfo.Name
-                existingAGRG=$AGInfo.ResourceGroupName
+    }
+    else { #Pack is PaaS
+        $parameters=@{
+            location=$location
+            workspaceId=$workspaceResourceId
+            useExistingAG=$useExistingAG
+            packtag=$packinfo.RequiredTag
+            solutionTag=$solutionTag
+            solutionVersion=$solutionVersion
+            userManagedIdentityResourceId=$userManagedIdentityResourceId
+            mgname=$managementGroupName
+            #assignmentlevel=$assignmentlevel
+        }
+    }
+    if ($useExistingAG) {
+        $parameters+=@{
+            actionGroupName=$AGInfo.Name
+            existingAGRG=$AGInfo.ResourceGroupName
+        }
+    }
+    else {
+        $parameters+=@{
+            actionGroupName=$AGInfo.Name
+            emailreceivers=@($AGInfo.emailreceivers)
+            emailreiceversemails=@($AGInfo.emailreceiversEmails)
+        }
+    }
+    #deal with custom deployment parameters. 
+    #This will read the packinfo.ModuleParameters and if any is present, they will be added to the $parameters object
+    if ($null -ne $packinfo.moduleParameters) {
+        $packinfo.moduleParameters | ForEach-Object {
+            #$parameters | Add-Member -MemberType NoteProperty -Name $_.Name -Value $_.Value
+            if (!([string]::IsNullOrEmpty($_.Value))) {
+                $parameters+=@{"$($_.Name)"=$null}
+            }
+            else {
+                $newValue=Read-Host "Enter value for $($_.Name)"
+                $parameters+=@{"$($_.Name)"=$newValue}
             }
         }
-        else {
-            $parameters+=@{
-                actionGroupName=$AGInfo.Name
-                emailreceivers=@($AGInfo.emailreceivers)
-                emailreiceversemails=@($AGInfo.emailreceiversEmails)
-            }
+    }
+    if ($null -ne $packinfo.GrafanaDashboard) {
+        "Deploying Grafana Dashboard."
+    }
+    if ($assignmentlevel -ne 'managementgroup') { #assignments at subscription level for policies.
+        Write-Host "Deploying pack $($packinfo.PackName) in $($resourceGroup) resource group and assigning policies at subscription level."
+        $parameters+=@{
+            resourceGroupId=$resourceGroupId
+            subscriptionId=$($resourceGroupId.split('/')[2])
+            assignmentlevel='subscription'
         }
-        #deal with custom deployment parameters. 
-        #This will read the packinfo.ModuleParameters and if any is present, they will be added to the $parameters object
-        if ($null -ne $packinfo.moduleParameters) {
-            $packinfo.moduleParameters | ForEach-Object {
-                #$parameters | Add-Member -MemberType NoteProperty -Name $_.Name -Value $_.Value
-                if (!([string]::IsNullOrEmpty($_.Value))) {
-                    $parameters+=@{"$($_.Name)"=$null}
-                }
-                else {
-                    $newValue=Read-Host "Enter value for $($_.Name)"
-                    $parameters+=@{"$($_.Name)"=$newValue}
-                }
-            }
+        try {
+            New-AzManagementGroupDeployment -Name "deployment$(get-date -format "ddmmyyHHmmss")" -ManagementGroupId $managementGroupName -Location $location `
+            -TemplateFile $packinfo.TemplateLocation -templateParameterObject $parameters -WarningAction SilentlyContinue -ErrorAction Stop # | out-null
+            return $true
         }
-        if ($null -ne $packinfo.GrafanaDashboard) {
-            "Deploying Grafana Dashboard."
+        catch {
+            Write-Error $_.Exception.Message
+            return $false
         }
-        if ($assignmentlevel -ne 'managementgroup') { #assignments at subscription level for policies.
-            Write-Host "Deploying pack $($packinfo.PackName) in $($resourceGroup) resource group and assigning policies at subscription level."
-            $parameters+=@{
-                resourceGroupId=$resourceGroupId
-                subscriptionId=$($resourceGroupId.split('/')[2])
-                assignmentlevel='subscription'
-            }
-            try {
-                New-AzManagementGroupDeployment -Name "deployment$(get-date -format "ddmmyyHHmmss")" -ManagementGroupId $managementGroupName -Location $location `
-                -TemplateFile $packinfo.TemplateLocation -templateParameterObject $parameters -WarningAction SilentlyContinue -ErrorAction Stop # | out-null
-                return $true
-            }
-            catch {
-                Write-Error $_.Exception.Message
-                return $false
-            }
+    }
+    else {
+        Write-Host "Deploying pack $($packinfo.PackName) at management group level (policies) in $($resourceGroup) resource group."
+        $parameters+=@{
+            resourceGroupId=$resourceGroupId
+            subscriptionId=$($resourceGroupId.split('/')[2])
+            assignmentlevel='managementGroup'
         }
-        else {
-            Write-Host "Deploying pack $($packinfo.PackName) at management group level (policies) in $($resourceGroup) resource group."
-            $parameters+=@{
-                resourceGroupId=$resourceGroupId
-                subscriptionId=$($resourceGroupId.split('/')[2])
-                assignmentlevel='managementGroup'
-            }
-            try {
-                New-AzManagementGroupDeployment -Name "deployment$(get-date -format "ddmmyyHHmmss")" -ManagementGroupId $managementGroupName -Location $location `
-                -TemplateFile $packinfo.TemplateLocation -templateParameterObject $parameters -WarningAction SilentlyContinue -ErrorAction Stop # | out-null
-                return $true
-            }
-            catch {
-                Write-Error $_.Exception.Message
-                return $false
-            }
+        try {
+            New-AzManagementGroupDeployment -Name "deployment$(get-date -format "ddmmyyHHmmss")" -ManagementGroupId $managementGroupName -Location $location `
+            -TemplateFile $packinfo.TemplateLocation -templateParameterObject $parameters -WarningAction SilentlyContinue -ErrorAction Stop # | out-null
+            return $true
         }
+        catch {
+            Write-Error $_.Exception.Message
+            return $false
+        }
+    }
 }
 
 function install-packs {

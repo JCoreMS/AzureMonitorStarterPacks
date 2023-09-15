@@ -3,7 +3,7 @@
       "PackName": "AMSP-Windows-VM-OS",
       "RuleName": "AMSP-VMI_Server_OS",
       "ModuleType": "IaaS",
-      "Status": "Enabled",
+      "Status": "Disabled",
       "RequiredTag" : "WinOS",
       "osTarget" : "Windows",
       "DiscoveryType": "OS",
@@ -16,7 +16,7 @@
       "PackName": "AMSP-Linux-VM-OS",
       "RuleName": "AMSP-VMI_Server_Linux",
       "ModuleType": "IaaS",
-      "Status": "Enabled",
+      "Status": "Disabled",
       "RequiredTag" : "LxOS",
       "osTarget" : "Linux",
       "DiscoveryType": "OS",
@@ -31,7 +31,7 @@
       "PackName": "AMSP-Linux-Nginx",
       "RuleName": "AMSP-nginxMonitoring",
       "ModuleType": "IaaS",
-      "Status": "Enabled",
+      "Status": "Disabled",
       "RequiredTag" : "Nginx",
       "osTarget" : "Linux",
       "PackageName": "nginx",
@@ -45,7 +45,7 @@
         "PackName": "AMSP-Windows-IIS",
         "RuleName": "AMSP-IIS-Server",
         "ModuleType": "IaaS",
-        "Status": "Enabled",
+        "Status": "Disabled",
         "RequiredTag" : "IIS",
         "osTarget" : "Windows",
         "DiscoveryType": "RoleName",
@@ -54,5 +54,26 @@
         "GrafanaDashboard": "./Packs/IaaS/IIS/Azure Monitor Starter Pack _ IIS-1692341727216.json",
         "moduleParameters": [
         ]      
-    }
+    },
+    {
+      "PackName": "AMSP-vWan-gateways",
+      "RuleName": "N/A",
+      "ModuleType": "PaaS",
+      "Status": "Disabled",
+      "RequiredTag" : "vWan",
+      "osTarget" : "N/A",
+      "TemplateLocation" : "./Packs/PaaS/vWan/vWanMonitoring.bicep",
+      "moduleParameters": [
+      ]      
+  },
+  {
+    "PackName": "AMSP-Keyvault",
+    "ModuleType": "PaaS",
+    "Status": "Enabled",
+    "RequiredTag" : "Keyvault",
+    "osTarget" : "N/A",
+    "TemplateLocation" : "./Packs/PaaS/KeyVault/Monitoring.bicep",
+    "moduleParameters": [
+    ]      
+}
 ]

@@ -36,27 +36,6 @@ module ag '../../../modules/actiongroups/ag.bicep' =  {
   }
 }
 
-// // Alerts - Event viewer based alerts. Depend on the event viewer logs being enabled on the VMs events are being sent to the workspace via DCRs.
-// module eventAlerts 'eventAlerts.bicep' = {
-//   name: 'eventAlerts-${packtag}'
-//   params: {
-//     AGId: ag.outputs.actionGroupResourceId
-//     location: location
-//     workspaceId: workspaceId
-//     packtag: packtag
-//     solutionTag: solutionTag
-//     solutionVersion: solutionVersion
-
-//   }
-// } 
-
-// This option uses an existing VMI rule but this can be a tad problematic.
-// resource vmInsightsDCR 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' existing = if(enableInsightsAlerts == 'true') {
-//   name: insightsRuleName
-//   scope: resourceGroup(insightsRuleRg)
-// }
-// So, let's create an Insights rule for the VMs that should be the same as the usual VMInsights.
-
 module vmInsightsDCR '../../../modules/DCRs/DefaultVMI-rule.bicep' = {
   name: 'vmInsightsDCR-${packtag}'
   scope: resourceGroup(subscriptionId, resourceGroupName)
@@ -83,7 +62,7 @@ module InsightsAlerts './VMInsightsAlerts.bicep' = {
   }
 }
 
-module policysetup '../../../modules/policies/mg/policies.bicep' = {
+module policysetup '../../../modules/policies/mg/policiesDCR.bicep' = {
   name: 'policysetup-${packtag}'
   scope: managementGroup(mgname)
   params: {
@@ -109,3 +88,23 @@ module policysetup '../../../modules/policies/mg/policies.bicep' = {
 //     solutionTag: solutionTag
 //   }
 // }
+// // Alerts - Event viewer based alerts. Depend on the event viewer logs being enabled on the VMs events are being sent to the workspace via DCRs.
+// module eventAlerts 'eventAlerts.bicep' = {
+//   name: 'eventAlerts-${packtag}'
+//   params: {
+//     AGId: ag.outputs.actionGroupResourceId
+//     location: location
+//     workspaceId: workspaceId
+//     packtag: packtag
+//     solutionTag: solutionTag
+//     solutionVersion: solutionVersion
+
+//   }
+// } 
+
+// This option uses an existing VMI rule but this can be a tad problematic.
+// resource vmInsightsDCR 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' existing = if(enableInsightsAlerts == 'true') {
+//   name: insightsRuleName
+//   scope: resourceGroup(insightsRuleRg)
+// }
+// So, let's create an Insights rule for the VMs that should be the same as the usual VMInsights.

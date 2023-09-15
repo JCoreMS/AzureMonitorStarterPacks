@@ -86,7 +86,7 @@ module Alerts './nginxalerts.bicep' = {
     
   }
 }
-module policysetup '../../../modules/policies/mg/policies.bicep' = {
+module policysetup '../../../modules/policies/mg/policiesDCR.bicep' = {
   name: 'policysetup-${packtag}'
   params: {
     dcrId: fileCollectionRule.outputs.ruleId

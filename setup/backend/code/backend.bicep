@@ -25,6 +25,7 @@ param mgname string
 var packPolicyRoleDefinitionIds=[
   '749f88d5-cbae-40b8-bcfc-e573ddc772fa' // Monitoring Contributor Role Definition Id for Monitoring Contributor
   '92aaf0da-9dab-42b6-94a3-d43ce8d16293' // Log Analytics Contributor Role Definition Id for Log Analytics Contributor
+  'acdd72a7-3385-48ef-bd42-f606fba81ae7' // Reader Role Definition Id for Reader
   //Above role should be able to add diagnostics to everything according to docs.
   // '/providers/Microsoft.Authorization/roleDefinitions/4a9ae827-6dc8-4573-8ac7-8239d42aa03f' // Tag Contributor
 ]

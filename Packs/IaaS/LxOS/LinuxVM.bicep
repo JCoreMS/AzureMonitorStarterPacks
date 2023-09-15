@@ -61,7 +61,7 @@ module InsightsAlerts './VMInsightsAlerts.bicep' = {
     solutionVersion: solutionVersion
   }
 }
-module policysetup '../../../modules/policies/mg/policies.bicep' = {
+module policysetup '../../../modules/policies/mg/policiesDCR.bicep' = {
   name: 'policysetup-${packtag}'
   scope: managementGroup(mgname)
   params: {

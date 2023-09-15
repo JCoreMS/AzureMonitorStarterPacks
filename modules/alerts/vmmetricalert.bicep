@@ -1,6 +1,6 @@
 param alertrulename string
 param location string = 'global'
-param vmId string
+param scope string //vmId in this case.
 param metricName string
 param metricNamespace string = 'Microsoft.Compute/virtualMachines'
 param threshold int
@@ -39,7 +39,7 @@ resource metricalert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
   }
   properties: {
     scopes: [
-      vmId
+      scope
     ]
     severity: 3
     enabled: true

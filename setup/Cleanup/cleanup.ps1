@@ -146,8 +146,6 @@ insightsresources
         $Alerts=$Alerts | where-object {$_.Tags.MonitorStarterPacks -eq $RemoveTag}
     }
     $Alerts | Remove-AzResource -Force -AsJob
-
-
 }
 else {
     "Skipping packs removal. Use -RemovePacks to remove packs. Use -RemoveTag to remove packs with a specific tag."

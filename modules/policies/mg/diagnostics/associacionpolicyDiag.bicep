@@ -4,12 +4,8 @@ param policyDisplayName string
 param policyDescription string
 param packtag string
 param solutionTag string
-param lawId string
-param roledefinitionIds array =[
-  '/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa' 
-  '/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293'
-  // '/providers/Microsoft.Authorization/roleDefinitions/4a9ae827-6dc8-4573-8ac7-8239d42aa03f' // Tag Contributor
-]
+param logAnalyticsWSResourceId string
+param resourceType string// = 'Microsoft.Network/vpngateways'
 
 resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
   name: policyName
@@ -39,26 +35,34 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         }
         defaultValue: packtag
       }
-      categoryGroup: {
+      resourceType: {
         type: 'String'
         metadata: {
-          displayName: 'Category Group'
-          description: 'Diagnostic category group - none, audit, or allLogs.'
+          displayName: 'Resource Type'
+          description: 'The the full Microsoft.ResourceProvider/resourceType format of the resource type to apply the policy to.'
         }
-        allowedValues: [
-          'audit'
-          'allLogs'
-        ]
-        defaultValue: 'allLogs'
+        defaultValue: packtag
       }
-      diagnosticSettingName: {
-        type: 'String'
-        metadata: {
-          displayName: 'Diagnostic Setting Name'
-          description: 'Diagnostic Setting Name'
-        }
-        defaultValue: 'setByPolicy-LogAnalytics'
-      }
+      // categoryGroup: {
+      //   type: 'String'
+      //   metadata: {
+      //     displayName: 'Category Group'
+      //     description: 'Diagnostic category group - none, audit, or allLogs.'
+      //   }
+      //   allowedValues: [
+      //     'audit'
+      //     'allLogs'
+      //   ]
+      //   defaultValue: 'allLogs'
+      // }
+      // diagnosticSettingName: {
+      //   type: 'String'
+      //   metadata: {
+      //     displayName: 'Diagnostic Setting Name'
+      //     description: 'Diagnostic Setting Name'
+      //   }
+      //   defaultValue: 'setByPolicy-LogAnalytics'
+      // }
       effect: {
         type: 'String'
         metadata: {
@@ -71,13 +75,13 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         ]
         defaultValue: 'DeployIfNotExists'
       }
-      lawId: {
+      logAnalyticsWSResourceId: {
         type: 'String'
         metadata: {
           displayName: 'LAW Id'
           description: 'The Id of the Log Analytics workspace.'
         }
-        defaultValue: lawId
+        defaultValue: logAnalyticsWSResourceId
       }
     }
     policyRule: {
@@ -89,14 +93,17 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
           }
           {
             field: 'type'
-            equals: 'Microsoft.Network/virtualHubs'
+            equals: resourceType
           }
         ]
       }
       then: {
         effect: '[parameters(\'effect\')]'
         details: {
-          type: 'Microsoft.Network/virtualHubs/providers/diagnosticSettings'
+          roleDefinitionIds: [
+            '/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293'
+          ]
+          type: 'Microsoft.Insights/diagnosticSettings'
           existenceCondition: {
             allOf: [
               {
@@ -106,7 +113,7 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
                     allOf: [
                       {
                         field: 'Microsoft.Insights/diagnosticSettings/logs[*].enabled'
-                        equals: ('categoryGroup' == 'allLogs')
+                        equals: 'allLogs'
                       }
                       {
                         field: 'microsoft.insights/diagnosticSettings/logs[*].categoryGroup'
@@ -119,11 +126,10 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
               }
               {
                 field: 'Microsoft.Insights/diagnosticSettings/workspaceId'
-                equals: lawId
+                equals: logAnalyticsWSResourceId
               }
             ]
           }
-          //roleDefinitionIds: roledefinitionIds
           deployment: {
             properties: {
               mode: 'incremental'
@@ -131,13 +137,10 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
                 '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
                 contentVersion: '1.0.0.0'
                 parameters: {
-                  diagnosticSettingName: {
-                    type: 'string'
+                  resourceType: {
+                     type: 'string'
                   }
-                  logAnalytics: {
-                    type: 'string'
-                  }
-                  categoryGroup: {
+                  logAnalyticsWSResourceId: {
                     type: 'string'
                   }
                   packTag: {
@@ -151,40 +154,41 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
                 }
                 resources: [
                   {
-                  type: 'microsoft.network/virtualnetworkgateways/providers/diagnosticSettings'
-                  name: '[concat(parameters(\'resourceName\'), \'/\', \'Microsoft.Insights/\', parameters(\'diagnosticSettingName\'))]'
+                  type: '${resourceType}/providers/diagnosticSettings'
+                  name: '[concat(parameters(\'resourceName\'), \'/Microsoft.Insights/\', \'AMSP-\', parameters(\'packTag\'))]'
+                  apiVersion: '2021-05-01-preview'
                   properties: {
-                    workspaceId: '[parameters(\'logAnalytics\')]'
+                    workspaceId: '[parameters(\'logAnalyticsWSResourceId\')]'
                     logs: [
                       {
                         categoryGroup: 'allLogs'
-                        enabled: '[equals(parameters(\'categoryGroup\'), \'allLogs\')]'
-                      }
-                    ]
-                    metrics: [
-                      {
-                        timeGrain: null
                         enabled: true
-                        retentionPolicy: {
-                          days: 0
-                          enabled: false
-                        }
-                        category: 'AllMetrics'
                       }
                     ]
+                    // metrics: [
+                    //   {
+                    //     timeGrain: null
+                    //     enabled: true
+                    //     retentionPolicy: {
+                    //       days: 0
+                    //       enabled: false
+                    //     }
+                    //     category: 'AllMetrics'
+                    //   }
+                    // ]
                   }
                 }
                 ]
               }
               parameters: {
-                diagnosticSettingName: {
-                  value: '[parameters(\'diagnosticSettingName\')]'
+                resourceType: {
+                  value: '[parameters(\'resourceType\')]'
                 }
-                logAnalytics: {
-                  value: '[parameters(\'logAnalytics\')]'
+                logAnalyticsWSResourceId: {
+                  value: '[parameters(\'logAnalyticsWSResourceId\')]'
                 }
-                categoryGroup: {
-                  value: '[parameters(\'categoryGroup\')]'
+                packTag: {
+                  value: '[parameters(\'tagValue\')]'
                 }
                 resourceName: {
                   value: '[field(\'name\')]'
