@@ -113,7 +113,7 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
                     allOf: [
                       {
                         field: 'Microsoft.Insights/diagnosticSettings/logs[*].enabled'
-                        equals: 'allLogs'
+                        equals: true
                       }
                       {
                         field: 'microsoft.insights/diagnosticSettings/logs[*].categoryGroup'

@@ -67,5 +67,6 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for
     subscriptionId: subscriptionId 
     userManagedIdentityResourceId: userManagedIdentityResourceId
     assignmentLevel: assignmentLevel
+    policyType: 'diag'
   }
 }]

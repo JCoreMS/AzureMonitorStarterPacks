@@ -282,7 +282,7 @@ var wbConfig='''
                         },
                         "queryType": 1,
                         "resourceType": "microsoft.resourcegraph/resources",
-                        "value": null
+                        "value": "DNS2016"
                       }
                     ],
                     "style": "pills",
@@ -520,7 +520,7 @@ var wbConfig='''
                   "type": 3,
                   "content": {
                     "version": "KqlItem/1.0",
-                    "query": "resources\n| where tolower(type) in ('microsoft.network/vpngateways','microsoft.network/virtualnetworkgateways')\n| where isnotempty(tags.MonitorStarterPacks)\n| project Resource=id, name, subscriptionId, location, resourceGroup, type",
+                    "query": "resources\n| where tolower(type) in (\n    'microsoft.network/vpngateways',\n    'microsoft.network/virtualnetworkgateways',\n    'microsoft.keyvault/vaults'\n)\n| where isnotempty(tags.MonitorStarterPacks)\n| project Resource=id, name, subscriptionId, location, resourceGroup, type",
                     "size": 0,
                     "title": "Monitored PaaS Resources",
                     "exportMultipleValues": true,
@@ -565,7 +565,7 @@ var wbConfig='''
                         "label": "Add/Remove",
                         "type": 2,
                         "isGlobal": true,
-                        "query": "policyresources\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\n| where Pack in ('vWan')\n| summarize by Pack",
+                        "query": "policyresources\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\n| summarize by Pack\n",
                         "crossComponentResources": [
                           "value::tenant"
                         ],
@@ -578,7 +578,7 @@ var wbConfig='''
                         },
                         "queryType": 1,
                         "resourceType": "microsoft.resources/tenants",
-                        "value": "vWan"
+                        "value": null
                       }
                     ],
                     "style": "pills",
@@ -676,7 +676,7 @@ var wbConfig='''
                   "type": 3,
                   "content": {
                     "version": "KqlItem/1.0",
-                    "query": "resources\n| where tolower(type) in ('microsoft.network/vpngateways','microsoft.network/virtualnetworkgateways')\n| where isempty(tags.MonitorStarterPacks)\n| project Resource=id, name, subscriptionId, location, resourceGroup, type",
+                    "query": "resources\n| where tolower(type) in (\n    'microsoft.network/vpngateways',\n    'microsoft.network/virtualnetworkgateways',\n    'microsoft.keyvault/vaults'\n)\n| where isempty(tags.MonitorStarterPacks)\n| project Resource=id, name, subscriptionId, location, resourceGroup, type",
                     "size": 0,
                     "title": "Non-monitored Machines",
                     "exportMultipleValues": true,
@@ -720,7 +720,7 @@ var wbConfig='''
                         "label": "Select Pack to Enable",
                         "type": 2,
                         "isGlobal": true,
-                        "query": "policyresources\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\n| where Pack in ('vWan')\n| summarize by Pack",
+                        "query": "policyresources\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\n| summarize by Pack",
                         "crossComponentResources": [
                           "value::tenant"
                         ],
@@ -733,7 +733,7 @@ var wbConfig='''
                         },
                         "queryType": 1,
                         "resourceType": "microsoft.resources/tenants",
-                        "value": "vWan"
+                        "value": null
                       }
                     ],
                     "style": "pills",
@@ -825,7 +825,7 @@ var wbConfig='''
                   },
                   "queryType": 1,
                   "resourceType": "microsoft.resourcegraph/resources",
-                  "value": "LxOS"
+                  "value": "DNS2016"
                 }
               ],
               "style": "pills",
@@ -2147,9 +2147,9 @@ var wbConfig='''
     }
   ],
   "fallbackResourceIds": [
-    "Azure Monitor"
+    "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourcegroups/amonstarterpacks3/providers/microsoft.operationalinsights/workspaces/ws-amonstar"
   ],
-  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+  "Azure Monitor"
 }'''
 // var wbConfig2='"/subscriptions/${subscriptionId}/resourceGroups/${rg}/providers/Microsoft.OperationalInsights/workspaces/${logAnalyticsWorkspaceName}"]}'
 // //var wbConfig3='''

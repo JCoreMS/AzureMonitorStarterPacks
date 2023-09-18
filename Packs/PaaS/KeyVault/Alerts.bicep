@@ -45,7 +45,7 @@ module ActivityLogKeyVaultDeleteAlert '../../../modules/alz/deploy.bicep' = {
                   displayName: 'Tag Value'
                   description: 'A tag to apply the association conditionally.'
                 }
-                defaultValue: solutionTag
+                defaultValue: packTag
             }
             enabled: {
                 type: 'String'
