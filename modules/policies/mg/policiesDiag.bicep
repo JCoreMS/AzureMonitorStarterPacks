@@ -3,6 +3,7 @@ param packtag string
 param solutionTag string
 param location string
 param userManagedIdentityResourceId string
+param assignmentSuffix string=''
 param mgname string
 param assignmentLevel string = 'managementGroup'
 param subscriptionId string
@@ -27,11 +28,11 @@ var roledefinitionIds=[
 // param policyDefinitionID string = '/providers/Microsoft.Authorization/policyDefinitions/06a78e20-9358-41c9-923c-fb736d382a4d'
 
 module diagassignment './assignment.bicep' = if(assignmentLevel == 'managementGroup') {
-  name: 'Assignment-${packtag}-${resourceShortType}'
+  name: 'AM-${packtag}-${resourceShortType}-${assignmentSuffix}'
   scope: managementGroup(mgname)
   params: {
     policyDefinitionId: policydefinitionId
-    assignmentName: '${packtag}-${resourceShortType}'
+    assignmentName: '${packtag}-${resourceShortType}-${assignmentSuffix}'
     location: location
     //roledefinitionIds: roledefinitionIds
     solutionTag: solutionTag
@@ -39,11 +40,11 @@ module diagassignment './assignment.bicep' = if(assignmentLevel == 'managementGr
   }
 }
 module diagassignmentsub '../subscription/assignment.bicep' = if(assignmentLevel != 'managementGroup') {
-  name: 'AssignSub-${packtag}-${resourceShortType}-${policyType}'
+  name: 'AM-${packtag}-${resourceShortType}-${assignmentSuffix}'
   scope: subscription(subscriptionId)
   params: {
     policyDefinitionId: policydefinitionId
-    assignmentName: '${packtag}-${resourceShortType}-${policyType}'
+    assignmentName: '${packtag}-${resourceShortType}-${policyType}-${assignmentSuffix}'
     location: location
     //roledefinitionIds: roledefinitionIds
     solutionTag: solutionTag

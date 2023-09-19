@@ -70,8 +70,8 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for
   }
 }]
 
-module KVAlert1 'Alerts.bicep' = {
-  name: 'KVAlert1-Delete'
+module KVAlert 'Alerts.bicep' = {
+  name: 'Keyvault-Alerts'
   params: {
     packTag: packtag
     policyLocation: location

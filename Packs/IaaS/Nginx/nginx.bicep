@@ -63,7 +63,7 @@ module fileCollectionRule '../../../modules/DCRs/filecollectionSyslogLinux.bicep
     solutionTag: solutionTag
     ruleName: rulename
     filepatterns: [
-      '/var/log/nginx/access.log'
+      '/var/log/nginx/nginx_metrics.log'
     //'/var/log/nginx/error.log'
     ]
     lawResourceId:workspaceId
