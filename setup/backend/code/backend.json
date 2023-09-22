@@ -1,0 +1,1681 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.20.4.51522",
+      "templateHash": "3688415068208818801"
+    }
+  },
+  "parameters": {
+    "functionname": {
+      "type": "string",
+      "metadata": {
+        "description": "The name for the function app that you wish to create"
+      }
+    },
+    "currentUserIdObject": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "lawresourceid": {
+      "type": "string"
+    },
+    "grafanaName": {
+      "type": "string"
+    },
+    "grafanalocation": {
+      "type": "string"
+    },
+    "appInsightsLocation": {
+      "type": "string"
+    },
+    "solutionTag": {
+      "type": "string",
+      "metadata": {
+        "description": "UTC timestamp used to create distinct deployment scripts for each deployment"
+      }
+    },
+    "solutionVersion": {
+      "type": "string"
+    },
+    "subscriptionId": {
+      "type": "string"
+    },
+    "resourceGroupName": {
+      "type": "string"
+    },
+    "mgname": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "packPolicyRoleDefinitionIds": [
+      "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+      "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+      "acdd72a7-3385-48ef-bd42-f606fba81ae7"
+    ],
+    "backendFunctionRoleDefinitionIds": [
+      "4a9ae827-6dc8-4573-8ac7-8239d42aa03f",
+      "9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+      "48b40c6e-82e0-4eb3-90d5-19e40f49b624",
+      "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+      "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+      "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+      "36243c78-bf99-498c-9df9-86d9f8d28608",
+      "f1a07417-d97a-45cb-824c-7a7467783830"
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "backendFunction",
+      "subscriptionId": "[parameters('subscriptionId')]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "appInsightsLocation": {
+            "value": "[parameters('appInsightsLocation')]"
+          },
+          "functionname": {
+            "value": "[parameters('functionname')]"
+          },
+          "lawresourceid": {
+            "value": "[parameters('lawresourceid')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "solutionTag": {
+            "value": "[parameters('solutionTag')]"
+          },
+          "solutionVersion": {
+            "value": "[parameters('solutionVersion')]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "userManagedIdentity": {
+            "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', 'functionUserManagedIdentity'), '2022-09-01').outputs.userManagedIdentityResourceId.value]"
+          },
+          "userManagedIdentityClientId": {
+            "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', 'functionUserManagedIdentity'), '2022-09-01').outputs.userManagedIdentityClientId.value]"
+          },
+          "packsUserManagedId": {
+            "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', 'packsUserManagedIdentity'), '2022-09-01').outputs.userManagedIdentityResourceId.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "5283877505244727080"
+            }
+          },
+          "parameters": {
+            "functionname": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "solutionTag": {
+              "type": "string"
+            },
+            "solutionVersion": {
+              "type": "string"
+            },
+            "userManagedIdentity": {
+              "type": "string"
+            },
+            "userManagedIdentityClientId": {
+              "type": "string"
+            },
+            "packsUserManagedId": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "filename": {
+              "type": "string",
+              "defaultValue": "discovery.zip"
+            },
+            "sasExpiry": {
+              "type": "string",
+              "defaultValue": "[dateTimeAdd(utcNow(), 'PT2H')]"
+            },
+            "lawresourceid": {
+              "type": "string"
+            },
+            "appInsightsLocation": {
+              "type": "string"
+            },
+            "apiManagementKey": {
+              "type": "string",
+              "defaultValue": "[base64(newGuid())]"
+            }
+          },
+          "variables": {
+            "$fxv#0": "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",
+            "discoveryContainerName": "discovery",
+            "tempfilename": "[format('{0}.tmp', parameters('filename'))]",
+            "sasConfig": {
+              "signedResourceTypes": "sco",
+              "signedPermission": "r",
+              "signedServices": "b",
+              "signedExpiry": "[parameters('sasExpiry')]",
+              "signedProtocol": "https",
+              "keyToSign": "key2"
+            },
+            "keyName": "monitoringKey"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', 'discovery')]",
+              "properties": {
+                "immutableStorageWithVersioning": {
+                  "enabled": false
+                },
+                "denyEncryptionScopeOverride": false,
+                "defaultEncryptionScope": "$account-encryption-key",
+                "publicAccess": "None"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('storageAccountName'), 'default')]",
+              "properties": {
+                "cors": {
+                  "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                  "enabled": false
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-06-01",
+              "name": "[parameters('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "storageaccount",
+                "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+              },
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "StorageV2",
+              "properties": {
+                "accessTier": "Hot",
+                "allowBlobPublicAccess": false,
+                "allowSharedKeyAccess": true,
+                "supportsHttpsTrafficOnly": true
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "deployscript-MonstarPacks",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "deploymentScript",
+                "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+              },
+              "location": "[parameters('location')]",
+              "kind": "AzureCLI",
+              "properties": {
+                "azCliVersion": "2.26.1",
+                "timeout": "PT5M",
+                "retentionInterval": "PT1H",
+                "environmentVariables": [
+                  {
+                    "name": "AZURE_STORAGE_ACCOUNT",
+                    "value": "[parameters('storageAccountName')]"
+                  },
+                  {
+                    "name": "AZURE_STORAGE_KEY",
+                    "secureValue": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-06-01').keys[0].value]"
+                  },
+                  {
+                    "name": "CONTENT",
+                    "value": "[variables('$fxv#0')]"
+                  }
+                ],
+                "scriptContent": "[format('echo \"$CONTENT\" > {0} && cat {1} | base64 -d > {2} && az storage blob upload -f {3} -c {4} -n {5}', variables('tempfilename'), variables('tempfilename'), parameters('filename'), parameters('filename'), variables('discoveryContainerName'), parameters('filename'))]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/config', parameters('functionname'), 'appsettings')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2021-03-01",
+              "name": "[format('{0}-farm', parameters('functionname'))]",
+              "location": "[parameters('location')]",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "serverfarm",
+                "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+              },
+              "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+              },
+              "kind": "functioapp",
+              "properties": {
+                "perSiteScaling": false,
+                "elasticScaleEnabled": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0,
+                "zoneRedundant": false
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2021-03-01",
+              "name": "[parameters('functionname')]",
+              "location": "[parameters('location')]",
+              "kind": "functionapp",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "site",
+                "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+              },
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('userManagedIdentity'))]": {}
+                }
+              },
+              "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                  {
+                    "name": "[format('{0}.azurewebsites.net', parameters('functionname'))]",
+                    "sslState": "Disabled",
+                    "hostType": "Standard"
+                  },
+                  {
+                    "name": "[format('{0}.azurewebsites.net', parameters('functionname'))]",
+                    "sslState": "Disabled",
+                    "hostType": "Repository"
+                  }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', format('{0}-farm', parameters('functionname')))]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {
+                  "numberOfWorkers": 1,
+                  "acrUseManagedIdentityCreds": false,
+                  "alwaysOn": false,
+                  "ipSecurityRestrictions": [
+                    {
+                      "ipAddress": "Any",
+                      "action": "Allow",
+                      "priority": 1,
+                      "name": "Allow all",
+                      "description": "Allow all access"
+                    }
+                  ],
+                  "scmIpSecurityRestrictions": [
+                    {
+                      "ipAddress": "Any",
+                      "action": "Allow",
+                      "priority": 1,
+                      "name": "Allow all",
+                      "description": "Allow all access"
+                    }
+                  ],
+                  "http20Enabled": false,
+                  "functionAppScaleLimit": 200,
+                  "minimumElasticInstanceCount": 0
+                },
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "clientCertMode": "Required",
+                "hostNamesDisabled": false,
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None",
+                "storageAccountRequired": false,
+                "keyVaultReferenceIdentity": "SystemAssigned"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', format('{0}-farm', parameters('functionname')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/config",
+              "apiVersion": "2021-03-01",
+              "name": "[format('{0}/{1}', parameters('functionname'), 'appsettings')]",
+              "properties": {
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix={2}', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-06-01').keys[0].value, environment().suffixes.storage)]",
+                "AzureWebJobsStorage": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix={2}', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-06-01').keys[0].value, environment().suffixes.storage)]",
+                "WEBSITE_CONTENTSHARE": "[parameters('storageAccountName')]",
+                "FUNCTIONS_WORKER_RUNTIME": "powershell",
+                "FUNCTIONS_EXTENSION_VERSION": "~4",
+                "ResourceGroup": "[resourceGroup().name]",
+                "SolutionTag": "[parameters('solutionTag')]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.Insights/components', parameters('functionname')), '2020-02-02-preview').InstrumentationKey]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[format('InstrumentationKey={0}', reference(resourceId('Microsoft.Insights/components', parameters('functionname')), '2020-02-02-preview').InstrumentationKey)]",
+                "ApplicationInsightsAgent_EXTENSION_VERSION": "~2",
+                "MSI_CLIENT_ID": "[parameters('userManagedIdentityClientId')]",
+                "PacksUserManagedId": "[parameters('packsUserManagedId')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', parameters('functionname'))]",
+                "[resourceId('Microsoft.Web/sites', parameters('functionname'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/extensions",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}/{1}', parameters('functionname'), 'MSDeploy')]",
+              "properties": {
+                "packageUri": "[format('{0}{1}/{2}?{3}', reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-06-01').primaryEndpoints.blob, variables('discoveryContainerName'), parameters('filename'), listAccountSAS(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-06-01', variables('sasConfig')).accountSasToken)]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('functionname'))]",
+                "[resourceId('Microsoft.Resources/deploymentScripts', 'deployscript-MonstarPacks')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/components",
+              "apiVersion": "2020-02-02",
+              "name": "[parameters('functionname')]",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "InsightsComponent",
+                "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+              },
+              "location": "[parameters('appInsightsLocation')]",
+              "kind": "web",
+              "properties": {
+                "Application_Type": "web",
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled",
+                "WorkspaceResourceId": "[parameters('lawresourceid')]"
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites/host/functionKeys",
+              "apiVersion": "2022-03-01",
+              "name": "[format('{0}/default/{1}', parameters('functionname'), variables('keyName'))]",
+              "properties": {
+                "name": "[variables('keyName')]",
+                "value": "[parameters('apiManagementKey')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/config', parameters('functionname'), 'appsettings')]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', 'functionUserManagedIdentity')]",
+        "[extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', 'packsUserManagedIdentity')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "BackendLogicApp",
+      "subscriptionId": "[parameters('subscriptionId')]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "functioname": {
+            "value": "[parameters('functionname')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "solutionTag": {
+            "value": "[parameters('solutionTag')]"
+          },
+          "solutionVersion": {
+            "value": "[parameters('solutionVersion')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "10777186311489362137"
+            }
+          },
+          "parameters": {
+            "functioname": {
+              "type": "string"
+            },
+            "solutionTag": {
+              "type": "string"
+            },
+            "solutionVersion": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Logic/workflows",
+              "apiVersion": "2019-05-01",
+              "name": "MonitorStarterPacks-Backend",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "logicapp",
+                "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+              },
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "state": "Enabled",
+                "definition": {
+                  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {},
+                  "triggers": {
+                    "manual": {
+                      "type": "Request",
+                      "kind": "Http",
+                      "inputs": {}
+                    }
+                  },
+                  "actions": {
+                    "Parse_JSON": {
+                      "runAfter": {},
+                      "type": "ParseJson",
+                      "inputs": {
+                        "content": "@triggerBody()",
+                        "schema": {
+                          "properties": {
+                            "function": {
+                              "type": "string"
+                            },
+                            "functionBody": {
+                              "properties": {},
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      }
+                    },
+                    "Switch": {
+                      "runAfter": {
+                        "Parse_JSON": [
+                          "Succeeded"
+                        ]
+                      },
+                      "cases": {
+                        "Case": {
+                          "case": "tagmgmt",
+                          "actions": {
+                            "tagmgmt": {
+                              "runAfter": {},
+                              "type": "Function",
+                              "inputs": {
+                                "body": "@body('Parse_JSON')?['functionBody']",
+                                "Headers": {
+                                  "x-functions-key": "[listKeys(resourceId('Microsoft.Web/sites/host', parameters('functioname'), 'default'), '2022-09-01').functionKeys.monitoringKey]"
+                                },
+                                "function": {
+                                  "id": "[format('{0}/functions/tagmgmt', resourceId('Microsoft.Web/sites', parameters('functioname')))]"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Case_2": {
+                          "case": "alertmgmt",
+                          "actions": {
+                            "alertConfigMgmt": {
+                              "runAfter": {},
+                              "type": "Function",
+                              "inputs": {
+                                "body": "@body('Parse_JSON')?['functionBody']",
+                                "function": {
+                                  "id": "[format('{0}/functions/alertConfigMgmt', resourceId('Microsoft.Web/sites', parameters('functioname')))]"
+                                },
+                                "headers": {
+                                  "x-functions-key": "[listKeys(resourceId('Microsoft.Web/sites/host', parameters('functioname'), 'default'), '2022-09-01').functionKeys.monitoringKey]"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Case_3": {
+                          "case": "policymgmt",
+                          "actions": {
+                            "policymgmt": {
+                              "runAfter": {},
+                              "type": "Function",
+                              "inputs": {
+                                "body": "@body('Parse_JSON')?['functionBody']",
+                                "function": {
+                                  "id": "[format('{0}/functions/policymgmt', resourceId('Microsoft.Web/sites', parameters('functioname')))]"
+                                },
+                                "headers": {
+                                  "x-functions-key": "[listKeys(resourceId('Microsoft.Web/sites/host', parameters('functioname'), 'default'), '2022-09-01').functionKeys.monitoringKey]"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "default": {
+                        "actions": {}
+                      },
+                      "expression": "@body('Parse_JSON')?['Function']",
+                      "type": "Switch"
+                    }
+                  },
+                  "outputs": {}
+                },
+                "parameters": {}
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'backendFunction')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "workbookdeployment",
+      "subscriptionId": "[parameters('subscriptionId')]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "lawresourceid": {
+            "value": "[parameters('lawresourceid')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "solutionTag": {
+            "value": "[parameters('solutionTag')]"
+          },
+          "solutionVersion": {
+            "value": "[parameters('solutionVersion')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "398684229768854452"
+            }
+          },
+          "parameters": {
+            "solutionTag": {
+              "type": "string"
+            },
+            "solutionVersion": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "lawresourceid": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "wbConfig": "{\n  \"version\": \"Notebook/1.0\",\n  \"items\": [\n    {\n      \"type\": 1,\n      \"content\": {\n        \"json\": \"# Azure Monitor Starter Packs - Admin Centre\\n[Azure MONitor STARter Packs](http://github.com/Azure/AzureMonitorStarterPacks)\\n\"\n      },\n      \"customWidth\": \"50\",\n      \"name\": \"text - 5\"\n    },\n    {\n      \"type\": 9,\n      \"content\": {\n        \"version\": \"KqlParameterItem/1.0\",\n        \"parameters\": [\n          {\n            \"id\": \"7a778b2c-619d-4f82-bd1c-810f853af6fd\",\n            \"version\": \"KqlParameterItem/1.0\",\n            \"name\": \"Subscriptions\",\n            \"type\": 6,\n            \"isRequired\": true,\n            \"isGlobal\": true,\n            \"multiSelect\": true,\n            \"quote\": \"'\",\n            \"delimiter\": \",\",\n            \"typeSettings\": {\n              \"additionalResourceOptions\": [\n                \"value::all\"\n              ],\n              \"includeAll\": false,\n              \"showDefault\": false\n            },\n            \"timeContext\": {\n              \"durationMs\": 86400000\n            },\n            \"value\": [\n              \"value::all\"\n            ]\n          },\n          {\n            \"id\": \"1efb8bbe-532a-491b-b3c4-55f1402ee280\",\n            \"version\": \"KqlParameterItem/1.0\",\n            \"name\": \"logicAppResource\",\n            \"label\": \"Logic App\",\n            \"type\": 5,\n            \"isRequired\": true,\n            \"query\": \"resources\\n| where type == \\\"microsoft.logic/workflows\\\"\\n| project Id=id, Name=name\",\n            \"crossComponentResources\": [\n              \"{Subscriptions}\"\n            ],\n            \"typeSettings\": {\n              \"resourceTypeFilter\": {\n                \"microsoft.logic/workflows\": true\n              },\n              \"additionalResourceOptions\": [],\n              \"showDefault\": false\n            },\n            \"timeContext\": {\n              \"durationMs\": 86400000\n            },\n            \"queryType\": 1,\n            \"resourceType\": \"microsoft.resourcegraph/resources\",\n            \"value\": \"/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/amonstarterpacks3/providers/Microsoft.Logic/workflows/MonitorStarterPacks-Backend\"\n          },\n          {\n            \"id\": \"4552c35d-c26c-4cbf-a4cf-b2e57ff7ee78\",\n            \"version\": \"KqlParameterItem/1.0\",\n            \"name\": \"Workspace\",\n            \"label\": \"WorkSpace\",\n            \"type\": 5,\n            \"isRequired\": true,\n            \"isGlobal\": true,\n            \"query\": \"resources\\n| where type == \\\"microsoft.operationalinsights/workspaces\\\"\\n| project id\",\n            \"crossComponentResources\": [\n              \"value::all\"\n            ],\n            \"typeSettings\": {\n              \"additionalResourceOptions\": [],\n              \"showDefault\": false\n            },\n            \"queryType\": 1,\n            \"resourceType\": \"microsoft.resourcegraph/resources\",\n            \"value\": \"/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/amonstarterpacks3/providers/Microsoft.OperationalInsights/workspaces/ws-amonstar\"\n          },\n          {\n            \"id\": \"36bac02a-250b-45a0-a451-46561033b7ed\",\n            \"version\": \"KqlParameterItem/1.0\",\n            \"name\": \"showHelp\",\n            \"label\": \"Show Help Items\",\n            \"type\": 10,\n            \"isRequired\": true,\n            \"isGlobal\": true,\n            \"typeSettings\": {\n              \"additionalResourceOptions\": [],\n              \"showDefault\": false\n            },\n            \"jsonData\": \"[\\n    { \\\"value\\\":\\\"yes\\\", \\\"label\\\":\\\"Yes\\\",\\\"default\\\": \\\"yes\\\" },\\n    { \\\"value\\\":\\\"no\\\", \\\"label\\\":\\\"No\\\" }\\n]\",\n            \"value\": \"no\"\n          }\n        ],\n        \"style\": \"above\",\n        \"queryType\": 0,\n        \"resourceType\": \"microsoft.operationalinsights/workspaces\"\n      },\n      \"customWidth\": \"50\",\n      \"name\": \"parameters - 6\"\n    },\n    {\n      \"type\": 11,\n      \"content\": {\n        \"version\": \"LinkItem/1.0\",\n        \"style\": \"tabs\",\n        \"links\": [\n          {\n            \"id\": \"a9a63932-4a11-4fe1-938c-02619e609193\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"Getting Started\",\n            \"subTarget\": \"gettingstarted\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"15f0fa97-4286-48d6-9dea-26a956197d26\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"IaaS Resources\",\n            \"subTarget\": \"discovery\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"9dc796d0-69e4-4687-9055-b451a8beaf74\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"PaaS Resources (Preview)\",\n            \"subTarget\": \"paas\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"7499a88f-a536-41d7-9b58-9ebae1b5290e\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"Alert Setup\",\n            \"subTarget\": \"alertmanagement\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"3a19e3a9-d64d-41d8-a313-3a60db36bcc4\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"Policy Status\",\n            \"subTarget\": \"policystatus\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"c2a67d72-dd46-44ea-adba-b9d70915c607\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"Pack Management\",\n            \"subTarget\": \"rulemanagement\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"d8f7936d-170f-430d-af7d-ac22115a9e38\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"Agent Info\",\n            \"subTarget\": \"agentmgmt\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"f46dfd96-b9b5-49f4-a67d-59f5f37a9c37\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"ALZ Baseline Info (Preview)\",\n            \"subTarget\": \"alzinfo\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"e1f636a4-1593-49ef-bf35-abf708e2be48\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"Backend Status\",\n            \"subTarget\": \"backend\",\n            \"style\": \"link\"\n          },\n          {\n            \"id\": \"57d6dfde-3d42-4bd0-baa1-c06972d4c000\",\n            \"cellValue\": \"tabSelection\",\n            \"linkTarget\": \"parameter\",\n            \"linkLabel\": \"Pack Setup (Preview)\",\n            \"subTarget\": \"setup\",\n            \"style\": \"link\"\n          }\n        ]\n      },\n      \"name\": \"links - 8\"\n    },\n    {\n      \"type\": 1,\n      \"content\": {\n        \"json\": \"# Getting Started\\n\\nWelcome to the Azure Monitor Starter Packs. This workbook was designed to help you configuring the solution. Here you can:\\n- Enable/Disable monitoring packs for one or more VMs. You may also disable all the monitoring for a specific server. This will remove the tags and the rule associations*\\n- Enable/Disable Alerts\\n- Check policy status and start remediation if required.\\n- Check Monitor pack associations\\n\"\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"gettingstarted\"\n      },\n      \"name\": \"text - 14\"\n    },\n    {\n      \"type\": 3,\n      \"content\": {\n        \"version\": \"KqlItem/1.0\",\n        \"query\": \"policyresources\\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\\n| extend policyType=properties.policyRule.then.details.type\\n| extend packType=iff(policyType !~ 'Microsoft.Insights/dataCollectionRuleAssociations',\\\"PaaS\\\", \\\"IaaS\\\")\\n| summarize by Pack, packType\",\n        \"size\": 0,\n        \"title\": \"Installed Packs\",\n        \"queryType\": 1,\n        \"resourceType\": \"microsoft.resources/tenants\",\n        \"crossComponentResources\": [\n          \"value::tenant\"\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"setup\"\n      },\n      \"customWidth\": \"50\",\n      \"name\": \"query - 16\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 3,\n      \"content\": {\n        \"version\": \"KqlItem/1.0\",\n        \"query\": \"externaldata(PackName: string, RequiredTag:string, ModuleType:string, TemplateLocation:string)[    h@'https://raw.githubusercontent.com/Azure/AzureMonitorStarterPacks/main/Packs/packs.json']\\nwith(format='multijson', ingestionMapping='[{\\\\\\\"PackName\\\\\\\":\\\\\\\"PackName\\\\\\\",\\\\\\\"RequiredTag\\\\\\\":\\\\\\\"RequiredTag\\\\\\\", \\\\\\\"ModuleType\\\\\\\":\\\\\\\"ModuleType\\\\\\\",\\\\\\\"TemplateLocation\\\\\\\":\\\\\\\"TemplateLocation\\\\\\\"}]')\\n|extend Deploy=\\\"Install\\\"\\n| extend TemplateLocation=strcat(\\\"https://raw.githubusercontent.com/Azure/AzureMonitorStarterPacks/main\\\",trim('.',TemplateLocation),\\\"p\\\")\",\n        \"size\": 0,\n        \"title\": \"Packs available to Install\",\n        \"queryType\": 0,\n        \"resourceType\": \"microsoft.operationalinsights/workspaces\",\n        \"gridSettings\": {\n          \"formatters\": [\n            {\n              \"columnMatch\": \"Deploy\",\n              \"formatter\": 7,\n              \"formatOptions\": {\n                \"linkTarget\": \"ArmTemplate\",\n                \"templateRunContext\": {\n                  \"componentIdSource\": \"cell\",\n                  \"templateUriSource\": \"column\",\n                  \"templateUri\": \"TemplateLocation\",\n                  \"templateParameters\": [],\n                  \"titleSource\": \"static\",\n                  \"descriptionSource\": \"static\",\n                  \"runLabelSource\": \"static\"\n                }\n              }\n            }\n          ]\n        }\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"setup\"\n      },\n      \"customWidth\": \"50\",\n      \"name\": \"query - 16 - Copy\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 12,\n      \"content\": {\n        \"version\": \"NotebookGroup/1.0\",\n        \"groupType\": \"editable\",\n        \"title\": \"IaaS Resources\",\n        \"items\": [\n          {\n            \"type\": 12,\n            \"content\": {\n              \"version\": \"NotebookGroup/1.0\",\n              \"groupType\": \"editable\",\n              \"items\": [\n                {\n                  \"type\": 3,\n                  \"content\": {\n                    \"version\": \"KqlItem/1.0\",\n                    \"query\": \"resources | where type =~ 'microsoft.hybridcompute/machines' \\n| where isnotempty(tolower(tags.MonitorStarterPacks))\\n| project Resource=id,['Resource Group']=resourceGroup,Packs=tags.MonitorStarterPacks, OS=properties.osType, subscriptionId\\n| union (resources | where type =~ 'microsoft.compute/virtualmachines' \\n| where isnotempty(tolower(tags.MonitorStarterPacks))\\n| project Resource=id,['Resource Group']=resourceGroup,Packs=tags.MonitorStarterPacks, OS=properties.storageProfile.osDisk.osType, subscriptionId)\\n| join kind= leftouter   (resourcecontainers\\n| where type =~ 'microsoft.resources/subscriptions'\\n| project Subscription=name,subscriptionId) on subscriptionId\\n| project-away subscriptionId, subscriptionId1\",\n                    \"size\": 0,\n                    \"title\": \"Monitored Machines\",\n                    \"exportMultipleValues\": true,\n                    \"exportedParameters\": [\n                      {\n                        \"fieldName\": \"\",\n                        \"parameterName\": \"taggedVMs\",\n                        \"parameterType\": 5,\n                        \"quote\": \"\"\n                      }\n                    ],\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resourcegraph/resources\",\n                    \"crossComponentResources\": [\n                      \"{Subscriptions}\"\n                    ],\n                    \"visualization\": \"table\",\n                    \"gridSettings\": {\n                      \"filter\": true\n                    },\n                    \"sortBy\": []\n                  },\n                  \"name\": \"Monitored Machines\",\n                  \"styleSettings\": {\n                    \"margin\": \"400\",\n                    \"padding\": \"400\",\n                    \"showBorder\": true\n                  }\n                },\n                {\n                  \"type\": 9,\n                  \"content\": {\n                    \"version\": \"KqlParameterItem/1.0\",\n                    \"crossComponentResources\": [\n                      \"{Workspace}\"\n                    ],\n                    \"parameters\": [\n                      {\n                        \"id\": \"54f2c7fb-7251-43b6-aa4d-fd94647cac4a\",\n                        \"version\": \"KqlParameterItem/1.0\",\n                        \"name\": \"PackTagsLeft\",\n                        \"label\": \"Add/Remove\",\n                        \"type\": 2,\n                        \"isGlobal\": true,\n                        \"query\": \"resources\\n| where type == \\\"microsoft.insights/datacollectionrules\\\"\\n| where isnotempty(tags.MonitorStarterPacks)\\n| project MPs=tostring(tags.MonitorStarterPacks)\\n| summarize by MPs\\n\",\n                        \"crossComponentResources\": [\n                          \"{Workspace}\"\n                        ],\n                        \"typeSettings\": {\n                          \"additionalResourceOptions\": [],\n                          \"showDefault\": false\n                        },\n                        \"timeContext\": {\n                          \"durationMs\": 86400000\n                        },\n                        \"queryType\": 1,\n                        \"resourceType\": \"microsoft.resourcegraph/resources\",\n                        \"value\": null\n                      }\n                    ],\n                    \"style\": \"pills\",\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resourcegraph/resources\"\n                  },\n                  \"customWidth\": \"25\",\n                  \"name\": \"parameters - 5 - Copy\"\n                },\n                {\n                  \"type\": 11,\n                  \"content\": {\n                    \"version\": \"LinkItem/1.0\",\n                    \"style\": \"paragraph\",\n                    \"links\": [\n                      {\n                        \"id\": \"36b65f94-1c3d-4e7a-b771-677a2081d288\",\n                        \"cellValue\": \"\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Remove Monitoring for {PackTagsLeft} Pack \",\n                        \"preText\": \"\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [\n                            {\n                              \"key\": \"action\",\n                              \"value\": \"removeTag\"\n                            }\n                          ],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"tagmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"RemoveTag\\\",\\n    \\\"Resources\\\": [{taggedVMs}],\\n    \\\"Pack\\\": \\\"{PackTagsLeft}\\\"\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Remove Monitoring\",\n                          \"description\": \"# Please confirm the change.\\n\\nRemove Monitoring for {PackTagsLeft} Pack \\n\\nServers:\\n\\n{taggedVMs}\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      },\n                      {\n                        \"id\": \"550df977-06a8-4c40-9cd3-aba6286ebcdf\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Add Monitoring for {PackTagsLeft} Pack\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"tagmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"AddTag\\\",\\n    \\\"Resources\\\": [{taggedVMs}],\\n    \\\"Pack\\\": \\\"{PackTagsLeft}\\\"\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Add Monitoring\",\n                          \"description\": \"# Please confirm the change.\\n\\nAdd Monitoring for {PackTagsLeft} Pack \",\n                          \"actionName\": \"AddMonitoringPack\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      },\n                      {\n                        \"id\": \"3b1af630-47ab-43e9-a5b2-d2f2e21880d0\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Remove All Monitoring for VM\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"tagmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"RemoveTag\\\",\\n    \\\"Resources\\\": [{taggedVMs}],\\n    \\\"Pack\\\": \\\"All\\\"\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Remove All Monitoring\",\n                          \"description\": \"# Please confirm the change.\\n\\nRemove All Monitoring for {PackTagsLeft} Pack \",\n                          \"actionName\": \"RemoveAllMonitoring\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      }\n                    ]\n                  },\n                  \"customWidth\": \"75\",\n                  \"name\": \"links - 1\"\n                }\n              ],\n              \"exportParameters\": true\n            },\n            \"customWidth\": \"50\",\n            \"conditionalVisibility\": {\n              \"parameterName\": \"tabSelection\",\n              \"comparison\": \"isEqualTo\",\n              \"value\": \"discovery\"\n            },\n            \"name\": \"TaggedGroup\"\n          },\n          {\n            \"type\": 12,\n            \"content\": {\n              \"version\": \"NotebookGroup/1.0\",\n              \"groupType\": \"editable\",\n              \"items\": [\n                {\n                  \"type\": 3,\n                  \"content\": {\n                    \"version\": \"KqlItem/1.0\",\n                    \"query\": \"resources | where type =~ 'microsoft.hybridcompute/machines' \\n| where isempty(tolower(tags.MonitorStarterPacks)) //and subscriptionId in split('{Subscriptions:subscriptionId}',',')\\n| project Resource=id,['Resource Group']=resourceGroup, OS=properties.osType, subscriptionId\\n| union (resources | where type =~ 'microsoft.compute/virtualmachines' \\n| where isempty(tolower(tags.MonitorStarterPacks)) //and subscriptionId in split('{Subscriptions:subscriptionId}',',')\\n| project Resource=id,['Resource Group']=resourceGroup, OS=properties.storageProfile.osDisk.osType, subscriptionId)\\n| join kind= leftouter   (resourcecontainers\\n| where type =~ 'microsoft.resources/subscriptions'\\n| project Subscription=name,subscriptionId) on subscriptionId\\n| project-away subscriptionId, subscriptionId1\",\n                    \"size\": 0,\n                    \"title\": \"Non-monitored Machines\",\n                    \"exportMultipleValues\": true,\n                    \"exportedParameters\": [\n                      {\n                        \"parameterName\": \"vmstotag\",\n                        \"parameterType\": 1,\n                        \"quote\": \"\"\n                      }\n                    ],\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resourcegraph/resources\",\n                    \"crossComponentResources\": [\n                      \"{Subscriptions}\"\n                    ],\n                    \"visualization\": \"table\",\n                    \"gridSettings\": {\n                      \"filter\": true\n                    },\n                    \"sortBy\": []\n                  },\n                  \"name\": \"Non Discoverable Machines\",\n                  \"styleSettings\": {\n                    \"margin\": \"400\",\n                    \"padding\": \"400\",\n                    \"showBorder\": true\n                  }\n                },\n                {\n                  \"type\": 9,\n                  \"content\": {\n                    \"version\": \"KqlParameterItem/1.0\",\n                    \"parameters\": [\n                      {\n                        \"id\": \"8a177eab-edac-41cc-84f9-a5b7de931bea\",\n                        \"version\": \"KqlParameterItem/1.0\",\n                        \"name\": \"PackTags\",\n                        \"label\": \"Select Pack to Enable\",\n                        \"type\": 2,\n                        \"isGlobal\": true,\n                        \"query\": \"resources\\n| where type == \\\"microsoft.insights/datacollectionrules\\\"\\n| where isnotempty(tags.MonitorStarterPacks)\\n| project MPs=tostring(tags.MonitorStarterPacks)\\n| summarize by MPs\",\n                        \"typeSettings\": {\n                          \"additionalResourceOptions\": [],\n                          \"showDefault\": false\n                        },\n                        \"timeContext\": {\n                          \"durationMs\": 86400000\n                        },\n                        \"queryType\": 1,\n                        \"resourceType\": \"microsoft.resourcegraph/resources\",\n                        \"value\": null\n                      }\n                    ],\n                    \"style\": \"pills\",\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resourcegraph/resources\"\n                  },\n                  \"customWidth\": \"50\",\n                  \"name\": \"parameters - 5\"\n                },\n                {\n                  \"type\": 11,\n                  \"content\": {\n                    \"version\": \"LinkItem/1.0\",\n                    \"style\": \"paragraph\",\n                    \"links\": [\n                      {\n                        \"id\": \"91fb0fed-0e4f-41ce-9024-98a3cc4432a7\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Enable Monitoring for {PackTags} Pack\",\n                        \"preText\": \"\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [\n                            {\n                              \"key\": \"action\",\n                              \"value\": \"addTag\"\n                            }\n                          ],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"tagmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"AddTag\\\",\\n    \\\"Resources\\\": [{vmstotag}],\\n    \\\"Pack\\\": \\\"{PackTags}\\\"\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Enable Monitoring Packs\",\n                          \"description\": \"# This will enable the pack for the following servers:\\n{vmstotag}\\n\\nby adding the {PackTags} to the server.\",\n                          \"actionName\": \"EnableMonitoring\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      }\n                    ]\n                  },\n                  \"customWidth\": \"50\",\n                  \"name\": \"links - 1 - Copy\"\n                }\n              ],\n              \"exportParameters\": true\n            },\n            \"customWidth\": \"50\",\n            \"conditionalVisibility\": {\n              \"parameterName\": \"tabSelection\",\n              \"comparison\": \"isEqualTo\",\n              \"value\": \"discovery\"\n            },\n            \"name\": \"NonTaggedGroup\"\n          }\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"discovery\"\n      },\n      \"name\": \"IaaS\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 12,\n      \"content\": {\n        \"version\": \"NotebookGroup/1.0\",\n        \"groupType\": \"editable\",\n        \"title\": \"PaaS Resources\",\n        \"items\": [\n          {\n            \"type\": 12,\n            \"content\": {\n              \"version\": \"NotebookGroup/1.0\",\n              \"groupType\": \"editable\",\n              \"items\": [\n                {\n                  \"type\": 3,\n                  \"content\": {\n                    \"version\": \"KqlItem/1.0\",\n                    \"query\": \"resources\\n| where tolower(type) in (\\n    'microsoft.network/vpngateways',\\n    'microsoft.network/virtualnetworkgateways',\\n    'microsoft.keyvault/vaults'\\n)\\n| where isnotempty(tags.MonitorStarterPacks)\\n| project Resource=id, name, subscriptionId, location, resourceGroup, type\",\n                    \"size\": 0,\n                    \"title\": \"Monitored PaaS Resources\",\n                    \"exportMultipleValues\": true,\n                    \"exportedParameters\": [\n                      {\n                        \"fieldName\": \"\",\n                        \"parameterName\": \"taggedResources\",\n                        \"parameterType\": 5,\n                        \"quote\": \"\"\n                      }\n                    ],\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resources/tenants\",\n                    \"crossComponentResources\": [\n                      \"value::tenant\"\n                    ],\n                    \"visualization\": \"table\",\n                    \"gridSettings\": {\n                      \"filter\": true\n                    },\n                    \"sortBy\": []\n                  },\n                  \"name\": \"Monitored PaaS Resources\",\n                  \"styleSettings\": {\n                    \"margin\": \"400\",\n                    \"padding\": \"400\",\n                    \"showBorder\": true\n                  }\n                },\n                {\n                  \"type\": 9,\n                  \"content\": {\n                    \"version\": \"KqlParameterItem/1.0\",\n                    \"crossComponentResources\": [\n                      \"value::tenant\"\n                    ],\n                    \"parameters\": [\n                      {\n                        \"id\": \"54f2c7fb-7251-43b6-aa4d-fd94647cac4a\",\n                        \"version\": \"KqlParameterItem/1.0\",\n                        \"name\": \"PackTagsLeftPaaS\",\n                        \"label\": \"Add/Remove\",\n                        \"type\": 2,\n                        \"isGlobal\": true,\n                        \"query\": \"policyresources\\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\\n| extend policyType=properties.policyRule.then.details.type\\n| where policyType !~ 'Microsoft.Insights/dataCollectionRuleAssociations'\\n| summarize by Pack\",\n                        \"crossComponentResources\": [\n                          \"value::tenant\"\n                        ],\n                        \"typeSettings\": {\n                          \"additionalResourceOptions\": [],\n                          \"showDefault\": false\n                        },\n                        \"timeContext\": {\n                          \"durationMs\": 86400000\n                        },\n                        \"queryType\": 1,\n                        \"resourceType\": \"microsoft.resources/tenants\",\n                        \"value\": null\n                      }\n                    ],\n                    \"style\": \"pills\",\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resources/tenants\"\n                  },\n                  \"customWidth\": \"25\",\n                  \"name\": \"parameters - 5 - Copy\"\n                },\n                {\n                  \"type\": 11,\n                  \"content\": {\n                    \"version\": \"LinkItem/1.0\",\n                    \"style\": \"paragraph\",\n                    \"links\": [\n                      {\n                        \"id\": \"36b65f94-1c3d-4e7a-b771-677a2081d288\",\n                        \"cellValue\": \"\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Remove Monitoring for {PackTagsLeftPaaS} Pack \",\n                        \"preText\": \"\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [\n                            {\n                              \"key\": \"action\",\n                              \"value\": \"removeTag\"\n                            }\n                          ],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"tagmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"RemoveTag\\\",\\n    \\\"Resources\\\": [{taggedResources}],\\n    \\\"Pack\\\": \\\"{PackTagsLeftPaaS}\\\",\\n    \\\"PackType\\\": \\\"PaaS\\\"\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Remove Monitoring\",\n                          \"description\": \"# Please confirm the change.\\n\\nRemove Monitoring for {PackTagsLeftPaaS} Pack \\n\\nResources:\\n\\n{taggedResources}\",\n                          \"actionName\": \"RemovePaaSPackMonitoring\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      },\n                      {\n                        \"id\": \"550df977-06a8-4c40-9cd3-aba6286ebcdf\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Add Monitoring for {PackTagsLeftPaaS} Pack\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"tagmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"AddTag\\\",\\n    \\\"Resources\\\": [{taggedResources}],\\n    \\\"Pack\\\": \\\"{PackTagsLeftPaaS}\\\",\\n    \\\"PackType\\\": \\\"PaaS\\\"\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Add Monitoring\",\n                          \"description\": \"# Please confirm the change.\\n\\nAdd Monitoring for {PackTagsLeftPaaS} Pack \\n\\nResources:\\n\\n{taggedResources}\",\n                          \"actionName\": \"AddMonitoringPackPaas\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      },\n                      {\n                        \"id\": \"3b1af630-47ab-43e9-a5b2-d2f2e21880d0\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Remove All Monitoring for Resource\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"tagmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"RemoveTag\\\",\\n    \\\"Resources\\\": [{taggedResources}],\\n    \\\"Pack\\\": \\\"All\\\",\\n    \\\"PackType\\\": \\\"PaaS\\\"\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Remove All Monitoring\",\n                          \"description\": \"# Please confirm the change.\\n\\nRemove All Monitoring for All Packs\\n\\nResources:\\n\\n{taggedResources}\",\n                          \"actionName\": \"RemoveAllMonitoring\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      }\n                    ]\n                  },\n                  \"customWidth\": \"75\",\n                  \"name\": \"links - 1\"\n                }\n              ],\n              \"exportParameters\": true\n            },\n            \"customWidth\": \"50\",\n            \"name\": \"TaggedGroup\"\n          },\n          {\n            \"type\": 12,\n            \"content\": {\n              \"version\": \"NotebookGroup/1.0\",\n              \"groupType\": \"editable\",\n              \"items\": [\n                {\n                  \"type\": 3,\n                  \"content\": {\n                    \"version\": \"KqlItem/1.0\",\n                    \"query\": \"resources\\n| where tolower(type) in (\\n    'microsoft.network/vpngateways',\\n    'microsoft.network/virtualnetworkgateways',\\n    'microsoft.keyvault/vaults'\\n)\\n| where isempty(tags.MonitorStarterPacks)\\n| project Resource=id, name, subscriptionId, location, resourceGroup, type\",\n                    \"size\": 0,\n                    \"title\": \"Non-monitored Machines\",\n                    \"exportMultipleValues\": true,\n                    \"exportedParameters\": [\n                      {\n                        \"parameterName\": \"servicestotag\",\n                        \"parameterType\": 1,\n                        \"quote\": \"\"\n                      }\n                    ],\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resources/tenants\",\n                    \"crossComponentResources\": [\n                      \"value::tenant\"\n                    ],\n                    \"visualization\": \"table\",\n                    \"gridSettings\": {\n                      \"filter\": true\n                    },\n                    \"sortBy\": []\n                  },\n                  \"name\": \"Non Discoverable Machines\",\n                  \"styleSettings\": {\n                    \"margin\": \"400\",\n                    \"padding\": \"400\",\n                    \"showBorder\": true\n                  }\n                },\n                {\n                  \"type\": 9,\n                  \"content\": {\n                    \"version\": \"KqlParameterItem/1.0\",\n                    \"crossComponentResources\": [\n                      \"value::tenant\"\n                    ],\n                    \"parameters\": [\n                      {\n                        \"id\": \"8a177eab-edac-41cc-84f9-a5b7de931bea\",\n                        \"version\": \"KqlParameterItem/1.0\",\n                        \"name\": \"PackTagsPaaS\",\n                        \"label\": \"Select Pack to Enable\",\n                        \"type\": 2,\n                        \"isGlobal\": true,\n                        \"query\": \"policyresources\\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\\n| extend policyType=properties.policyRule.then.details.type\\n| where policyType !~ 'Microsoft.Insights/dataCollectionRuleAssociations'\\n| summarize by Pack\",\n                        \"crossComponentResources\": [\n                          \"value::tenant\"\n                        ],\n                        \"typeSettings\": {\n                          \"additionalResourceOptions\": [],\n                          \"showDefault\": false\n                        },\n                        \"timeContext\": {\n                          \"durationMs\": 86400000\n                        },\n                        \"queryType\": 1,\n                        \"resourceType\": \"microsoft.resources/tenants\",\n                        \"value\": null\n                      }\n                    ],\n                    \"style\": \"pills\",\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resources/tenants\"\n                  },\n                  \"customWidth\": \"50\",\n                  \"name\": \"parameters - 5\"\n                },\n                {\n                  \"type\": 11,\n                  \"content\": {\n                    \"version\": \"LinkItem/1.0\",\n                    \"style\": \"paragraph\",\n                    \"links\": [\n                      {\n                        \"id\": \"91fb0fed-0e4f-41ce-9024-98a3cc4432a7\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Enable Monitoring for {PackTagsPaaS} Pack\",\n                        \"preText\": \"\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [\n                            {\n                              \"key\": \"action\",\n                              \"value\": \"addTag\"\n                            }\n                          ],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"tagmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"AddTag\\\",\\n    \\\"Resources\\\": [{servicestotag}],\\n    \\\"Pack\\\": \\\"{PackTagsPaaS}\\\"\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Enable Monitoring Packs\",\n                          \"description\": \"# This will enable the pack for the following services:\\n\\n{servicestotag}\\n\\n\\nby adding the {PackTagsPaaS} tag to the resource.\",\n                          \"actionName\": \"EnableMonitoring\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      }\n                    ]\n                  },\n                  \"customWidth\": \"50\",\n                  \"name\": \"links - 1 - Copy\"\n                }\n              ],\n              \"exportParameters\": true\n            },\n            \"customWidth\": \"50\",\n            \"name\": \"NonTaggedGroup\"\n          }\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"paas\"\n      },\n      \"name\": \"PaaS\"\n    },\n    {\n      \"type\": 12,\n      \"content\": {\n        \"version\": \"NotebookGroup/1.0\",\n        \"groupType\": \"editable\",\n        \"title\": \"Alert Management - MonStar Alerts\",\n        \"items\": [\n          {\n            \"type\": 9,\n            \"content\": {\n              \"version\": \"KqlParameterItem/1.0\",\n              \"crossComponentResources\": [\n                \"value::tenant\"\n              ],\n              \"parameters\": [\n                {\n                  \"id\": \"e99b4870-f7a6-4b8e-95b7-6aaeece1f438\",\n                  \"version\": \"KqlParameterItem/1.0\",\n                  \"name\": \"AlertPack\",\n                  \"type\": 2,\n                  \"query\": \"resources\\n| where tolower(type) in (\\\"microsoft.insights/scheduledqueryrules\\\", \\\"microsoft.insights/metricalerts\\\",\\\"microsoft.insights/activitylogalerts\\\")\\n| where isnotempty(tags.MonitorStarterPacks)\\n| project MPs=tostring(tags.MonitorStarterPacks)\\n| summarize by MPs\\n\",\n                  \"crossComponentResources\": [\n                    \"value::tenant\"\n                  ],\n                  \"typeSettings\": {\n                    \"additionalResourceOptions\": [],\n                    \"showDefault\": false\n                  },\n                  \"timeContext\": {\n                    \"durationMs\": 86400000\n                  },\n                  \"queryType\": 1,\n                  \"resourceType\": \"microsoft.resources/tenants\",\n                  \"value\": \"DNS2016\"\n                }\n              ],\n              \"style\": \"pills\",\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resources/tenants\"\n            },\n            \"name\": \"parameters - 7\"\n          },\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"resources\\n| where tolower(type) in (\\\"microsoft.insights/scheduledqueryrules\\\")\\n| where isnotempty(tags.MonitorStarterPacks)\\n| project id,MP=tags.MonitorStarterPacks, Enabled=properties.enabled, Description=properties.description, ['Action Group']=split(properties.actions.actionGroups[0],\\\"/\\\")[8], location, Target=split(properties.scopes[0],\\\"/\\\")[-1]\\n| union (\\nresources\\n| where tolower(type) in (\\\"microsoft.insights/metricalerts\\\")\\n| where isnotempty(tags.MonitorStarterPacks)\\n| project id,MP=tags.MonitorStarterPacks, Enabled=properties.enabled, Description=properties.description, ['Action Group']=split(properties.actions[0].actionGroupId,\\\"/\\\")[8], location, Target=split(properties.scopes[0],\\\"/\\\")[-1])\\n| union (resources\\n| where tolower(type) in (\\\"microsoft.insights/activitylogalerts\\\")\\n| where isnotempty(tags.MonitorStarterPacks)\\n| project id,MP=tags.MonitorStarterPacks, Enabled=properties.enabled, Description=properties.description, ['Action Group']=split(properties.actions.actionGroups[0].actionGroupId,\\\"/\\\")[8], location, Target=split(properties.scopes[0],\\\"/\\\")[-1])\\n| where MP=='{AlertPack}'\",\n              \"size\": 0,\n              \"exportMultipleValues\": true,\n              \"exportedParameters\": [\n                {\n                  \"fieldName\": \"\",\n                  \"parameterName\": \"alertsselected\",\n                  \"parameterType\": 1,\n                  \"quote\": \"\"\n                }\n              ],\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resources/tenants\",\n              \"crossComponentResources\": [\n                \"value::tenant\"\n              ],\n              \"visualization\": \"table\",\n              \"gridSettings\": {\n                \"formatters\": [\n                  {\n                    \"columnMatch\": \"location\",\n                    \"formatter\": 5\n                  },\n                  {\n                    \"columnMatch\": \"name\",\n                    \"formatter\": 7\n                  }\n                ],\n                \"filter\": true\n              }\n            },\n            \"customWidth\": \"70\",\n            \"name\": \"query - 6\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          },\n          {\n            \"type\": 12,\n            \"content\": {\n              \"version\": \"NotebookGroup/1.0\",\n              \"groupType\": \"editable\",\n              \"items\": [\n                {\n                  \"type\": 1,\n                  \"content\": {\n                    \"json\": \"# Enable or Disable alerts. \\n\\n## By selecting a list of alerts on the left, the buttons will disable or enable the alert rules in Azure Monitor.\\n\\n# Update Action Group\\n## Select a list of alerts on the left and a new Action Group to assign to the alert.\",\n                    \"style\": \"info\"\n                  },\n                  \"conditionalVisibility\": {\n                    \"parameterName\": \"showHelp\",\n                    \"comparison\": \"isEqualTo\",\n                    \"value\": \"yes\"\n                  },\n                  \"name\": \"text - 3\"\n                },\n                {\n                  \"type\": 3,\n                  \"content\": {\n                    \"version\": \"KqlItem/1.0\",\n                    \"query\": \"resources\\n| where type == \\\"microsoft.insights/actiongroups\\\"\\n| where properties.enabled == 'true'\\n| project id\",\n                    \"size\": 1,\n                    \"exportFieldName\": \"\",\n                    \"exportParameterName\": \"selectedAG\",\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resourcegraph/resources\",\n                    \"gridSettings\": {\n                      \"filter\": true\n                    }\n                  },\n                  \"conditionalVisibility\": {\n                    \"parameterName\": \"alertsselected\",\n                    \"comparison\": \"isNotEqualTo\"\n                  },\n                  \"name\": \"query - 3\",\n                  \"styleSettings\": {\n                    \"showBorder\": true\n                  }\n                },\n                {\n                  \"type\": 11,\n                  \"content\": {\n                    \"version\": \"LinkItem/1.0\",\n                    \"style\": \"paragraph\",\n                    \"links\": [\n                      {\n                        \"id\": \"f5cb3ede-91d1-4414-bfa1-a1689f45d0c8\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Enable Alerts\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"alertmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"Enable\\\", \\n    \\\"alerts\\\":  [{alertsselected}]\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Enable Alerts\",\n                          \"description\": \"# This action will Enable the selected Alerts\\n\\n{alertsselected}\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      },\n                      {\n                        \"id\": \"d9469141-a104-4696-b9cd-f0fc7e3f963e\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Disable Alerts\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"alertmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"Disable\\\", \\n    \\\"alerts\\\":  [{alertsselected}]\\n  }\\n}\\n\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Disable Alerts\",\n                          \"description\": \"# This action will disable the selected Alerts\\n\\n{alertsselected}\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      },\n                      {\n                        \"id\": \"7942ba17-4942-4f4a-b2ea-e19ad806b49d\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Update Action Group\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"alertmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"Update\\\", \\n    \\\"alerts\\\":  [{alertsselected}],\\n    \\\"aGroup\\\": {selectedAG}\\n  }\\n}\\n\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Update Action Group\",\n                          \"description\": \"Updating alerts:\\n\\n\\n{alertsselected}\\n\\nwith Action Group:\\n\\n{selectedAG}\\n\",\n                          \"actionName\": \"updateAG\",\n                          \"runLabel\": \"Update\"\n                        }\n                      }\n                    ]\n                  },\n                  \"name\": \"links - 8\"\n                }\n              ]\n            },\n            \"customWidth\": \"30\",\n            \"name\": \"AlertsSubGroup1\"\n          }\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"alertmanagement\"\n      },\n      \"name\": \"AlertMGMT\"\n    },\n    {\n      \"type\": 12,\n      \"content\": {\n        \"version\": \"NotebookGroup/1.0\",\n        \"groupType\": \"editable\",\n        \"title\": \"Alert Management - Other Alerts\",\n        \"items\": [\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"resources\\n| where tolower(type) in (\\\"microsoft.insights/scheduledqueryrules\\\")\\n| where isempty(tags.MonitorStarterPacks)\\n| project id,Enabled=properties.enabled, Description=properties.description, ['Action Group']=split(properties.actions.actionGroups[0],\\\"/\\\")[8], location, Target=split(properties.scopes[0],\\\"/\\\")[-1]\\n| union (\\nresources\\n| where tolower(type) in (\\\"microsoft.insights/metricalerts\\\")\\n| where isempty(tags.MonitorStarterPacks)\\n| project id, Enabled=properties.enabled, Description=properties.description, ['Action Group']=split(properties.actions[0].actionGroupId,\\\"/\\\")[8], location, Target=split(properties.scopes[0],\\\"/\\\")[-1])\\n| union (resources\\n| where tolower(type) in (\\\"microsoft.insights/activitylogalerts\\\")\\n| where isempty(tags.MonitorStarterPacks)\\n| project id,Enabled=properties.enabled, Description=properties.description, ['Action Group']=split(properties.actions.actionGroups[0].actionGroupId,\\\"/\\\")[8], location, Target=split(properties.scopes[0],\\\"/\\\")[-1])\",\n              \"size\": 0,\n              \"exportMultipleValues\": true,\n              \"exportedParameters\": [\n                {\n                  \"fieldName\": \"\",\n                  \"parameterName\": \"alertsselectednopack\",\n                  \"parameterType\": 1,\n                  \"quote\": \"\"\n                }\n              ],\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resources/tenants\",\n              \"crossComponentResources\": [\n                \"value::tenant\"\n              ],\n              \"visualization\": \"table\",\n              \"gridSettings\": {\n                \"formatters\": [\n                  {\n                    \"columnMatch\": \"location\",\n                    \"formatter\": 5\n                  },\n                  {\n                    \"columnMatch\": \"name\",\n                    \"formatter\": 7\n                  }\n                ],\n                \"filter\": true\n              }\n            },\n            \"customWidth\": \"70\",\n            \"name\": \"query - 6\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          },\n          {\n            \"type\": 12,\n            \"content\": {\n              \"version\": \"NotebookGroup/1.0\",\n              \"groupType\": \"editable\",\n              \"items\": [\n                {\n                  \"type\": 1,\n                  \"content\": {\n                    \"json\": \"# Enable or Disable alerts. \\n\\n## By selecting a list of alerts on the left, the buttons will disable or enable the alert rules in Azure Monitor.\\n\\n# Update Action Group\\n## Select a list of alerts on the left and a new Action Group to assign to the alert.\",\n                    \"style\": \"info\"\n                  },\n                  \"conditionalVisibility\": {\n                    \"parameterName\": \"showHelp\",\n                    \"comparison\": \"isEqualTo\",\n                    \"value\": \"yes\"\n                  },\n                  \"name\": \"text - 3\"\n                },\n                {\n                  \"type\": 3,\n                  \"content\": {\n                    \"version\": \"KqlItem/1.0\",\n                    \"query\": \"resources\\n| where type == \\\"microsoft.insights/actiongroups\\\"\\n| where properties.enabled == 'true'\\n| project id\",\n                    \"size\": 1,\n                    \"exportFieldName\": \"\",\n                    \"exportParameterName\": \"selectedAG\",\n                    \"queryType\": 1,\n                    \"resourceType\": \"microsoft.resourcegraph/resources\",\n                    \"gridSettings\": {\n                      \"filter\": true\n                    }\n                  },\n                  \"conditionalVisibility\": {\n                    \"parameterName\": \"alertsselected\",\n                    \"comparison\": \"isNotEqualTo\"\n                  },\n                  \"name\": \"query - 3\",\n                  \"styleSettings\": {\n                    \"showBorder\": true\n                  }\n                },\n                {\n                  \"type\": 11,\n                  \"content\": {\n                    \"version\": \"LinkItem/1.0\",\n                    \"style\": \"paragraph\",\n                    \"links\": [\n                      {\n                        \"id\": \"f5cb3ede-91d1-4414-bfa1-a1689f45d0c8\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Enable Alerts\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"alertmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"Enable\\\", \\n    \\\"alerts\\\":  [{alertsselectednopack}]\\n  }\\n}\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Enable Alerts\",\n                          \"description\": \"# This action will Enable the selected Alerts\\n\\n{alertsselected}\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      },\n                      {\n                        \"id\": \"d9469141-a104-4696-b9cd-f0fc7e3f963e\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Disable Alerts\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"alertmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"Disable\\\", \\n    \\\"alerts\\\":  [{alertsselectednopack}]\\n  }\\n}\\n\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Disable Alerts\",\n                          \"description\": \"# This action will disable the selected Alerts\\n\\n{alertsselected}\",\n                          \"runLabel\": \"Confirm\"\n                        }\n                      },\n                      {\n                        \"id\": \"7942ba17-4942-4f4a-b2ea-e19ad806b49d\",\n                        \"linkTarget\": \"ArmAction\",\n                        \"linkLabel\": \"Update Action Group\",\n                        \"style\": \"primary\",\n                        \"linkIsContextBlade\": true,\n                        \"armActionContext\": {\n                          \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                          \"headers\": [],\n                          \"params\": [],\n                          \"body\": \"{ \\n  \\\"function\\\": \\\"alertmgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"Action\\\":\\\"Update\\\", \\n    \\\"alerts\\\":  [{alertsselectednopack}],\\n    \\\"aGroup\\\": {selectedAG}\\n  }\\n}\\n\",\n                          \"httpMethod\": \"POST\",\n                          \"title\": \"Update Action Group\",\n                          \"description\": \"Updating alerts:\\n\\n\\n{alertsselected}\\n\\nwith Action Group:\\n\\n{selectedAG}\\n\",\n                          \"actionName\": \"updateAG\",\n                          \"runLabel\": \"Update\"\n                        }\n                      }\n                    ]\n                  },\n                  \"name\": \"links - 8\"\n                }\n              ]\n            },\n            \"customWidth\": \"30\",\n            \"name\": \"AlertsSubGroup1\"\n          }\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"alertmanagement\"\n      },\n      \"name\": \"AlertMGMT - Others\"\n    },\n    {\n      \"type\": 12,\n      \"content\": {\n        \"version\": \"NotebookGroup/1.0\",\n        \"groupType\": \"editable\",\n        \"title\": \"IaaS Packs Association\",\n        \"items\": [\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"resources\\n| where type == \\\"microsoft.insights/datacollectionrules\\\"\\n| extend MPs=tostring(['tags'].MonitorStarterPacks)\\n| where isnotempty(MPs) //or properties.dataSources.performanceCounters[0].name == 'VMInsightsPerfCounters'\\n| summarize by Pack=MPs,name\\n\",\n              \"size\": 1,\n              \"title\": \"Select Pack to see associated Machines\",\n              \"exportFieldName\": \"name\",\n              \"exportParameterName\": \"selectedRule\",\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resourcegraph/resources\",\n              \"gridSettings\": {\n                \"formatters\": [\n                  {\n                    \"columnMatch\": \"Group\",\n                    \"formatter\": 1\n                  }\n                ],\n                \"sortBy\": [\n                  {\n                    \"itemKey\": \"name\",\n                    \"sortOrder\": 1\n                  }\n                ]\n              },\n              \"sortBy\": [\n                {\n                  \"itemKey\": \"name\",\n                  \"sortOrder\": 1\n                }\n              ]\n            },\n            \"customWidth\": \"50\",\n            \"name\": \"query - 6 - Copy\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          },\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"insightsresources\\n| where type == \\\"microsoft.insights/datacollectionruleassociations\\\"\\n| extend resourceId=split(id,'/providers/Microsoft.Insights/')[0]\\n| where isnotnull(properties.dataCollectionRuleId)\\n| project rulename=split(properties.dataCollectionRuleId,\\\"/\\\")[8],resourceName=split(resourceId,\\\"/\\\")[8],resourceId//ruleId=properties.dataCollectionRuleId\\n| where '{selectedRule}'==rulename\",\n              \"size\": 1,\n              \"title\": \"Associated Machines\",\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resourcegraph/resources\",\n              \"gridSettings\": {\n                \"formatters\": [\n                  {\n                    \"columnMatch\": \"Group\",\n                    \"formatter\": 1\n                  }\n                ]\n              }\n            },\n            \"customWidth\": \"50\",\n            \"name\": \"query - 6 - Copy - Copy\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          }\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"rulemanagement\"\n      },\n      \"name\": \"rulemanagement\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 3,\n      \"content\": {\n        \"version\": \"KqlItem/1.0\",\n        \"query\": \"resources\\n| where type == \\\"microsoft.insights/datacollectionrules\\\"\\n| where isnotempty(tags.MonitorStarterPacks)\\n| extend ds=properties.dataSources\\n| project id,Type=kind, location,syslog=ds.syslog[0].streams[0], windowsEventLogs=ds.windowsEventLogs[0].streams[0], logsettings=ds.logFiles, performanceCounters=ds.performanceCounters[0].streams[0],provisioningState=properties.provisioningState, \\ndataCollectionEndpointId=properties.dataCollectionEndpointId,transformKql=properties.dataFlows[0].transformKql,workspaceResourceId=properties.destinations.logAnalytics[0].workspaceResourceId\\n\",\n        \"size\": 1,\n        \"title\": \"List of Currently Configured Data Collection Rules\",\n        \"showRefreshButton\": true,\n        \"exportedParameters\": [\n          {\n            \"parameterName\": \"selectedRule\"\n          },\n          {\n            \"fieldName\": \"destinationName\",\n            \"parameterName\": \"destinationName\",\n            \"parameterType\": 1\n          },\n          {\n            \"fieldName\": \"\",\n            \"parameterName\": \"resourceGroupName\",\n            \"parameterType\": 1\n          },\n          {\n            \"fieldName\": \"workspaceResourceId\",\n            \"parameterName\": \"workspace\",\n            \"parameterType\": 5\n          },\n          {\n            \"fieldName\": \"properties\",\n            \"parameterName\": \"properties\",\n            \"parameterType\": 1\n          },\n          {\n            \"fieldName\": \"name\",\n            \"parameterName\": \"name\",\n            \"parameterType\": 1\n          },\n          {\n            \"fieldName\": \"location\",\n            \"parameterName\": \"location\",\n            \"parameterType\": 1\n          },\n          {\n            \"fieldName\": \"Rule Type\",\n            \"parameterName\": \"kind\",\n            \"parameterType\": 1\n          },\n          {\n            \"parameterType\": 1\n          },\n          {\n            \"fieldName\": \"id\",\n            \"parameterName\": \"id\",\n            \"parameterType\": 1\n          }\n        ],\n        \"showExportToExcel\": true,\n        \"exportToExcelOptions\": \"all\",\n        \"queryType\": 1,\n        \"resourceType\": \"microsoft.resourcegraph/resources\",\n        \"crossComponentResources\": [\n          \"{Subscriptions}\"\n        ],\n        \"gridSettings\": {\n          \"formatters\": [\n            {\n              \"columnMatch\": \"id\",\n              \"formatter\": 13,\n              \"formatOptions\": {\n                \"linkColumn\": \"id\",\n                \"linkTarget\": \"Resource\",\n                \"linkIsContextBlade\": true,\n                \"showIcon\": true\n              }\n            },\n            {\n              \"columnMatch\": \"Type\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"==\",\n                    \"thresholdValue\": \"Windows\",\n                    \"representation\": \"Initial_Access\",\n                    \"text\": \"{0}{1}\"\n                  },\n                  {\n                    \"operator\": \"==\",\n                    \"thresholdValue\": \"Linux\",\n                    \"representation\": \"Console\",\n                    \"text\": \"{0}{1}\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"Capture\",\n                    \"text\": \"Custom\"\n                  }\n                ]\n              }\n            },\n            {\n              \"columnMatch\": \"location\",\n              \"formatter\": 17,\n              \"formatOptions\": {\n                \"customColumnWidthSetting\": \"94px\"\n              }\n            },\n            {\n              \"columnMatch\": \"syslog\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkTarget\": \"CellDetails\",\n                \"subTarget\": \"2\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"cancelled\",\n                    \"text\": \"Not Configured\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"Configured\"\n                  }\n                ],\n                \"bladeOpenContext\": {\n                  \"bladeName\": \"DataCollectionRulesDataSourceManagementViewModel\",\n                  \"extensionName\": \"Microsoft_Azure_Monitoring\",\n                  \"bladeParameters\": [\n                    {\n                      \"name\": \"id\",\n                      \"source\": \"column\",\n                      \"value\": \"id\"\n                    }\n                  ]\n                },\n                \"customColumnWidthSetting\": \"20ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"windowsEventLogs\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkTarget\": \"CellDetails\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"cancelled\",\n                    \"text\": \"Not Configured\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"Configured\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"20ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"logsettings\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"cancelled\",\n                    \"text\": \"Not Configured\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"Configured\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"20ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"performanceCounters\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkColumn\": \"performanceCounters\",\n                \"linkTarget\": \"CellDetails\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"cancelled\",\n                    \"text\": \"Not Configured!\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"Configured\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"20ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"provisioningState\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"contains\",\n                    \"thresholdValue\": \"succeeded\",\n                    \"representation\": \"success\",\n                    \"text\": \"{0}{1}\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"{0}{1}\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"17ch\"\n              },\n              \"numberFormat\": {\n                \"unit\": 0,\n                \"options\": {\n                  \"style\": \"decimal\"\n                }\n              }\n            },\n            {\n              \"columnMatch\": \"dataCollectionEndpointId\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkTarget\": \"Resource\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"cancelled\",\n                    \"text\": \"Not Configured\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"Configured\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"21.7143ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"transformKql\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkColumn\": \"queries\",\n                \"linkTarget\": \"CellDetails\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"stopped\",\n                    \"text\": \"Not Configured\"\n                  },\n                  {\n                    \"operator\": \"contains\",\n                    \"thresholdValue\": \"|\",\n                    \"representation\": \"success\",\n                    \"text\": \"Ingestion KQL\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"stopped\",\n                    \"text\": \"Custom KQL\"\n                  }\n                ],\n                \"bladeOpenContext\": {\n                  \"bladeName\": \"CreateMicrosoftTableTransformBlade\",\n                  \"extensionName\": \"Microsoft_OperationsManagementSuite_Workspace\",\n                  \"bladeJsonParameters\": \"{\\r\\n\\t\\\"workspaceResourceId\\\" : \\\"{workspace}\\\",\\r\\n\\t\\\"providers\\\" : \\\"microsoft.operationalinsights\\\",\\r\\n\\t\\\"table\\\" : { \\r\\n\\t\\t\\\"name\\\" : \\\"{selectedTableName}\\\",\\r\\n\\t\\t\\\"description\\\":\\\"Security events collected from windows machines by Azure Security Center or Azure Sentinel.\\\",\\r\\n\\t\\t\\\"hasData\\\":true,\\r\\n\\t\\t\\\"tableType\\\":\\\"Microsoft\\\",\\r\\n\\t\\t\\\"tableAPIState\\\":\\\"Any\\\",\\r\\n\\t\\t\\\"solutions\\\":[\\\"Security and Audit\\\",\\\"Microsoft Sentinel\\\"],\\r\\n\\t\\t\\\"categories\\\":[\\\"Security\\\"],\\r\\n\\t\\t\\\"retentionInDaysAsDefault\\\":false,\\r\\n\\t\\t\\\"totalRetentionInDaysAsDefault\\\":false,\\r\\n\\t\\t\\\"isEditTransformationEnabled\\\":true,\\r\\n\\t\\t\\\"isCreateTransformationEnabled\\\":true\\r\\n\\t},\\r\\n\\t\\\"isMicrosoftTable\\\" : true,\\r\\n\\t\\\"isMigrationRequired\\\" : false\\r\\n}\"\n                },\n                \"customColumnWidthSetting\": \"22ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"workspaceResourceId\",\n              \"formatter\": 13,\n              \"formatOptions\": {\n                \"linkTarget\": \"Resource\",\n                \"showIcon\": true,\n                \"customColumnWidthSetting\": \"16.8571ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"properties\",\n              \"formatter\": 7,\n              \"formatOptions\": {\n                \"linkTarget\": \"CellDetails\",\n                \"linkLabel\": \"📋\",\n                \"linkIsContextBlade\": true,\n                \"customColumnWidthSetting\": \"5ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"kind\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"Capture\",\n                    \"text\": \"{0}{1} Custom\"\n                  },\n                  {\n                    \"operator\": \"contains\",\n                    \"thresholdValue\": \"Linux\",\n                    \"representation\": \"Console\",\n                    \"text\": \"{0}{1}\"\n                  },\n                  {\n                    \"operator\": \"contains\",\n                    \"thresholdValue\": \"Windows\",\n                    \"representation\": \"Initial_Access\",\n                    \"text\": \"{0}{1}\"\n                  },\n                  {\n                    \"operator\": \"contains\",\n                    \"thresholdValue\": \"WorkspaceTransforms\",\n                    \"representation\": \"Persistence\",\n                    \"text\": \"{0}{1}\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"{0}{1}\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"17ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"name\",\n              \"formatter\": 5\n            },\n            {\n              \"columnMatch\": \"securityEvents\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkColumn\": \"windowsEventLogs\",\n                \"linkTarget\": \"CellDetails\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"cancelled\",\n                    \"text\": \"Not Configured\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"Configured\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"20ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"destinations\",\n              \"formatter\": 5\n            },\n            {\n              \"columnMatch\": \"queries\",\n              \"formatter\": 5\n            },\n            {\n              \"columnMatch\": \"dataSources\",\n              \"formatter\": 5\n            },\n            {\n              \"columnMatch\": \"dataFlows\",\n              \"formatter\": 5,\n              \"formatOptions\": {\n                \"aggregation\": \"Sum\"\n              }\n            },\n            {\n              \"columnMatch\": \"description\",\n              \"formatter\": 5\n            },\n            {\n              \"columnMatch\": \"destinationName\",\n              \"formatter\": 5\n            },\n            {\n              \"columnMatch\": \"lastModifiedBy\",\n              \"formatter\": 5\n            },\n            {\n              \"columnMatch\": \"customEvents\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkTarget\": \"CellDetails\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"is Empty\",\n                    \"representation\": \"cancelled\",\n                    \"text\": \"Not Configured\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"success\",\n                    \"text\": \"Configured\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"20ch\"\n              }\n            },\n            {\n              \"columnMatch\": \"StepTab\",\n              \"formatter\": 5\n            }\n          ],\n          \"rowLimit\": 1000,\n          \"filter\": true\n        },\n        \"sortBy\": []\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"rulemanagement\"\n      },\n      \"name\": \"Select Existing DCR - Copy\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 12,\n      \"content\": {\n        \"version\": \"NotebookGroup/1.0\",\n        \"groupType\": \"editable\",\n        \"title\": \"Policy Assignment Status\",\n        \"items\": [\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"policyresources | where type == \\\"microsoft.policyinsights/policystates\\\" | extend policyName=tostring(properties.policyDefinitionName), complianceState=properties.complianceState\\n| join (policyresources | where type == \\\"microsoft.authorization/policydefinitions\\\" and isnotempty(properties.metadata.MonitorStarterPacks) | project policyId=id, policyName=name, pack=tostring(properties.metadata.MonitorStarterPacks)) on policyName\\n| project policyId, policyName, complianceState=tostring(complianceState), pack,type='Policy'\\n| union( policyresources\\n| where type =~ 'Microsoft.PolicyInsights/PolicyStates'\\n| extend complianceState = tostring(properties.complianceState)\\n| extend\\n\\tresourceId = tostring(properties.resourceId),\\n\\tpolicyAssignmentId = tostring(properties.policyAssignmentId),\\n\\tpolicyAssignmentScope = tostring(properties.policyAssignmentScope),\\n\\tpolicyAssignmentName = tostring(properties.policyAssignmentName),\\n\\tpolicyDefinitionId = tostring(properties.policyDefinitionId),\\n    policySetDefinitionId=tostring(properties.policySetDefinitionId),\\n\\tpolicyDefinitionReferenceId = tostring(properties.policyDefinitionReferenceId),\\n\\tstateWeight = iff(complianceState == 'NonCompliant', int(300), iff(complianceState == 'Compliant', int(200), iff(complianceState == 'Conflict', int(100), iff(complianceState == 'Exempt', int(50), int(0)))))\\n| summarize max(stateWeight) by resourceId, policyAssignmentId, policyAssignmentScope, policyAssignmentName,policySetDefinitionId\\n| summarize counts = count() by policyAssignmentId, policyAssignmentScope, max_stateWeight, policyAssignmentName,policySetDefinitionId\\n| summarize overallStateWeight = max(max_stateWeight),\\nnonCompliantCount = sumif(counts, max_stateWeight == 300),\\ncompliantCount = sumif(counts, max_stateWeight == 200),\\nconflictCount = sumif(counts, max_stateWeight == 100),\\nexemptCount = sumif(counts, max_stateWeight == 50) by policyAssignmentId, policyAssignmentScope, policyAssignmentName,policySetDefinitionId\\n| extend totalResources = todouble(nonCompliantCount + compliantCount + conflictCount + exemptCount)\\n| extend compliancePercentage = iff(totalResources == 0, todouble(100), 100 * todouble(compliantCount + exemptCount) / totalResources)\\n| project policyAssignmentName, scope = policyAssignmentScope,policySetDefinitionId,\\ncomplianceState = iff(overallStateWeight == 300, 'nonCompliant', iff(overallStateWeight == 200, 'Compliant', iff(overallStateWeight == 100, 'conflict', iff(overallStateWeight == 50, 'exempt', 'notstarted')))),\\ncompliancePercentage,\\ncompliantCount,\\nnonCompliantCount,\\nconflictCount,\\nexemptCount\\n| where isnotempty(policySetDefinitionId)\\n| join (policyresources\\n| where type =~ 'microsoft.authorization/policysetdefinitions' and isnotempty(properties.metadata.MonitorStarterPacks)\\n| extend policySetDefinitionId=tostring(id)) on policySetDefinitionId\\n| project policyId=policySetDefinitionId, policyName=name,complianceState,pack='N/A', type='Set')\",\n              \"size\": 1,\n              \"title\": \"Assignment Status (Compliance)\",\n              \"exportedParameters\": [\n                {\n                  \"parameterName\": \"policiesToRemediate\",\n                  \"parameterType\": 5\n                }\n              ],\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resources/tenants\",\n              \"crossComponentResources\": [\n                \"value::tenant\"\n              ],\n              \"gridSettings\": {\n                \"formatters\": [\n                  {\n                    \"columnMatch\": \"complianceState\",\n                    \"formatter\": 18,\n                    \"formatOptions\": {\n                      \"thresholdsOptions\": \"icons\",\n                      \"thresholdsGrid\": [\n                        {\n                          \"operator\": \"==\",\n                          \"thresholdValue\": \"Compliant\",\n                          \"representation\": \"success\",\n                          \"text\": \"Compliant\"\n                        },\n                        {\n                          \"operator\": \"==\",\n                          \"thresholdValue\": \"Non-compliant\",\n                          \"representation\": \"2\",\n                          \"text\": \"Non-Compliant\"\n                        },\n                        {\n                          \"operator\": \"Default\",\n                          \"thresholdValue\": null,\n                          \"representation\": \"warning\",\n                          \"text\": \"{0}{1}\"\n                        }\n                      ]\n                    }\n                  }\n                ],\n                \"filter\": true\n              }\n            },\n            \"customWidth\": \"75\",\n            \"conditionalVisibility\": {\n              \"parameterName\": \"tabSelection\",\n              \"comparison\": \"isEqualTo\",\n              \"value\": \"policystatus\"\n            },\n            \"name\": \"query - 8\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          },\n          {\n            \"type\": 11,\n            \"content\": {\n              \"version\": \"LinkItem/1.0\",\n              \"style\": \"list\",\n              \"links\": [\n                {\n                  \"id\": \"b3bb5a4d-0f95-4e9a-8634-9cb027f860aa\",\n                  \"linkTarget\": \"ArmAction\",\n                  \"linkLabel\": \"Remediate (all policies)\",\n                  \"preText\": \"\",\n                  \"style\": \"primary\",\n                  \"linkIsContextBlade\": true,\n                  \"armActionContext\": {\n                    \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                    \"headers\": [],\n                    \"params\": [],\n                    \"body\": \"{ \\n  \\\"function\\\": \\\"policymgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"SolutionTag\\\":\\\"MonitorStarterPacks\\\",\\n    \\\"Action\\\": \\\"Remediate\\\"\\n  }\\n}\",\n                    \"httpMethod\": \"POST\",\n                    \"title\": \"Rmediate policies\",\n                    \"description\": \"# Please confirm remediation\\n\\nThis button will trigger a global policy remeadiation. \\n\\nThe backend script will go through the policies and initiatives, finding the ones that are not compliant, and will trigger remediation. \\n\\nIt is not restricted to the ones in this screen.\",\n                    \"actionName\": \"Remediate\",\n                    \"runLabel\": \"Confirm\"\n                  }\n                },\n                {\n                  \"id\": \"8dfc5afa-108a-4713-8a0c-651c3a32c5f1\",\n                  \"linkTarget\": \"ArmAction\",\n                  \"linkLabel\": \"Check Compliance\",\n                  \"style\": \"primary\",\n                  \"linkIsContextBlade\": true,\n                  \"armActionContext\": {\n                    \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                    \"headers\": [],\n                    \"params\": [],\n                    \"body\": \"{ \\n  \\\"function\\\": \\\"policymgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"SolutionTag\\\":\\\"MonitorStarterPacks\\\",\\n    \\\"Action\\\": \\\"Scan\\\"\\n  }\\n}\",\n                    \"httpMethod\": \"POST\",\n                    \"title\": \"Check Policy Compliance\",\n                    \"description\": \"# Please confirm the scan.\",\n                    \"runLabel\": \"Confirm\"\n                  }\n                }\n              ]\n            },\n            \"customWidth\": \"25\",\n            \"name\": \"links - 3\"\n          },\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"policyresources\\n| where type == \\\"microsoft.authorization/policydefinitions\\\"\\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\\n| project Name=name, Type='Policy',['id'],Pack=tostring(properties.metadata.MonitorStarterPacks)\\n| join kind = leftouter (policyresources\\n| where type == \\\"microsoft.authorization/policyassignments\\\"\\n| project AssignmentName=name,scope=properties.scope,PolicyId=tostring(properties.policyDefinitionId), PolicyName=split(properties.PolicyId,\\\"/\\\")[8]\\n| join kind=leftouter  (policyresources\\n| where type == \\\"microsoft.authorization/policydefinitions\\\"\\n| where  isnotempty(properties.metadata.MonitorStarterPacks)) on $left.PolicyId == $right.id\\n| project tostring(AssignmentName),Name=tostring(split(PolicyId,\\\"/\\\")[8]), PolicyId,ScopeLevel=iff(scope contains 'subscriptions',\\\"Sub\\\", \\\"MG\\\"), Scope=scope) on Name\\n| project-away Name1, id\\n| union ( policyresources\\n| where type == \\\"microsoft.authorization/policysetdefinitions\\\"\\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\\n| project Name=name, Type='Initiative',['id'],Pack=\\\"_N/A\\\"\\n| join kind = leftouter (policyresources\\n| where type == \\\"microsoft.authorization/policyassignments\\\"\\n| project AssignmentName=name,scope=properties.scope,PolicyId=tostring(properties.policyDefinitionId), PolicyName=split(properties.PolicyId,\\\"/\\\")[8]\\n| join kind=leftouter  (policyresources\\n| where type == \\\"microsoft.authorization/policysetdefinitions\\\"\\n| where  isnotempty(properties.metadata.MonitorStarterPacks)) on $left.PolicyId == $right.id\\n| project tostring(AssignmentName),Name=tostring(split(PolicyId,\\\"/\\\")[8]), PolicyId, ScopeLevel=iff(scope contains 'subscriptions',\\\"Sub\\\", \\\"MG\\\"),Scope=scope) on Name\\n| project-away Name1, id)\\n| sort by Pack asc, AssignmentName asc \",\n              \"size\": 0,\n              \"title\": \"Installed Policies and Initiatives with Assignments\",\n              \"noDataMessage\": \"No MonStar policies (packs) installed.\",\n              \"exportMultipleValues\": true,\n              \"exportedParameters\": [\n                {\n                  \"fieldName\": \"\",\n                  \"parameterName\": \"policyseletedpolicy\",\n                  \"parameterType\": 1\n                }\n              ],\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resources/tenants\",\n              \"crossComponentResources\": [\n                \"value::tenant\"\n              ],\n              \"gridSettings\": {\n                \"formatters\": [\n                  {\n                    \"columnMatch\": \"Group\",\n                    \"formatter\": 1\n                  }\n                ],\n                \"filter\": true\n              }\n            },\n            \"conditionalVisibility\": {\n              \"parameterName\": \"tabSelection\",\n              \"comparison\": \"isEqualTo\",\n              \"value\": \"policystatus\"\n            },\n            \"name\": \"query - 8 - Copy\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          },\n          {\n            \"type\": 1,\n            \"content\": {\n              \"json\": \"Select Scope below to assign a policy. There is no need to Select a scope to Unassign the policy.\",\n              \"style\": \"info\"\n            },\n            \"conditionalVisibility\": {\n              \"parameterName\": \"policyseletedpolicy\",\n              \"comparison\": \"isNotEqualTo\"\n            },\n            \"name\": \"text - 6\"\n          },\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"resourcecontainers\\n| where type == 'microsoft.management/managementgroups' or type =~ 'microsoft.resources/subscriptions'\\n| project name, id, subscriptionId, type=split(type,'/')[1]\",\n              \"size\": 0,\n              \"exportMultipleValues\": true,\n              \"exportedParameters\": [\n                {\n                  \"parameterName\": \"policyscopes\",\n                  \"parameterType\": 1,\n                  \"quote\": \"\\\"\"\n                }\n              ],\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resources/tenants\",\n              \"crossComponentResources\": [\n                \"value::tenant\"\n              ]\n            },\n            \"conditionalVisibility\": {\n              \"parameterName\": \"policyseletedpolicy\",\n              \"comparison\": \"isNotEqualTo\"\n            },\n            \"name\": \"query - 15\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          },\n          {\n            \"type\": 1,\n            \"content\": {\n              \"json\": \"Policies To Assign: {policyseletedpolicy}\\n\\nScopes: {policyscopes}\"\n            },\n            \"conditionalVisibility\": {\n              \"parameterName\": \"policyseletedpolicy\",\n              \"comparison\": \"isNotEqualTo\"\n            },\n            \"name\": \"text - 4\"\n          },\n          {\n            \"type\": 11,\n            \"content\": {\n              \"version\": \"LinkItem/1.0\",\n              \"style\": \"paragraph\",\n              \"links\": [\n                {\n                  \"id\": \"63320366-2b93-4e52-831c-55f7c6de4043\",\n                  \"linkTarget\": \"ArmAction\",\n                  \"linkLabel\": \"Assign Policy\",\n                  \"style\": \"primary\",\n                  \"linkIsContextBlade\": true,\n                  \"armActionContext\": {\n                    \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                    \"headers\": [],\n                    \"params\": [],\n                    \"body\": \"{ \\n  \\\"function\\\": \\\"policymgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"SolutionTag\\\":\\\"MonitorStarterPacks\\\",\\n    \\\"Action\\\": \\\"Assign\\\",\\n    \\\"Scopes\\\": [{policyscopes}],\\n    \\\"policies\\\": [{policyseletedpolicy}]\\n  }\\n}\",\n                    \"httpMethod\": \"POST\",\n                    \"title\": \"Assign Policy\",\n                    \"description\": \"# Assign policy below to selected scope:\\n\\n## Policy\\n\\n{policyseletedpolicy}\\n\\n## Scope\\n\\n{policyscopes}\",\n                    \"runLabel\": \"Assign\"\n                  }\n                },\n                {\n                  \"id\": \"ed3b8c20-e2ef-4768-b0b9-bfcc254602e6\",\n                  \"linkTarget\": \"ArmAction\",\n                  \"linkLabel\": \"Unassign Policy\",\n                  \"style\": \"primary\",\n                  \"linkIsContextBlade\": true,\n                  \"armActionContext\": {\n                    \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                    \"headers\": [],\n                    \"params\": [],\n                    \"body\": \"{ \\n  \\\"function\\\": \\\"policymgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"SolutionTag\\\":\\\"MonitorStarterPacks\\\",\\n    \\\"Action\\\": \\\"Unassign\\\",\\n    \\\"policies\\\": [{policyseletedpolicy}]\\n  }\\n}\",\n                    \"httpMethod\": \"POST\",\n                    \"title\": \"Unassign Policies\",\n                    \"description\": \"# Unassign policy or policies below from their scopes.\\n\\n## Policy\\n\\n{policyseletedpolicy}\\n\\n\",\n                    \"actionName\": \"Unassign Policies\",\n                    \"runLabel\": \"Unassign\"\n                  }\n                }\n              ]\n            },\n            \"customWidth\": \"25\",\n            \"conditionalVisibility\": {\n              \"parameterName\": \"policyseletedpolicy\",\n              \"comparison\": \"isNotEqualTo\"\n            },\n            \"name\": \"links - 2 - Copy\"\n          }\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"policystatus\"\n      },\n      \"name\": \"policymgmt\"\n    },\n    {\n      \"type\": 3,\n      \"content\": {\n        \"version\": \"KqlItem/1.0\",\n        \"query\": \"Resources\\n| where type == 'microsoft.compute/virtualmachines'\\n| extend\\n    JoinID = toupper(id),\\n    OSName = tostring(properties.osProfile.computerName),\\n    OSType = tostring(properties.storageProfile.osDisk.osType)\\n| join kind=leftouter(\\n    Resources\\n    | where ( type == 'microsoft.compute/virtualmachines/extensions') and name in ('AzureMonitorLinuxAgent', 'AzureMonitorWindowsAgent')\\n    | extend\\n        VMId = toupper(substring(id, 0, indexof(id, '/extensions'))),\\n        ExtensionName = name\\n) on $left.JoinID == $right.VMId\\n| union (Resources\\n| where type == 'microsoft.hybridcompute/machines'\\n| extend\\n    JoinID = toupper(id),\\n    OSName = tostring(properties.osProfile.computerName),\\n    OSType = tostring(properties.osType)\\n| join kind=leftouter(\\n    Resources\\n    | where type == 'microsoft.hybridcompute/machines/extensions' and name in ('AzureMonitorLinuxAgent', 'AzureMonitorWindowsAgent')\\n    | extend\\n        VMId = toupper(substring(id, 0, indexof(id, '/extensions'))),\\n        ExtensionName = name\\n) on $left.JoinID == $right.VMId)\\n| summarize by id, OSName, OSType, ExtensionName, subscriptionId\\n| join kind= leftouter   (resourcecontainers\\n| where type =~ 'microsoft.resources/subscriptions'\\n| project Subscription=name,subscriptionId) on subscriptionId\\n| project-away subscriptionId, subscriptionId1\\n| order by tolower(OSName) asc\",\n        \"size\": 0,\n        \"title\": \"Agent Install Status\",\n        \"queryType\": 1,\n        \"resourceType\": \"microsoft.resources/tenants\",\n        \"crossComponentResources\": [\n          \"value::tenant\"\n        ],\n        \"visualization\": \"table\",\n        \"gridSettings\": {\n          \"formatters\": [\n            {\n              \"columnMatch\": \"ExtensionName\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkTarget\": \"CellDetails\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"==\",\n                    \"thresholdValue\": \"AzureMonitorLinuxAgent\",\n                    \"representation\": \"success\",\n                    \"text\": \"Linux Agent\"\n                  },\n                  {\n                    \"operator\": \"==\",\n                    \"thresholdValue\": \"AzureMonitorWindowsAgent\",\n                    \"representation\": \"success\",\n                    \"text\": \"Windows Agent\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"stopped\",\n                    \"text\": \"No Agent\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"20ch\"\n              }\n            }\n          ],\n          \"filter\": true\n        },\n        \"sortBy\": []\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"agentmgmt\"\n      },\n      \"customWidth\": \"50\",\n      \"name\": \"query - agent install status\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 3,\n      \"content\": {\n        \"version\": \"KqlItem/1.0\",\n        \"query\": \"Resources\\n| where type == 'microsoft.compute/virtualmachines'\\n| extend\\n    JoinID = toupper(id),\\n    OSName = tostring(properties.osProfile.computerName),\\n    OSType = tostring(properties.storageProfile.osDisk.osType)\\n| join kind=leftouter(\\n    Resources\\n    | where ( type == 'microsoft.compute/virtualmachines/extensions') and name in ('AzureMonitorLinuxAgent', 'AzureMonitorWindowsAgent')\\n    | extend\\n        VMId = toupper(substring(id, 0, indexof(id, '/extensions'))),\\n        ExtensionName = name\\n) on $left.JoinID == $right.VMId\\n| union (Resources\\n| where type == 'microsoft.hybridcompute/machines'\\n| extend\\n    JoinID = toupper(id),\\n    OSName = tostring(properties.osProfile.computerName),\\n    OSType = tostring(properties.osType)\\n| join kind=leftouter(\\n    Resources\\n    | where type == 'microsoft.hybridcompute/machines/extensions' and name in ('AzureMonitorLinuxAgent', 'AzureMonitorWindowsAgent')\\n    | extend\\n        VMId = toupper(substring(id, 0, indexof(id, '/extensions'))),\\n        ExtensionName = name\\n) on $left.JoinID == $right.VMId)\\n| summarize count() by ExtensionName\",\n        \"size\": 1,\n        \"title\": \"Agent Install Status\",\n        \"queryType\": 1,\n        \"resourceType\": \"microsoft.resources/tenants\",\n        \"crossComponentResources\": [\n          \"value::tenant\"\n        ],\n        \"visualization\": \"piechart\",\n        \"gridSettings\": {\n          \"formatters\": [\n            {\n              \"columnMatch\": \"ExtensionName\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"linkTarget\": \"CellDetails\",\n                \"linkIsContextBlade\": true,\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"==\",\n                    \"thresholdValue\": \"AzureMonitorLinuxAgent\",\n                    \"representation\": \"success\",\n                    \"text\": \"Linux Agent\"\n                  },\n                  {\n                    \"operator\": \"==\",\n                    \"thresholdValue\": \"AzureMonitorWindowsAgent\",\n                    \"representation\": \"success\",\n                    \"text\": \"Windows Agent\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": \"stopped\",\n                    \"text\": \"No Agent\"\n                  }\n                ],\n                \"customColumnWidthSetting\": \"20ch\"\n              }\n            }\n          ],\n          \"filter\": true\n        },\n        \"chartSettings\": {\n          \"seriesLabelSettings\": [\n            {\n              \"seriesName\": \"\",\n              \"label\": \"No Agent\",\n              \"color\": \"red\"\n            }\n          ]\n        }\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"agentmgmt\"\n      },\n      \"customWidth\": \"50\",\n      \"name\": \"query - agent install status - Copy\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 3,\n      \"content\": {\n        \"version\": \"KqlItem/1.0\",\n        \"query\": \"Heartbeat | where Category == \\\"Azure Monitor Agent\\\"\\n| summarize arg_max(TimeGenerated, *) by Computer\\n| project  Computer,LastHeartbeat=TimeGenerated, ['SecondsAgo']=datetime_diff('second',now(),TimeGenerated)\\n| sort by SecondsAgo asc\",\n        \"size\": 4,\n        \"title\": \"Last Heartbeat (24 hours)\",\n        \"timeContext\": {\n          \"durationMs\": 86400000\n        },\n        \"queryType\": 0,\n        \"resourceType\": \"microsoft.operationalinsights/workspaces\",\n        \"gridSettings\": {\n          \"formatters\": [\n            {\n              \"columnMatch\": \"SecondsAgo\",\n              \"formatter\": 18,\n              \"formatOptions\": {\n                \"thresholdsOptions\": \"icons\",\n                \"thresholdsGrid\": [\n                  {\n                    \"operator\": \"<=\",\n                    \"thresholdValue\": \"600\",\n                    \"representation\": \"success\",\n                    \"text\": \"{0}{1}\"\n                  },\n                  {\n                    \"operator\": \">\",\n                    \"thresholdValue\": \"600\",\n                    \"representation\": \"2\",\n                    \"text\": \"{0}{1}\"\n                  },\n                  {\n                    \"operator\": \"Default\",\n                    \"thresholdValue\": null,\n                    \"representation\": null,\n                    \"text\": \"{0}{1}\"\n                  }\n                ]\n              }\n            }\n          ],\n          \"filter\": true\n        }\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"agentmgmt\"\n      },\n      \"customWidth\": \"50\",\n      \"name\": \"query - 16\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 12,\n      \"content\": {\n        \"version\": \"NotebookGroup/1.0\",\n        \"groupType\": \"editable\",\n        \"title\": \"ALZ Baseline Alerts Info\",\n        \"items\": [\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"policyresources\\n| where type == \\\"microsoft.authorization/policydefinitions\\\"\\n| where properties.metadata.source=='https://github.com/Azure/ALZ-Monitor/'\\n| project  id,Name=tostring(name), ['Display Name']=properties.displayName\\n| join kind = leftouter (policyresources\\n| where type == \\\"microsoft.authorization/policyassignments\\\"\\n| project AssignmentDisplayName=properties.displayName,scope=properties.scope,PolicyId=tostring(properties.policyDefinitionId), PolicyName=split(properties.PolicyId,\\\"/\\\")[8]\\n| join  (policyresources\\n| where type == \\\"microsoft.authorization/policydefinitions\\\"\\n| where properties.metadata.source=='https://github.com/Azure/ALZ-Monitor/') on $left.PolicyId == $right.id\\n| project AssignmentDisplayName,Name=tostring(split(PolicyId,\\\"/\\\")[8]), PolicyId, Scope=scope) on Name\\n| project-away Name1, id\",\n              \"size\": 0,\n              \"exportMultipleValues\": true,\n              \"exportedParameters\": [\n                {\n                  \"fieldName\": \"\",\n                  \"parameterName\": \"selectedALZPolicies\",\n                  \"parameterType\": 1,\n                  \"quote\": \"\"\n                }\n              ],\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resources/tenants\",\n              \"crossComponentResources\": [\n                \"value::tenant\"\n              ],\n              \"gridSettings\": {\n                \"formatters\": [\n                  {\n                    \"columnMatch\": \"id\",\n                    \"formatter\": 7,\n                    \"formatOptions\": {\n                      \"linkTarget\": \"Resource\",\n                      \"linkLabel\": \"View\"\n                    }\n                  }\n                ],\n                \"filter\": true,\n                \"sortBy\": [\n                  {\n                    \"itemKey\": \"$gen_link_AssignmentDisplayName_2\",\n                    \"sortOrder\": 2\n                  }\n                ]\n              },\n              \"sortBy\": [\n                {\n                  \"itemKey\": \"$gen_link_AssignmentDisplayName_2\",\n                  \"sortOrder\": 2\n                }\n              ]\n            },\n            \"name\": \"query - 0\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          },\n          {\n            \"type\": 3,\n            \"content\": {\n              \"version\": \"KqlItem/1.0\",\n              \"query\": \"resourcecontainers\\n| where type == 'microsoft.management/managementgroups' or type =~ 'microsoft.resources/subscriptions'\\n| project name, id, subscriptionId, type=split(type,'/')[1]\",\n              \"size\": 1,\n              \"exportMultipleValues\": true,\n              \"exportedParameters\": [\n                {\n                  \"parameterName\": \"selectedALZScopes\",\n                  \"parameterType\": 1,\n                  \"quote\": \"\"\n                }\n              ],\n              \"queryType\": 1,\n              \"resourceType\": \"microsoft.resources/tenants\",\n              \"crossComponentResources\": [\n                \"value::tenant\"\n              ],\n              \"gridSettings\": {\n                \"filter\": true\n              }\n            },\n            \"conditionalVisibility\": {\n              \"parameterName\": \"selectedALZPolicies\",\n              \"comparison\": \"isNotEqualTo\"\n            },\n            \"name\": \"query - 3\",\n            \"styleSettings\": {\n              \"showBorder\": true\n            }\n          },\n          {\n            \"type\": 11,\n            \"content\": {\n              \"version\": \"LinkItem/1.0\",\n              \"style\": \"paragraph\",\n              \"links\": [\n                {\n                  \"id\": \"d2ddbf42-13e1-4aa7-96ad-114509fe1e32\",\n                  \"linkTarget\": \"ArmAction\",\n                  \"linkLabel\": \"Assign Policy\",\n                  \"style\": \"primary\",\n                  \"linkIsContextBlade\": true,\n                  \"armActionContext\": {\n                    \"path\": \"{logicAppResource}/triggers/manual/run?api-version=2016-06-01\",\n                    \"headers\": [],\n                    \"params\": [],\n                    \"body\": \"{ \\n  \\\"function\\\": \\\"policymgmt\\\",\\n  \\\"functionBody\\\" : {\\n    \\\"SolutionTag\\\":\\\"MonitorStarterPacks\\\",\\n    \\\"Action\\\": \\\"Assign\\\",\\n    \\\"Scopes\\\": [{selectedALZScopes}],\\n    \\\"policies\\\": [{selectedALZPolicies}]\\n\\n  }\\n}\",\n                    \"httpMethod\": \"POST\",\n                    \"title\": \"Assign Policy\",\n                    \"description\": \"# Assign policy below to selected scope:\\n\\n## Policy\\n\\n{selectedALZPolicies}\\n\\n## Scope\\n\\n{selectedALZScopes}\",\n                    \"runLabel\": \"Assign\"\n                  }\n                },\n                {\n                  \"id\": \"071a7cd1-94ad-4209-b3ca-0647b4a8ce2d\",\n                  \"linkTarget\": \"ArmAction\",\n                  \"linkLabel\": \"Unassign Policy\",\n                  \"style\": \"primary\",\n                  \"linkIsContextBlade\": true\n                }\n              ]\n            },\n            \"customWidth\": \"25\",\n            \"conditionalVisibility\": {\n              \"parameterName\": \"selectedALZPolicies\",\n              \"comparison\": \"isNotEqualTo\"\n            },\n            \"name\": \"links - 2\"\n          }\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"alzinfo\"\n      },\n      \"name\": \"alzgroup\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    },\n    {\n      \"type\": 3,\n      \"content\": {\n        \"version\": \"KqlItem/1.0\",\n        \"query\": \"requests\\n| project\\n    timestamp,\\n    id,\\n    operation_Name,\\n    success,\\n    resultCode,\\n    duration,\\n    cloud_RoleName\\n| where timestamp > ago(30d)\\n| where cloud_RoleName =~ 'MonitorStarterPacks-6c64f9ed' //and operation_Name =~ 'tagmgmt'\\n| order by timestamp desc\\n| take 20\",\n        \"size\": 0,\n        \"title\": \"Function Runs\",\n        \"timeContext\": {\n          \"durationMs\": 86400000\n        },\n        \"queryType\": 0,\n        \"resourceType\": \"microsoft.insights/components\",\n        \"crossComponentResources\": [\n          \"/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/amonstarterpacks3/providers/Microsoft.Insights/components/MonitorStarterPacks-6c64f9ed\"\n        ]\n      },\n      \"conditionalVisibility\": {\n        \"parameterName\": \"tabSelection\",\n        \"comparison\": \"isEqualTo\",\n        \"value\": \"backend\"\n      },\n      \"name\": \"query - 15\",\n      \"styleSettings\": {\n        \"showBorder\": true\n      }\n    }\n  ],\n  \"fallbackResourceIds\": [\n    \"/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourcegroups/amonstarterpacks3/providers/microsoft.operationalinsights/workspaces/ws-amonstar\"\n  ],\n  \"$schema\": \"https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json\"\n}\n"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Insights/workbooks",
+              "apiVersion": "2022-04-01",
+              "name": "[guid('monstar')]",
+              "location": "[parameters('location')]",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "mainworkbook",
+                "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+              },
+              "kind": "shared",
+              "properties": {
+                "displayName": "Azure Monitor Starter Packs",
+                "serializedData": "[variables('wbConfig')]",
+                "category": "workbook",
+                "sourceId": "[parameters('lawresourceid')]"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "azureManagedGrafana",
+      "subscriptionId": "[parameters('subscriptionId')]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "solutionTag": {
+            "value": "[parameters('solutionTag')]"
+          },
+          "solutionVersion": {
+            "value": "[parameters('solutionVersion')]"
+          },
+          "location": {
+            "value": "[parameters('grafanalocation')]"
+          },
+          "grafanaName": {
+            "value": "[parameters('grafanaName')]"
+          },
+          "userObjectId": {
+            "value": "[parameters('currentUserIdObject')]"
+          },
+          "lawresourceId": {
+            "value": "[parameters('lawresourceid')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "14367539003115938243"
+            }
+          },
+          "parameters": {
+            "grafanaName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "solutionTag": {
+              "type": "string"
+            },
+            "solutionVersion": {
+              "type": "string"
+            },
+            "userObjectId": {
+              "type": "string"
+            },
+            "utcValue": {
+              "type": "string",
+              "defaultValue": "[utcNow()]"
+            },
+            "lawresourceId": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "lawResourceGroup": "[split(parameters('lawresourceId'), '/')[4]]",
+            "GrafanaAdminRoleId": "22926164-76b3-42b3-bc55-97df8dab3e41",
+            "ReaderRoleId": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+            "LogAnalyticsContribuorRoleId": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+            "MonitoringContributorRoleId": "749f88d5-cbae-40b8-bcfc-e573ddc772fa"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Dashboard/grafana",
+              "apiVersion": "2022-08-01",
+              "name": "[parameters('grafanaName')]",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "storageaccount",
+                "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+              },
+              "sku": {
+                "name": "Standard"
+              },
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[format('Microsoft.Dashboard/grafana/{0}', parameters('grafanaName'))]",
+              "name": "[guid(resourceGroup().id, parameters('grafanaName'), variables('GrafanaAdminRoleId'))]",
+              "properties": {
+                "description": "[format('{0}-GrafanaAdmin-{1}-{2}', parameters('solutionTag'), parameters('userObjectId'), parameters('utcValue'))]",
+                "principalId": "[parameters('userObjectId')]",
+                "principalType": "User",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('GrafanaAdminRoleId'))]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Dashboard/grafana', parameters('grafanaName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "grafanaReadPermissions",
+              "subscriptionId": "[subscription().subscriptionId]",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[reference(resourceId('Microsoft.Dashboard/grafana', parameters('grafanaName')), '2022-08-01', 'full').identity.principalId]"
+                  },
+                  "resourcename": {
+                    "value": "[parameters('grafanaName')]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[variables('ReaderRoleId')]"
+                  },
+                  "roleShortName": {
+                    "value": "Reader"
+                  },
+                  "solutionTag": {
+                    "value": "[parameters('solutionTag')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.20.4.51522",
+                      "templateHash": "9640557259126127493"
+                    }
+                  },
+                  "parameters": {
+                    "resourcename": {
+                      "type": "string"
+                    },
+                    "solutionTag": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "roleShortName": {
+                      "type": "string"
+                    },
+                    "utcValue": {
+                      "type": "string",
+                      "defaultValue": "[utcNow()]"
+                    }
+                  },
+                  "variables": {
+                    "roleIdtoUse": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]"
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2022-04-01",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleDefinitionId'))]",
+                      "properties": {
+                        "description": "[format('{0}-{1}-{2}-{3}', parameters('solutionTag'), parameters('roleShortName'), parameters('resourcename'), parameters('utcValue'))]",
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "ServicePrincipal",
+                        "roleDefinitionId": "[variables('roleIdtoUse')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "roleassignmentname": {
+                      "type": "string",
+                      "value": "[guid(subscription().id, parameters('principalId'), parameters('roleDefinitionId'))]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Dashboard/grafana', parameters('grafanaName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "grafanaLAWPermissions",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[reference(resourceId('Microsoft.Dashboard/grafana', parameters('grafanaName')), '2022-08-01', 'full').identity.principalId]"
+                  },
+                  "resourcename": {
+                    "value": "[parameters('grafanaName')]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[variables('LogAnalyticsContribuorRoleId')]"
+                  },
+                  "roleShortName": {
+                    "value": "Log Analytics Contributor"
+                  },
+                  "solutionTag": {
+                    "value": "[parameters('solutionTag')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.20.4.51522",
+                      "templateHash": "13765506848823263645"
+                    }
+                  },
+                  "parameters": {
+                    "resourcename": {
+                      "type": "string"
+                    },
+                    "solutionTag": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "roleShortName": {
+                      "type": "string"
+                    },
+                    "utcValue": {
+                      "type": "string",
+                      "defaultValue": "[utcNow()]"
+                    }
+                  },
+                  "variables": {
+                    "roleIdtoUse": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]"
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2022-04-01",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleDefinitionId'))]",
+                      "properties": {
+                        "description": "[format('{0}-{1}-{2}-{3}', parameters('solutionTag'), parameters('roleShortName'), parameters('resourcename'), parameters('utcValue'))]",
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "ServicePrincipal",
+                        "roleDefinitionId": "[variables('roleIdtoUse')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "roleassignmentname": {
+                      "type": "string",
+                      "value": "[guid(subscription().id, parameters('principalId'), parameters('roleDefinitionId'))]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Dashboard/grafana', parameters('grafanaName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "grafanaMonitorPermissions",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[reference(resourceId('Microsoft.Dashboard/grafana', parameters('grafanaName')), '2022-08-01', 'full').identity.principalId]"
+                  },
+                  "resourcename": {
+                    "value": "[parameters('grafanaName')]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[variables('MonitoringContributorRoleId')]"
+                  },
+                  "roleShortName": {
+                    "value": "Monitor Contributor Role"
+                  },
+                  "solutionTag": {
+                    "value": "[parameters('solutionTag')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.20.4.51522",
+                      "templateHash": "13765506848823263645"
+                    }
+                  },
+                  "parameters": {
+                    "resourcename": {
+                      "type": "string"
+                    },
+                    "solutionTag": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "roleShortName": {
+                      "type": "string"
+                    },
+                    "utcValue": {
+                      "type": "string",
+                      "defaultValue": "[utcNow()]"
+                    }
+                  },
+                  "variables": {
+                    "roleIdtoUse": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]"
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2022-04-01",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleDefinitionId'))]",
+                      "properties": {
+                        "description": "[format('{0}-{1}-{2}-{3}', parameters('solutionTag'), parameters('roleShortName'), parameters('resourcename'), parameters('utcValue'))]",
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "ServicePrincipal",
+                        "roleDefinitionId": "[variables('roleIdtoUse')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "roleassignmentname": {
+                      "type": "string",
+                      "value": "[guid(subscription().id, parameters('principalId'), parameters('roleDefinitionId'))]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Dashboard/grafana', parameters('grafanaName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "grafanaId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Dashboard/grafana', parameters('grafanaName'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('DCE-{0}-{1}', parameters('solutionTag'), parameters('location'))]",
+      "subscriptionId": "[parameters('subscriptionId')]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "packtag": {
+            "value": "dceMainRegion"
+          },
+          "solutionTag": {
+            "value": "[parameters('solutionTag')]"
+          },
+          "dceName": {
+            "value": "[format('DCE-{0}-{1}', parameters('solutionTag'), parameters('location'))]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "6439354615761736870"
+            }
+          },
+          "parameters": {
+            "dceName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "solutionTag": {
+              "type": "string"
+            },
+            "packtag": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Insights/dataCollectionEndpoints",
+              "apiVersion": "2021-09-01-preview",
+              "name": "[parameters('dceName')]",
+              "location": "[parameters('location')]",
+              "tags": {
+                "[format('{0}', parameters('solutionTag'))]": "[parameters('packtag')]"
+              },
+              "properties": {
+                "networkAcls": {
+                  "publicNetworkAccess": "Enabled"
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "dceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Insights/dataCollectionEndpoints', parameters('dceName'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "packsUserManagedIdentity",
+      "location": "[deployment().location]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "solutionTag": {
+            "value": "[parameters('solutionTag')]"
+          },
+          "solutionVersion": {
+            "value": "[parameters('solutionVersion')]"
+          },
+          "roleDefinitionIds": {
+            "value": "[variables('packPolicyRoleDefinitionIds')]"
+          },
+          "userIdentityName": {
+            "value": "packsUserManagedIdentity"
+          },
+          "mgname": {
+            "value": "[parameters('mgname')]"
+          },
+          "resourceGroupName": {
+            "value": "[parameters('resourceGroupName')]"
+          },
+          "subscriptionId": {
+            "value": "[parameters('subscriptionId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "2392605353847140975"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "solutionTag": {
+              "type": "string"
+            },
+            "solutionVersion": {
+              "type": "string"
+            },
+            "roleDefinitionIds": {
+              "type": "array"
+            },
+            "userIdentityName": {
+              "type": "string"
+            },
+            "mgname": {
+              "type": "string"
+            },
+            "subscriptionId": {
+              "type": "string"
+            },
+            "resourceGroupName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "[parameters('userIdentityName')]",
+              "subscriptionId": "[parameters('subscriptionId')]",
+              "resourceGroup": "[parameters('resourceGroupName')]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "solutionTag": {
+                    "value": "[parameters('solutionTag')]"
+                  },
+                  "solutionVersion": {
+                    "value": "[parameters('solutionVersion')]"
+                  },
+                  "userIdentityName": {
+                    "value": "[parameters('userIdentityName')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.20.4.51522",
+                      "templateHash": "17260189257503072595"
+                    }
+                  },
+                  "parameters": {
+                    "location": {
+                      "type": "string"
+                    },
+                    "solutionTag": {
+                      "type": "string"
+                    },
+                    "solutionVersion": {
+                      "type": "string"
+                    },
+                    "userIdentityName": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                      "apiVersion": "2023-01-31",
+                      "name": "[parameters('userIdentityName')]",
+                      "location": "[parameters('location')]",
+                      "tags": {
+                        "[format('{0}', parameters('solutionTag'))]": "[parameters('userIdentityName')]",
+                        "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "userManagedIdentityPrincipalId": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userIdentityName')), '2023-01-31').principalId]"
+                    },
+                    "userManagedIdentityClientId": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userIdentityName')), '2023-01-31').clientId]"
+                    },
+                    "userManagedIdentityResourceId": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userIdentityName'))]"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "copy": {
+                "name": "userIdentityRoleAssignments",
+                "count": "[length(parameters('roleDefinitionIds'))]"
+              },
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}-{1}', parameters('userIdentityName'), copyIndex())]",
+              "scope": "[format('Microsoft.Management/managementGroups/{0}', parameters('mgname'))]",
+              "location": "[deployment().location]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "resourcename": {
+                    "value": "[parameters('userIdentityName')]"
+                  },
+                  "principalId": {
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName')), '2022-09-01').outputs.userManagedIdentityPrincipalId.value]"
+                  },
+                  "solutionTag": {
+                    "value": "[parameters('solutionTag')]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[parameters('roleDefinitionIds')[copyIndex()]]"
+                  },
+                  "roleShortName": {
+                    "value": "[parameters('roleDefinitionIds')[copyIndex()]]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.20.4.51522",
+                      "templateHash": "6314791387466906825"
+                    }
+                  },
+                  "parameters": {
+                    "resourcename": {
+                      "type": "string"
+                    },
+                    "solutionTag": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "roleShortName": {
+                      "type": "string"
+                    },
+                    "utcValue": {
+                      "type": "string",
+                      "defaultValue": "[utcNow()]"
+                    }
+                  },
+                  "variables": {
+                    "roleIdtoUse": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]"
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2022-04-01",
+                      "name": "[guid(managementGroup().name, parameters('principalId'), parameters('roleDefinitionId'))]",
+                      "properties": {
+                        "description": "[format('{0}-{1}-{2}-{3}', parameters('solutionTag'), parameters('roleShortName'), parameters('resourcename'), parameters('utcValue'))]",
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "ServicePrincipal",
+                        "roleDefinitionId": "[variables('roleIdtoUse')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "roleassignmentname": {
+                      "type": "string",
+                      "value": "[guid(managementGroup().name, parameters('principalId'), parameters('roleDefinitionId'))]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "userManagedIdentityPrincipalId": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName')), '2022-09-01').outputs.userManagedIdentityPrincipalId.value]"
+            },
+            "userManagedIdentityClientId": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName')), '2022-09-01').outputs.userManagedIdentityClientId.value]"
+            },
+            "userManagedIdentityResourceId": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName')), '2022-09-01').outputs.userManagedIdentityResourceId.value]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "functionUserManagedIdentity",
+      "location": "[deployment().location]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "solutionTag": {
+            "value": "[parameters('solutionTag')]"
+          },
+          "solutionVersion": {
+            "value": "[parameters('solutionVersion')]"
+          },
+          "roleDefinitionIds": {
+            "value": "[variables('backendFunctionRoleDefinitionIds')]"
+          },
+          "userIdentityName": {
+            "value": "functionUserManagedIdentity"
+          },
+          "mgname": {
+            "value": "[parameters('mgname')]"
+          },
+          "resourceGroupName": {
+            "value": "[parameters('resourceGroupName')]"
+          },
+          "subscriptionId": {
+            "value": "[parameters('subscriptionId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.20.4.51522",
+              "templateHash": "2392605353847140975"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "solutionTag": {
+              "type": "string"
+            },
+            "solutionVersion": {
+              "type": "string"
+            },
+            "roleDefinitionIds": {
+              "type": "array"
+            },
+            "userIdentityName": {
+              "type": "string"
+            },
+            "mgname": {
+              "type": "string"
+            },
+            "subscriptionId": {
+              "type": "string"
+            },
+            "resourceGroupName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "[parameters('userIdentityName')]",
+              "subscriptionId": "[parameters('subscriptionId')]",
+              "resourceGroup": "[parameters('resourceGroupName')]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "solutionTag": {
+                    "value": "[parameters('solutionTag')]"
+                  },
+                  "solutionVersion": {
+                    "value": "[parameters('solutionVersion')]"
+                  },
+                  "userIdentityName": {
+                    "value": "[parameters('userIdentityName')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.20.4.51522",
+                      "templateHash": "17260189257503072595"
+                    }
+                  },
+                  "parameters": {
+                    "location": {
+                      "type": "string"
+                    },
+                    "solutionTag": {
+                      "type": "string"
+                    },
+                    "solutionVersion": {
+                      "type": "string"
+                    },
+                    "userIdentityName": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                      "apiVersion": "2023-01-31",
+                      "name": "[parameters('userIdentityName')]",
+                      "location": "[parameters('location')]",
+                      "tags": {
+                        "[format('{0}', parameters('solutionTag'))]": "[parameters('userIdentityName')]",
+                        "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "userManagedIdentityPrincipalId": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userIdentityName')), '2023-01-31').principalId]"
+                    },
+                    "userManagedIdentityClientId": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userIdentityName')), '2023-01-31').clientId]"
+                    },
+                    "userManagedIdentityResourceId": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userIdentityName'))]"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "copy": {
+                "name": "userIdentityRoleAssignments",
+                "count": "[length(parameters('roleDefinitionIds'))]"
+              },
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}-{1}', parameters('userIdentityName'), copyIndex())]",
+              "scope": "[format('Microsoft.Management/managementGroups/{0}', parameters('mgname'))]",
+              "location": "[deployment().location]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "resourcename": {
+                    "value": "[parameters('userIdentityName')]"
+                  },
+                  "principalId": {
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName')), '2022-09-01').outputs.userManagedIdentityPrincipalId.value]"
+                  },
+                  "solutionTag": {
+                    "value": "[parameters('solutionTag')]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[parameters('roleDefinitionIds')[copyIndex()]]"
+                  },
+                  "roleShortName": {
+                    "value": "[parameters('roleDefinitionIds')[copyIndex()]]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.20.4.51522",
+                      "templateHash": "6314791387466906825"
+                    }
+                  },
+                  "parameters": {
+                    "resourcename": {
+                      "type": "string"
+                    },
+                    "solutionTag": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "roleShortName": {
+                      "type": "string"
+                    },
+                    "utcValue": {
+                      "type": "string",
+                      "defaultValue": "[utcNow()]"
+                    }
+                  },
+                  "variables": {
+                    "roleIdtoUse": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]"
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2022-04-01",
+                      "name": "[guid(managementGroup().name, parameters('principalId'), parameters('roleDefinitionId'))]",
+                      "properties": {
+                        "description": "[format('{0}-{1}-{2}-{3}', parameters('solutionTag'), parameters('roleShortName'), parameters('resourcename'), parameters('utcValue'))]",
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "ServicePrincipal",
+                        "roleDefinitionId": "[variables('roleIdtoUse')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "roleassignmentname": {
+                      "type": "string",
+                      "value": "[guid(managementGroup().name, parameters('principalId'), parameters('roleDefinitionId'))]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "userManagedIdentityPrincipalId": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName')), '2022-09-01').outputs.userManagedIdentityPrincipalId.value]"
+            },
+            "userManagedIdentityClientId": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName')), '2022-09-01').outputs.userManagedIdentityClientId.value]"
+            },
+            "userManagedIdentityResourceId": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', parameters('userIdentityName')), '2022-09-01').outputs.userManagedIdentityResourceId.value]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "packsUserManagedIdentityId": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', 'packsUserManagedIdentity'), '2022-09-01').outputs.userManagedIdentityPrincipalId.value]"
+    },
+    "packsUserManagedResourceId": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', 'packsUserManagedIdentity'), '2022-09-01').outputs.userManagedIdentityResourceId.value]"
+    }
+  }
+}

@@ -139,7 +139,7 @@ var wbConfig='''
             "id": "9dc796d0-69e4-4687-9055-b451a8beaf74",
             "cellValue": "tabSelection",
             "linkTarget": "parameter",
-            "linkLabel": "PaaS Resources",
+            "linkLabel": "PaaS Resources (Preview)",
             "subTarget": "paas",
             "style": "link"
           },
@@ -179,7 +179,7 @@ var wbConfig='''
             "id": "f46dfd96-b9b5-49f4-a67d-59f5f37a9c37",
             "cellValue": "tabSelection",
             "linkTarget": "parameter",
-            "linkLabel": "ALZ Baseline Info",
+            "linkLabel": "ALZ Baseline Info (Preview)",
             "subTarget": "alzinfo",
             "style": "link"
           },
@@ -189,6 +189,14 @@ var wbConfig='''
             "linkTarget": "parameter",
             "linkLabel": "Backend Status",
             "subTarget": "backend",
+            "style": "link"
+          },
+          {
+            "id": "57d6dfde-3d42-4bd0-baa1-c06972d4c000",
+            "cellValue": "tabSelection",
+            "linkTarget": "parameter",
+            "linkLabel": "Pack Setup (Preview)",
+            "subTarget": "setup",
             "style": "link"
           }
         ]
@@ -206,6 +214,71 @@ var wbConfig='''
         "value": "gettingstarted"
       },
       "name": "text - 14"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "policyresources\n| where type =~ 'Microsoft.Authorization/policyDefinitions'\n| where  isnotempty(properties.metadata.MonitorStarterPacks)\n| extend Pack=tostring(properties.metadata.MonitorStarterPacks)\n| extend policyType=properties.policyRule.then.details.type\n| extend packType=iff(policyType !~ 'Microsoft.Insights/dataCollectionRuleAssociations',\"PaaS\", \"IaaS\")\n| summarize by Pack, packType",
+        "size": 0,
+        "title": "Installed Packs",
+        "queryType": 1,
+        "resourceType": "microsoft.resources/tenants",
+        "crossComponentResources": [
+          "value::tenant"
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "tabSelection",
+        "comparison": "isEqualTo",
+        "value": "setup"
+      },
+      "customWidth": "50",
+      "name": "query - 16",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "externaldata(PackName: string, RequiredTag:string, ModuleType:string, TemplateLocation:string)[    h@'https://raw.githubusercontent.com/Azure/AzureMonitorStarterPacks/main/Packs/packs.json']\nwith(format='multijson', ingestionMapping='[{\\\"PackName\\\":\\\"PackName\\\",\\\"RequiredTag\\\":\\\"RequiredTag\\\", \\\"ModuleType\\\":\\\"ModuleType\\\",\\\"TemplateLocation\\\":\\\"TemplateLocation\\\"}]')\n|extend Deploy=\"Install\"\n| extend TemplateLocation=strcat(\"https://raw.githubusercontent.com/Azure/AzureMonitorStarterPacks/main\",trim('.',TemplateLocation),\"p\")",
+        "size": 0,
+        "title": "Packs available to Install",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Deploy",
+              "formatter": 7,
+              "formatOptions": {
+                "linkTarget": "ArmTemplate",
+                "templateRunContext": {
+                  "componentIdSource": "cell",
+                  "templateUriSource": "column",
+                  "templateUri": "TemplateLocation",
+                  "templateParameters": [],
+                  "titleSource": "static",
+                  "descriptionSource": "static",
+                  "runLabelSource": "static"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "tabSelection",
+        "comparison": "isEqualTo",
+        "value": "setup"
+      },
+      "customWidth": "50",
+      "name": "query - 16 - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
     },
     {
       "type": 12,
