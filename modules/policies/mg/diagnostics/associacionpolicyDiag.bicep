@@ -43,26 +43,6 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         }
         defaultValue: packtag
       }
-      // categoryGroup: {
-      //   type: 'String'
-      //   metadata: {
-      //     displayName: 'Category Group'
-      //     description: 'Diagnostic category group - none, audit, or allLogs.'
-      //   }
-      //   allowedValues: [
-      //     'audit'
-      //     'allLogs'
-      //   ]
-      //   defaultValue: 'allLogs'
-      // }
-      // diagnosticSettingName: {
-      //   type: 'String'
-      //   metadata: {
-      //     displayName: 'Diagnostic Setting Name'
-      //     description: 'Diagnostic Setting Name'
-      //   }
-      //   defaultValue: 'setByPolicy-LogAnalytics'
-      // }
       effect: {
         type: 'String'
         metadata: {

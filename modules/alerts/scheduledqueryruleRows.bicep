@@ -68,7 +68,6 @@ resource rule 'Microsoft.Insights/scheduledQueryRules@2023-03-15-preview' = {
           actionGroupResourceId
         ]
         customProperties: {
-
         }
     }
   }

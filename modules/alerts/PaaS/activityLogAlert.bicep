@@ -17,8 +17,8 @@ param subscriptionId string
 param mgname string
 param assignmentLevel string
 param userManagedIdentityResourceId string
-param resourceTypes array
-
+param resourceType string
+param AGId string
 var parAlertState = 'true'
 
 
@@ -52,6 +52,14 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
               }
               defaultValue: packTag
           }
+          alertDescription: {
+              type: 'String'
+              metadata: {
+                  displayName: 'Description'
+                  description: 'Description for the alert'
+              }
+              defaultValue: alertDescription
+          }
           enabled: {
               type: 'String'
               metadata: {
@@ -80,6 +88,14 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
               }
               defaultValue: parResourceGroupTags
           }
+          actionGroupResourceId: {
+                type: 'String'
+                metadata: {
+                    displayName: 'Action Group Resource Id'
+                    description: 'Resource Id of the action group to be used for the alert'
+                }
+                defaultValue: AGId
+          }
       }
       policyRule: {
           if: {
@@ -99,7 +115,7 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
               details: {
                   roleDefinitionIds: deploymentRoleDefinitionIds
                   type: 'Microsoft.Insights/activityLogAlerts'
-                  name: 'ActivityKeyVaultDelete'
+                  name: alertname
                   existenceScope: 'resourcegroup'
                   resourceGroupName: '[parameters(\'alertResourceGroupName\')]'
                   deploymentScope: 'subscription'
@@ -153,19 +169,31 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
                               '$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#'
                               contentVersion: '1.0.0.0'
                               parameters: {
-                                  alertResourceGroupName: {
-                                      type: 'string'
-                                  }
-                                  alertResourceGroupTags: {
-                                      type: 'object'
-                                  }
-                                  policyLocation: {
-                                      type: 'string'
-                                      defaultValue: policyLocation
-                                  }
-                                  enabled: {
-                                      type: 'string'
-                                  }
+                                alertResourceGroupName: {
+                                    type: 'string'
+                                }
+                                alertResourceGroupTags: {
+                                    type: 'object'
+                                }
+                                policyLocation: {
+                                    type: 'string'
+                                    defaultValue: policyLocation
+                                }
+                                enabled: {
+                                    type: 'string'
+                                }
+                                alertDescription: {
+                                    type: 'string'
+                                }
+                                solutionTag: {
+                                    type: 'string'
+                                }
+                                packTag: {
+                                    type: 'string'
+                                }
+                                actionGroupResourceId: {
+                                    type: 'string'
+                                }
                               }
                               variables: {}
                               resources: [
@@ -179,7 +207,7 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
                                   {
                                       type: 'Microsoft.Resources/deployments'
                                       apiVersion: '2019-10-01'
-                                      name: 'ActivityKeyVaultDelete'
+                                      name: alertname
                                       resourceGroup: '[parameters(\'alertResourceGroupName\')]'
                                       dependsOn: [
                                           '[concat(\'Microsoft.Resources/resourceGroups/\', parameters(\'alertResourceGroupName\'))]'
@@ -190,25 +218,37 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
                                               '$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#'
                                               contentVersion: '1.0.0.0'
                                               parameters: {
-                                                  enabled: {
-                                                      type: 'string'
-                                                  }
-                                                  alertResourceGroupName: {
-                                                      type: 'string'
-                                                  }
+                                                enabled: {
+                                                    type: 'string'
+                                                }
+                                                alertResourceGroupName: {
+                                                    type: 'string'
+                                                }
+                                                alertDescription: {
+                                                    type: 'string'
+                                                }
+                                                solutionTag: {
+                                                    type: 'string'
+                                                }
+                                                packTag: {
+                                                    type: 'string'
+                                                }
+                                                actionGroupResourceId: {
+                                                    type: 'string'
+                                                }
                                               }
                                               variables: {}
                                               resources: [
                                                   {
                                                       type: 'microsoft.insights/activityLogAlerts'
                                                       apiVersion: '2020-10-01'
-                                                      name: 'ActivityKeyVaultDelete'
+                                                      name: alertname
                                                       location: 'global'
                                                       tags: {
                                                          '[parameters(\'solutionTag\')]': '[parameters(\'packTag\')]'
                                                       }
                                                       properties: {
-                                                          description: 'Activity Log Key Vault Delete'
+                                                          description: '[parameters(\'alertDescription\')]'
                                                           enabled: '[parameters(\'enabled\')]'
                                                           scopes: [
                                                               '[subscription().id]'
@@ -231,6 +271,15 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
                                                                   }
                                                               ]
                                                           }
+                                                          actions: {
+                                                            actionGroups: [
+                                                                {
+                                                                    actionGroupId: '[parameters(\'actionGroupResourceId\')]'
+                                                                }
+                                                            ]
+                                                            customProperties: {
+                                                            }
+                                                          }
                                                           parameters: {
                                                               enabled: {
                                                                   value: '[parameters(\'enabled\')]'
@@ -247,6 +296,18 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
                                               alertResourceGroupName: {
                                                   value: '[parameters(\'alertResourceGroupName\')]'
                                               }
+                                              alertDescription: {
+                                                  value: '[parameters(\'alertDescription\')]'
+                                              }
+                                              solutionTag: {
+                                                    value: '[parameters(\'solutionTag\')]'
+                                              }
+                                              packTag: {
+                                                    value: '[parameters(\'packTag\')]'
+                                              }
+                                              actionGroupResourceId: {
+                                                  value: '[parameters(\'actionGroupResourceId\')]'
+                                              }
                                           }
                                       }
                                   }
@@ -262,7 +323,18 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
                               alertResourceGroupTags: {
                                   value: '[parameters(\'alertResourceGroupTags\')]'
                               }
-
+                              alertDescription: {
+                                  value: '[parameters(\'alertDescription\')]'
+                              }
+                              solutionTag: {
+                                value: '[parameters(\'tagName\')]'
+                            }
+                            packTag: {
+                                value: '[parameters(\'tagValue\')]'
+                            }
+                            actionGroupResourceId: {
+                                value: '[parameters(\'actionGroupResourceId\')]'
+                            }
                           }
                       }
                   }
@@ -272,8 +344,8 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
   }
 }
 
-module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for (rt,i) in resourceTypes: {
-  name: guid('${alertname}-${i}-${assignmentSuffix}')
+module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' =  {
+  name: guid('${alertname}-${assignmentSuffix}')
   dependsOn: [
       ActivityLogKeyVaultDeleteAlert
   ]
@@ -282,7 +354,7 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for
     mgname: mgname
     packtag: packTag
     policydefinitionId: ActivityLogKeyVaultDeleteAlert.outputs.resourceId
-    resourceType: rt
+    resourceType: resourceType
     solutionTag: solutionTag
     subscriptionId: subscriptionId 
     userManagedIdentityResourceId: userManagedIdentityResourceId
@@ -290,6 +362,6 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for
     policyType: 'alert'
     assignmentSuffix: assignmentSuffix
   }
-}]
+}
 
 output policyResourceId string = ActivityLogKeyVaultDeleteAlert.outputs.resourceId

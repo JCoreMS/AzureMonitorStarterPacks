@@ -3,11 +3,12 @@ param solutionTag string
 param packTag string
 param subscriptionId string
 param mgname string
-param resourceTypes array
+param resourceType string
 param policyLocation string
 param parResourceGroupName string
 param assignmentLevel string
 param userManagedIdentityResourceId string
+param AGId string
 
 param deploymentRoleDefinitionIds array = [
     '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c'
@@ -26,7 +27,7 @@ module ActivityLogKeyVaultDeleteAlert '../../../modules/alerts/PaaS/activityLogA
         packTag: packTag
         parResourceGroupName: parResourceGroupName
         parResourceGroupTags: parResourceGroupTags
-        resourceTypes: resourceTypes
+        resourceType: resourceType
         solutionTag: solutionTag
         subscriptionId: subscriptionId
         userManagedIdentityResourceId: userManagedIdentityResourceId
@@ -35,6 +36,7 @@ module ActivityLogKeyVaultDeleteAlert '../../../modules/alerts/PaaS/activityLogA
         alertDisplayName: '[AMSP] Deploy Activity Log Key Vault Delete Alert'
         alertDescription: 'AMSP policy to Deploy Activity Log Key Vault Delete Alert'
         assignmentSuffix: 'ActKVDel'
+        AGId: AGId
     }
 }
 module KeyVaultLatencyAlert '../../../modules/alerts/PaaS/metricAlert.bicep' = {
@@ -44,7 +46,7 @@ module KeyVaultLatencyAlert '../../../modules/alerts/PaaS/metricAlert.bicep' = {
         policyLocation: policyLocation
         mgname: mgname
         packTag: packTag
-        resourceTypes: resourceTypes
+        resourceType: resourceType
         solutionTag: solutionTag
         subscriptionId: subscriptionId
         userManagedIdentityResourceId: userManagedIdentityResourceId
@@ -61,6 +63,7 @@ module KeyVaultLatencyAlert '../../../modules/alerts/PaaS/metricAlert.bicep' = {
         parWindowSize: 'PT15M'
         parThreshold: '1000'
         assignmentSuffix: 'ActKVLat'
+        AGId: AGId
     }
 }
 

@@ -16,9 +16,10 @@ param subscriptionId string
 param mgname string
 param assignmentLevel string
 param userManagedIdentityResourceId string
-param resourceTypes array
+param resourceType string
 
 param metricNamespace string
+param AGId string
 
 param policyLocation string
 param deploymentRoleDefinitionIds array = [
@@ -199,6 +200,22 @@ module metricAlert '../../alz/deploy.bicep' = {
                 ]
                 defaultValue: parPolicyEffect
             }
+            alertDescription: {
+                type: 'String'
+                metadata: {
+                    displayName: 'Description'
+                    description: 'Description for the alert'
+                }
+                defaultValue: alertDescription
+            }
+            actionGroupResourceId: {
+                type: 'String'
+                metadata: {
+                    displayName: 'Action Group Resource Id'
+                    description: 'Action Group Resource Id for the alert'
+                }
+                defaultValue: AGId
+            }
             // MonitorDisable: {
             //     type: 'String'
             //     metadata: {
@@ -214,7 +231,7 @@ module metricAlert '../../alz/deploy.bicep' = {
                 allOf: [
                     {
                         field: 'type'
-                        equals: 'microsoft.keyvault/vaults'
+                        equals: resourceType
                     }
                     {
                         field: '[concat(\'tags[\', parameters(\'tagName\'), \']\')]'
@@ -275,7 +292,7 @@ module metricAlert '../../alz/deploy.bicep' = {
                                           description: 'Metric namespace of the metric that will be used for the comparison'
                                       }
                                     }
-                                    description: {
+                                    alertDescription: {
                                         type: 'String'
                                         metadata: {
                                             displayName: 'description'
@@ -300,6 +317,15 @@ module metricAlert '../../alz/deploy.bicep' = {
                                     threshold: {
                                         type: 'String'
                                     }
+                                    solutionTag: {
+                                        type: 'string'
+                                    }
+                                    packTag: {
+                                        type: 'string'
+                                    }
+                                    actionGroupResourceId :{
+                                        type: 'string'
+                                    }
                                 }
                                 variables: {}
                                 resources: [
@@ -312,7 +338,7 @@ module metricAlert '../../alz/deploy.bicep' = {
                                             '[parameters(\'solutionTag\')]': '[parameters(\'packTag\')]'
                                         }
                                         properties: {
-                                            description: '[parameters(\'description\')]'
+                                            description: '[parameters(\'alertDescription\')]'
                                             severity: '[parameters(\'severity\')]'
                                             enabled: '[parameters(\'enabled\')]'
                                             scopes: [
@@ -335,30 +361,41 @@ module metricAlert '../../alz/deploy.bicep' = {
                                                 'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'
                                             }
                                             autoMitigate: '[parameters(\'autoMitigate\')]'
+                                            actions: [
+                                                {
+                                                    actionGroupId: '[parameters(\'actionGroupResourceId\')]'
+                                                }
+                                            ]
                                             parameters: {
                                                 severity: {
-                                                    value: '[parameters(\'severity\')]'
+                                                    type: 'string'
                                                 }
                                                 windowSize: {
-                                                    value: '[parameters(\'windowSize\')]'
+                                                    type: 'string'
                                                 }
                                                 evaluationFrequency: {
-                                                    value: '[parameters(\'evaluationFrequency\')]'
+                                                    type: 'string'
                                                 }
                                                 autoMitigate: {
-                                                    value: '[parameters(\'autoMitigate\')]'
+                                                    type: 'string'
                                                 }
                                                 enabled: {
-                                                    value: '[parameters(\'enabled\')]'
+                                                    type: 'string'
                                                 }
                                                 threshold: {
-                                                    value: '[parameters(\'threshold\')]'
+                                                    type: 'string'
                                                 }
                                                 metricNamespace: {
-                                                    value: '[parameters(\'metricNamespace\')]'
+                                                    type: 'string'
                                                 }
-                                                description: {
-                                                    value: '[parameters(\'description\')]'
+                                                alertDescription: {
+                                                    type: 'string'
+                                                }
+                                                solutionTag: {
+                                                    type: 'string'
+                                                }
+                                                packTag: {
+                                                    type: 'string'
                                                 }
                                             }
                                         }
@@ -393,6 +430,19 @@ module metricAlert '../../alz/deploy.bicep' = {
                                 metricNamespace: {
                                     value: '[parameters(\'metricNamespace\')]'
                                 }
+                                alertDescription: {
+                                    value: '[parameters(\'alertDescription\')]'
+                                }
+                                solutionTag: {
+                                    value: '[parameters(\'tagName\')]'
+
+                                }
+                                packTag: {
+                                    value: '[parameters(\'tagValue\')]'
+                                }
+                                actionGroupResourceId: {
+                                    value: '[parameters(\'actionGroupResourceId\')]'
+                                }
                             }
                         }
                     }
@@ -402,8 +452,8 @@ module metricAlert '../../alz/deploy.bicep' = {
     }
 }
 
-module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for (rt,i) in resourceTypes: {
-  name: guid('${alertname}-${i}-${assignmentSuffix}')
+module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = {
+  name: guid('${alertname}-${assignmentSuffix}')
   dependsOn: [
     metricAlert
   ]
@@ -412,7 +462,7 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for
     mgname: mgname
     packtag: packTag
     policydefinitionId: metricAlert.outputs.resourceId
-    resourceType: rt
+    resourceType: resourceType
     solutionTag: solutionTag
     subscriptionId: subscriptionId 
     userManagedIdentityResourceId: userManagedIdentityResourceId
@@ -420,6 +470,6 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for
     policyType: 'alert'
     assignmentSuffix: assignmentSuffix
   }
-}]
+}
 
 output policyResourceId string = metricAlert.outputs.resourceId
