@@ -62,7 +62,7 @@ var xPathQueries=[
 ]
 // The performance counters define which counters are collected
 var performanceCounters=[
-  '\\DNS(_Total)\\Recursive Queries/sec'
+  '\\Web Service(_Total)\\Bytes Received/sec'
   '\\Web Service(_Total)\\Bytes Sent/sec'
   '\\Web Service(_Total)\\Bytes Total/sec'
   '\\Web Service(_Total)\\Connection Attempts/sec'
