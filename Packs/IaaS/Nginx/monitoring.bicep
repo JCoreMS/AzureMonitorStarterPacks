@@ -101,3 +101,31 @@ module policysetup '../../../modules/policies/mg/policies.bicep' = {
     subscriptionId: subscriptionId
   }
 }
+
+//New stuff - VM Application
+module nginxcollector '../../../modules/aig/aigapp.bicep' = {
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  name: 'nginxcollector-${packtag}'
+  params: {
+    aigname: 'monstargallery'
+    appDescription: 'Nginx MonStar Collector'
+    appName: 'nginxmonstarcollector'
+    location: location
+    osType: 'Linux'
+  }
+}
+
+module ngnixcolv1 '../../../modules/aig/aigappversion.bicep' = {
+  name: 'nginxcollectorv1-${packtag}'
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  params: {
+    aigname: 'monstargallery'
+    appName: 'nginxmonstarcollector'
+    appVersionName: 'nginxmonstarcollectorv1'
+    location: location
+    targetRegion: location
+    mediaLink: 'https://azmonstarpacksgvap.blob.core.windows.net/discovery/amspdiscovery.deb?sp=r&se=2023-09-07T22:06:50Z&sv=2022-11-02&sr=b&sig=VY9z%2FD9%2B7PRKLk28v7i8WIdS0SfRtpmFeWLt3OYKsU8%3D'
+    installCommands: 'cd /tmp && sudo apt install ./amspcol.deb -y && ./install.sh'
+    removeCommands: 'sudo apt remove amspcol -y'
+  }
+}

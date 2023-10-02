@@ -56,6 +56,14 @@ var backendFunctionRoleDefinitionIds = [
 //   signedProtocol: 'https'
 //   keyToSign: 'key2'
 // }
+module gallery 'modules/aig.bicep' = {
+  name: 'gallery'
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  params: {
+    galleryname: 'monstargallery'
+    location: location
+  }
+}
 
 // Module below implements function, storage account, and app insights
 module backendFunction 'modules/function.bicep' = {
