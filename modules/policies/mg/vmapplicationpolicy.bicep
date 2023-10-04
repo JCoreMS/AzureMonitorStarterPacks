@@ -111,11 +111,14 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
                     type: 'string'
                   }
                 }
+                variables: {
+                  vmApplicationName: vmApplicationName
+                }
                 resources: [
                   {
                     apiVersion: '2021-07-01'
                     type: 'Microsoft.Compute/virtualMachines/VMapplications'
-                    name: '[parameters(\'vmName\')]/nginxcollector'
+                    name: '[concat(parameters(\'vmName\'), \'/\',variables(\'vmApplicationName\')]'
                     location: '[parameters(\'location\')]'
                     properties: {
                       packageReferenceId: '[parameters(\'vmapplicationId\')]'
