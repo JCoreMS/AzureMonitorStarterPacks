@@ -62,6 +62,17 @@ resource discoveryStorage 'Microsoft.Storage/storageAccounts@2021-06-01' = {
         publicAccess: 'None'
       }
     }
+    resource container2 'containers'={
+      name: 'packs'
+      properties: {
+        immutableStorageWithVersioning: {
+            enabled: false
+        }
+        denyEncryptionScopeOverride: false
+        defaultEncryptionScope: '$account-encryption-key'
+        publicAccess: 'None'
+      }
+    }
   }
 }
 

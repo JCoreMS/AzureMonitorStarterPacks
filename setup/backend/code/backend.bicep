@@ -60,7 +60,7 @@ module gallery 'modules/aig.bicep' = {
   name: 'gallery'
   scope: resourceGroup(subscriptionId, resourceGroupName)
   params: {
-    galleryname: 'monstargallery'
+    galleryname: 'monstargallery2'
     location: location
   }
 }

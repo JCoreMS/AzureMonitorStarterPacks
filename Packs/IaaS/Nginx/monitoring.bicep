@@ -18,11 +18,10 @@ param mgname string // this the last part of the management group id
 param subscriptionId string
 param resourceGroupId string
 param assignmentLevel string
+param storageAccountname string
 
 var ruleshortname = 'Nginx'
-
 var resourceGroupName = split(resourceGroupId, '/')[4]
-
 var facilityNames = [
   'daemon'
 ]
@@ -107,7 +106,7 @@ module nginxcollector '../../../modules/aig/aigapp.bicep' = {
   scope: resourceGroup(subscriptionId, resourceGroupName)
   name: 'nginxcollector-${packtag}'
   params: {
-    aigname: 'monstargallery'
+    aigname: 'monstargallery2'
     appDescription: 'Nginx MonStar Collector'
     appName: 'nginxmonstarcollector'
     location: location
@@ -115,17 +114,47 @@ module nginxcollector '../../../modules/aig/aigapp.bicep' = {
   }
 }
 
+module upload 'uploadDS.bicep' = {
+  name: 'upload-${packtag}'
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  params: {
+    containerName: 'packs'
+    fileURL: 'https://github.com/FehseCorp/AzureMonitorStarterPacks/raw/imagegallery/Packs/IaaS/Nginx/amspcol.deb'
+    storageAccountName: storageAccountname
+    location: location
+    solutionTag: solutionTag
+    solutionVersion: solutionVersion
+  }
+}
+
 module ngnixcolv1 '../../../modules/aig/aigappversion.bicep' = {
   name: 'nginxcollectorv1-${packtag}'
   scope: resourceGroup(subscriptionId, resourceGroupName)
+  dependsOn: [
+    nginxcollector
+  ]
   params: {
-    aigname: 'monstargallery'
+    aigname: 'monstargallery2'
     appName: 'nginxmonstarcollector'
-    appVersionName: 'nginxmonstarcollectorv1'
+    appVersionName: '1.0.1'
     location: location
     targetRegion: location
-    mediaLink: 'https://azmonstarpacksgvap.blob.core.windows.net/discovery/amspdiscovery.deb?sp=r&se=2023-09-07T22:06:50Z&sv=2022-11-02&sr=b&sig=VY9z%2FD9%2B7PRKLk28v7i8WIdS0SfRtpmFeWLt3OYKsU8%3D'
+    mediaLink: upload.outputs.fileURL
     installCommands: 'cd /tmp && sudo apt install ./amspcol.deb -y && ./install.sh'
     removeCommands: 'sudo apt remove amspcol -y'
+  }
+}
+module applicationPolicy '../../../modules/policies/mg/vmapplicationpolicy.bicep' = {
+  name: 'applicationPolicy-${packtag}'
+  params: {
+    packtag: packtag
+    policyDescription: 'Install nginx collector to tagged VMs'
+    policyName: 'nginxcollector'
+    policyDisplayName: 'Install nginx collector'
+    solutionTag: solutionTag
+    vmapplicationResourceId: ngnixcolv1.outputs.appVersionId
+    roledefinitionIds: [
+      '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
+    ]
   }
 }
