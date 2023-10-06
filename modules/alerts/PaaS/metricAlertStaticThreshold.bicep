@@ -20,6 +20,8 @@ param resourceType string
 
 param metricNamespace string
 param AGId string
+param metricName string
+param operator string
 
 param policyLocation string
 param deploymentRoleDefinitionIds array = [
@@ -79,8 +81,8 @@ module metricAlert '../../alz/deploy.bicep' = {
         location: policyLocation
         metadata: {
             version: '1.0.0'
-            Category: 'Key Vault'
-            source: 'https://github.com/Azure/ALZ-Monitor/'
+            Category: 'Monitoring'
+            source: 'https://github.com/Azure/AzureMonitorStarterPacks'
             '${solutionTag}': packTag
         }
         parameters: {
@@ -188,6 +190,35 @@ module metricAlert '../../alz/deploy.bicep' = {
                 }
                 defaultValue: metricNamespace
             }
+            metricName: {
+                type: 'String'
+                metadata: {
+                    displayName: 'Metric Name'
+                    description: 'Metric Name for the alert'
+                }
+                defaultValue: metricName
+            }
+            operator: {
+                type: 'String'
+                metadata: {
+                    displayName: 'Operator'
+                    description: 'Operator for the alert'
+                }
+                allowedValues: [
+                    'GreaterThan'
+                    'LessThan'
+                    'GreaterOrLessThan'
+                ]
+                defaultValue: operator
+            }
+            alertname: {
+                type: 'String'
+                metadata: {
+                    displayName: 'Operator'
+                    description: 'Operator for the alert'
+                }
+                defaultValue: alertname
+            }
             effect: {
                 type: 'String'
                 metadata: {
@@ -248,15 +279,15 @@ module metricAlert '../../alz/deploy.bicep' = {
                         allOf: [
                             {
                                 field: 'Microsoft.Insights/metricAlerts/criteria.Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria.allOf[*].metricNamespace'
-                                equals: 'microsoft.keyvault/vaults'
+                                equals: '[parameters(\'metricNamespace\')]'
                             }
                             {
                                 field: 'Microsoft.Insights/metricAlerts/criteria.Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria.allOf[*].metricName'
-                                equals: 'ServiceApiLatency'
+                                equals: '[parameters(\'metricName\')]'
                             }
                             {
                                 field: 'Microsoft.Insights/metricalerts/scopes[*]'
-                                equals: '[concat(subscription().id, \'/resourceGroups/\', resourceGroup().name, \'/providers/microsoft.keyvault/vaults/\', field(\'fullName\'))]'
+                                equals: '[concat(subscription().id, \'/resourceGroups/\', resourceGroup().name, \'/providers/\',parameters(\'metricNamespace\'),\'/\',field(\'fullName\'))]'
                             }
                             {
                                 field: 'Microsoft.Insights/metricAlerts/enabled'
@@ -291,6 +322,27 @@ module metricAlert '../../alz/deploy.bicep' = {
                                           displayName: 'metricNamespace'
                                           description: 'Metric namespace of the metric that will be used for the comparison'
                                       }
+                                    }
+                                    metricName : {
+                                        type: 'String'
+                                        metadata: {
+                                            displayName: 'metricName'
+                                            description: 'Metric Name that will be used for the comparison'
+                                        }
+                                    }
+                                    operator : {
+                                        type: 'String'
+                                        metadata: {
+                                            displayName: 'operator'
+                                            description: 'alert operator for metric threshold compatirson, like GreaterThan, LessThan, GreaterOrLessThan'
+                                        }
+                                    }
+                                    alertname : {
+                                        type: 'String'
+                                        metadata: {
+                                            displayName: 'alertname'
+                                            description: 'Name of the alert'
+                                        }
                                     }
                                     alertDescription: {
                                         type: 'String'
@@ -332,7 +384,7 @@ module metricAlert '../../alz/deploy.bicep' = {
                                     {
                                         type: 'Microsoft.Insights/metricAlerts'
                                         apiVersion: '2018-03-01'
-                                        name: '[concat(parameters(\'resourceName\'), \'-LatencyAlert\')]'
+                                        name: '[parameters(\'alertname\')]'
                                         location: 'global'
                                         tags: {
                                             '[parameters(\'solutionTag\')]': '[parameters(\'packTag\')]'
@@ -349,10 +401,10 @@ module metricAlert '../../alz/deploy.bicep' = {
                                             criteria: {
                                                 allOf: [
                                                     {
-                                                        name: 'ServiceApiLatency'
+                                                        name: '[parameters(\'metricName\')]'
                                                         metricNamespace: '[parameters(\'metricNamespace\')]'
-                                                        metricName: 'ServiceApiLatency'
-                                                        operator: 'GreaterThan'
+                                                        metricName: '[parameters(\'metricName\')]'
+                                                        operator: '[parameters(\'operator\')]'
                                                         threshold: '[parameters(\'threshold\')]'
                                                         timeAggregation: 'Average'
                                                         criterionType: 'StaticThresholdCriterion'
@@ -386,6 +438,15 @@ module metricAlert '../../alz/deploy.bicep' = {
                                                     type: 'string'
                                                 }
                                                 metricNamespace: {
+                                                    type: 'string'
+                                                }
+                                                metricName: {
+                                                    type: 'string'
+                                                }
+                                                operator: {
+                                                    type: 'string'
+                                                }
+                                                alertname: {
                                                     type: 'string'
                                                 }
                                                 alertDescription: {
@@ -430,12 +491,20 @@ module metricAlert '../../alz/deploy.bicep' = {
                                 metricNamespace: {
                                     value: '[parameters(\'metricNamespace\')]'
                                 }
+                                metricName: {
+                                    value: '[parameters(\'metricName\')]'
+                                }
+                                operator: {
+                                    value: '[parameters(\'operator\')]'
+                                }
+                                alertname: {
+                                    value: '[parameters(\'alertname\')]'
+                                }
                                 alertDescription: {
                                     value: '[parameters(\'alertDescription\')]'
                                 }
                                 solutionTag: {
                                     value: '[parameters(\'tagName\')]'
-
                                 }
                                 packTag: {
                                     value: '[parameters(\'tagValue\')]'

@@ -6,6 +6,7 @@ var resourceTypes = [
   'Microsoft.Network/vpngateways'
   'Microsoft.Network/expressRouteGateways'
 ]
+
 param location string //= resourceGroup().location
 param subscriptionId string
 param userManagedIdentityResourceId string
@@ -70,3 +71,20 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for
     policyType: 'diag'
   }
 }]
+
+
+module vWanAlerts 'alerts.bicep' = {
+  name: 'Keyvault-Alerts'
+  params: {
+    packTag: packtag
+    policyLocation: location
+    solutionTag: solutionTag
+    parResourceGroupName: resourceGroupName
+    subscriptionId: subscriptionId
+    mgname: mgname
+    resourceType: 'Microsoft.Network/vpngateways'
+    assignmentLevel: assignmentLevel
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+    AGId: ag.outputs.actionGroupResourceId
+  }
+}

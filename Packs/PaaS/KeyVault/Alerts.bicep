@@ -39,7 +39,7 @@ module ActivityLogKeyVaultDeleteAlert '../../../modules/alerts/PaaS/activityLogA
         AGId: AGId
     }
 }
-module KeyVaultLatencyAlert '../../../modules/alerts/PaaS/metricAlert.bicep' = {
+module KeyVaultLatencyAlert '../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
     name: '${uniqueString(deployment().name)}-KeyVaultLatency'
     params: {
         assignmentLevel: assignmentLevel
@@ -64,6 +64,8 @@ module KeyVaultLatencyAlert '../../../modules/alerts/PaaS/metricAlert.bicep' = {
         parThreshold: '1000'
         assignmentSuffix: 'ActKVLat'
         AGId: AGId
+        metricName: 'ServiceApiLatency'
+        operator: 'GreaterThan'
     }
 }
 
