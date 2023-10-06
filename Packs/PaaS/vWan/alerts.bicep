@@ -17,6 +17,44 @@ param parResourceGroupTags object = {
   environment: 'test'
 }
 param parAlertState string = 'true'
+param location string
+param workspaceId string
+param solutionVersion string
+
+param moduleprefix string = 'vWan'
+
+// LAW based diagnostic settings alerts
+
+// Alert list
+
+var alertlist = [
+  {
+      alertRuleDescription: 'Tunnel disconnect'
+      alertRuleDisplayName: 'Tunnel disconnect'
+      alertRuleName:'vWan-TunnelDisconnect'
+      alertRuleSeverity:1
+      autoMitigate: false
+      evaluationFrequency: 'PT5M'
+      windowSize: 'PT5M'
+      alertType: 'rows'
+      query: 'AzureDiagnostics | where Category == "TunnelDiagnosticLog" | where OperationName == "TunnelDisconnected"'
+  }
+]
+
+module loganalyticsalerts '../../../modules/alerts/alerts.bicep' = {
+  name: '${moduleprefix}-Alerts'
+  scope: resourceGroup(subscriptionId, parResourceGroupName)
+  params: {
+    alertlist: alertlist
+    AGId: AGId
+    location: location
+    moduleprefix: moduleprefix
+    packtag: packTag
+    solutionTag: solutionTag
+    solutionVersion: solutionVersion
+    workspaceId: workspaceId
+  }
+}
 
 module vWanPacketEgressDropCountAlert '../../../modules/alerts/PaaS/metricAlertDynamic.bicep' = {
   name: '${uniqueString(deployment().name)}-vWanPacketDrop'
@@ -167,3 +205,6 @@ module BGPPeerStatus '../../../modules/alerts/PaaS/metricAlertStaticThreshold.bi
       operator: 'LessThan'
   }
 }
+
+
+

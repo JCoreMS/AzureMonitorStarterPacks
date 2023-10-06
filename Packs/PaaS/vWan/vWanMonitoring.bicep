@@ -86,5 +86,8 @@ module vWanAlerts 'alerts.bicep' = {
     assignmentLevel: assignmentLevel
     userManagedIdentityResourceId: userManagedIdentityResourceId
     AGId: ag.outputs.actionGroupResourceId
+    solutionVersion: solutionVersion
+    location: location
+    workspaceId: workspaceId
   }
 }
