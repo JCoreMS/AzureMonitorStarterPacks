@@ -1,0 +1,5 @@
+Package: amspdiscovery
+Version: 0.1
+Maintainer: Microsoft
+Architecture: all
+Description: Microsoft - AMSP Discovery Collector
