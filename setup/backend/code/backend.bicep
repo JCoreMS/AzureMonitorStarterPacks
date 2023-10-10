@@ -21,6 +21,7 @@ param solutionVersion string
 param subscriptionId string
 param resourceGroupName string
 param mgname string
+var linuxDiscoveryTag = 'LxOS'
 
 var packPolicyRoleDefinitionIds=[
   '749f88d5-cbae-40b8-bcfc-e573ddc772fa' // Monitoring Contributor Role Definition Id for Monitoring Contributor
@@ -169,6 +170,68 @@ module functionUserManagedIdentity 'modules/userManagedIdentity.bicep' = {
     subscriptionId: subscriptionId
   }
 }
+//Adding vm application deployment to discover roles in Linux boxes tagged with LxOS
+
+//New stuff - VM Application
+module nginxcollector '../../../modules/aig/aigapp.bicep' = {
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  name: 'discovery-${linuxDiscoveryTag}'
+  params: {
+    aigname: 'monstargallery2'
+    appDescription: 'Nginx MonStar Collector'
+    appName: 'nginxmonstarcollector'
+    location: location
+    osType: 'Linux'
+  }
+}
+
+module upload './modules/uploadDS.bicep' = {
+  name: 'upload-${linuxDiscoveryTag}'
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  params: {
+    containerName: 'packs'
+    fileURL: 'https://github.com/FehseCorp/AzureMonitorStarterPacks/raw/imagegallery/setup/backend/discovery/linux/amspdiscovery.deb'
+    storageAccountName: storageAccountName
+    location: location
+    solutionTag: solutionTag
+    solutionVersion: solutionVersion
+  }
+}
+
+module ngnixcolv1 '../../../modules/aig/aigappversion.bicep' = {
+  name: 'nginxcollectorv1-${linuxDiscoveryTag}'
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  dependsOn: [
+    nginxcollector
+  ]
+  params: {
+    aigname: 'monstargallery2'
+    appName: 'amspdiscovery'
+    appVersionName: '1.0.0'
+    location: location
+    targetRegion: location
+    mediaLink: upload.outputs.fileURL
+    installCommands: 'cd /tmp && sudo apt install ./amspdiscovery.deb -y '
+    removeCommands: 'sudo apt remove amspdiscovery -y'
+  }
+}
+
+module applicationPolicy '../../../modules/policies/mg/vmapplicationpolicy.bicep' = {
+  name: 'applicationPolicy-${linuxDiscoveryTag}'
+  params: {
+    packtag: linuxDiscoveryTag
+    policyDescription: 'Install discovery collector to tagged VMs'
+    policyName: 'linuxDiscoveryCollectorPolicy'
+    policyDisplayName: 'Linux Discovery Collector Policy'
+    solutionTag: solutionTag
+    vmapplicationResourceId: ngnixcolv1.outputs.appVersionId
+    roledefinitionIds: [
+      '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
+    ]
+  }
+}
+
+
 
 output packsUserManagedIdentityId string = packsUserManagedIdentity.outputs.userManagedIdentityPrincipalId
 output packsUserManagedResourceId string = packsUserManagedIdentity.outputs.userManagedIdentityResourceId

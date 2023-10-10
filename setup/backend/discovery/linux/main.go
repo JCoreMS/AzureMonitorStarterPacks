@@ -9,8 +9,7 @@ import (
 	"time"
 )
 
-func CollectPackages() error {
-
+func CollectPackages(path string) error {
 	cmd := exec.Command("dpkg-query", "-W", "-f=${Package},${Architecture},${Version}\n")
 	// Capture the output of the command
 	output, err := cmd.Output()
@@ -39,8 +38,9 @@ func CollectPackages() error {
 		// Append the package information to the slice of slices
 		packages = append(packages, []string{time.Now().Format("2006-01-02T15:04:05"), name, platform, version})
 	}
+	filepath := path + "packages.csv"
 	// Open or create a CSV file to append the package information
-	file, err := os.OpenFile("packages.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Println(err)
 		return nil
@@ -68,5 +68,12 @@ func CollectPackages() error {
 	return nil
 }
 func main() {
-	CollectPackages()
+	if len(os.Args) < 2 {
+		fmt.Println("Please enter a path")
+		return
+	} else {
+		path := os.Args[1]
+		CollectPackages(path)
+	}
+
 }

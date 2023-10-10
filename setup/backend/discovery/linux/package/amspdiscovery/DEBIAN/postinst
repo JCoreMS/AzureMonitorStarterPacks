@@ -1,0 +1,3 @@
+sudo mkdir /opt/microsoft/amspdiscovery
+mv amspdiscovery /opt/microsoft/amspdiscovery/
+(sudo crontab -l 2>/dev/null; echo "0 * * * * /opt/amspdiscovery") | sudo crontab -
