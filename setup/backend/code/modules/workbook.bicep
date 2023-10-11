@@ -68,7 +68,7 @@ var wbConfig='''
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "value": "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/amonstarterpacks3/providers/Microsoft.Logic/workflows/MonitorStarterPacks-Backend"
+            "value": "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/monstar-rg/providers/Microsoft.Logic/workflows/MonitorStarterPacks-Backend"
           },
           {
             "id": "4552c35d-c26c-4cbf-a4cf-b2e57ff7ee78",
@@ -366,7 +366,7 @@ var wbConfig='''
                         },
                         "queryType": 1,
                         "resourceType": "microsoft.resourcegraph/resources",
-                        "value": "IIS2016"
+                        "value": null
                       }
                     ],
                     "style": "pills",
@@ -910,7 +910,7 @@ var wbConfig='''
                   },
                   "queryType": 1,
                   "resourceType": "microsoft.resources/tenants",
-                  "value": "DNS2016"
+                  "value": "vWan"
                 }
               ],
               "style": "pills",
@@ -1795,7 +1795,7 @@ var wbConfig='''
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "policyresources | where type == \"microsoft.policyinsights/policystates\" | extend policyName=tostring(properties.policyDefinitionName), complianceState=properties.complianceState\n| join (policyresources | where type == \"microsoft.authorization/policydefinitions\" and isnotempty(properties.metadata.MonitorStarterPacks) | project policyId=id, policyName=name, pack=tostring(properties.metadata.MonitorStarterPacks)) on policyName\n| project policyId, policyName, complianceState=tostring(complianceState), pack,type='Policy'\n| union( policyresources\n| where type =~ 'Microsoft.PolicyInsights/PolicyStates'\n| extend complianceState = tostring(properties.complianceState)\n| extend\n\tresourceId = tostring(properties.resourceId),\n\tpolicyAssignmentId = tostring(properties.policyAssignmentId),\n\tpolicyAssignmentScope = tostring(properties.policyAssignmentScope),\n\tpolicyAssignmentName = tostring(properties.policyAssignmentName),\n\tpolicyDefinitionId = tostring(properties.policyDefinitionId),\n    policySetDefinitionId=tostring(properties.policySetDefinitionId),\n\tpolicyDefinitionReferenceId = tostring(properties.policyDefinitionReferenceId),\n\tstateWeight = iff(complianceState == 'NonCompliant', int(300), iff(complianceState == 'Compliant', int(200), iff(complianceState == 'Conflict', int(100), iff(complianceState == 'Exempt', int(50), int(0)))))\n| summarize max(stateWeight) by resourceId, policyAssignmentId, policyAssignmentScope, policyAssignmentName,policySetDefinitionId\n| summarize counts = count() by policyAssignmentId, policyAssignmentScope, max_stateWeight, policyAssignmentName,policySetDefinitionId\n| summarize overallStateWeight = max(max_stateWeight),\nnonCompliantCount = sumif(counts, max_stateWeight == 300),\ncompliantCount = sumif(counts, max_stateWeight == 200),\nconflictCount = sumif(counts, max_stateWeight == 100),\nexemptCount = sumif(counts, max_stateWeight == 50) by policyAssignmentId, policyAssignmentScope, policyAssignmentName,policySetDefinitionId\n| extend totalResources = todouble(nonCompliantCount + compliantCount + conflictCount + exemptCount)\n| extend compliancePercentage = iff(totalResources == 0, todouble(100), 100 * todouble(compliantCount + exemptCount) / totalResources)\n| project policyAssignmentName, scope = policyAssignmentScope,policySetDefinitionId,\ncomplianceState = iff(overallStateWeight == 300, 'nonCompliant', iff(overallStateWeight == 200, 'Compliant', iff(overallStateWeight == 100, 'conflict', iff(overallStateWeight == 50, 'exempt', 'notstarted')))),\ncompliancePercentage,\ncompliantCount,\nnonCompliantCount,\nconflictCount,\nexemptCount\n| where isnotempty(policySetDefinitionId)\n| join (policyresources\n| where type =~ 'microsoft.authorization/policysetdefinitions' and isnotempty(properties.metadata.MonitorStarterPacks)\n| extend policySetDefinitionId=tostring(id)) on policySetDefinitionId\n| project policyId=policySetDefinitionId, policyName=name,complianceState,pack='N/A', type='Set')",
+              "query": "policyresources | where type == \"microsoft.policyinsights/policystates\" | extend policyName=tostring(properties.policyDefinitionName), complianceState=properties.complianceState\n| join (policyresources | where type == \"microsoft.authorization/policydefinitions\" and isnotempty(properties.metadata.MonitorStarterPacks) | project policyId=id, policyName=name, pack=tostring(properties.metadata.MonitorStarterPacks)) on policyName\n| project policyId, policyName, complianceState=tostring(complianceState), pack,type='Policy'\n| union( policyresources\n| where type =~ 'Microsoft.PolicyInsights/PolicyStates'\n| extend complianceState = tostring(properties.complianceState)\n| extend\n\tresourceId = tostring(properties.resourceId),\n\tpolicyAssignmentId = tostring(properties.policyAssignmentId),\n\tpolicyAssignmentScope = tostring(properties.policyAssignmentScope),\n\tpolicyAssignmentName = tostring(properties.policyAssignmentName),\n\tpolicyDefinitionId = tostring(properties.policyDefinitionId),\n    policySetDefinitionId=tostring(properties.policySetDefinitionId),\n\tpolicyDefinitionReferenceId = tostring(properties.policyDefinitionReferenceId),\n\tstateWeight = iff(complianceState == 'NonCompliant', int(300), iff(complianceState == 'Compliant', int(200), iff(complianceState == 'Conflict', int(100), iff(complianceState == 'Exempt', int(50), int(0)))))\n| summarize max(stateWeight) by resourceId, policyAssignmentId, policyAssignmentScope, policyAssignmentName,policySetDefinitionId\n| summarize counts = count() by policyAssignmentId, policyAssignmentScope, max_stateWeight, policyAssignmentName,policySetDefinitionId\n| summarize overallStateWeight = max(max_stateWeight),\nnonCompliantCount = sumif(counts, max_stateWeight == 300),\ncompliantCount = sumif(counts, max_stateWeight == 200),\nconflictCount = sumif(counts, max_stateWeight == 100),\nexemptCount = sumif(counts, max_stateWeight == 50) by policyAssignmentId, policyAssignmentScope, policyAssignmentName,policySetDefinitionId\n| extend totalResources = todouble(nonCompliantCount + compliantCount + conflictCount + exemptCount)\n| extend compliancePercentage = iff(totalResources == 0, todouble(100), 100 * todouble(compliantCount + exemptCount) / totalResources)\n| project policyAssignmentName, scope = policyAssignmentScope,policySetDefinitionId,\ncomplianceState = iff(overallStateWeight == 300, 'nonCompliant', iff(overallStateWeight == 200, 'Compliant', iff(overallStateWeight == 100, 'conflict', iff(overallStateWeight == 50, 'exempt', 'notstarted')))),\ncompliancePercentage,\ncompliantCount,\nnonCompliantCount,\nconflictCount,\nexemptCount\n| where isnotempty(policySetDefinitionId)\n| join (policyresources\n| where type =~ 'microsoft.authorization/policysetdefinitions' and isnotempty(properties.metadata.MonitorStarterPacks)\n| extend policySetDefinitionId=tostring(id)) on policySetDefinitionId\n| project policyId=policySetDefinitionId, policyName=name,complianceState,pack='N/A', type='Set')\n| sort by policyName asc",
               "size": 0,
               "title": "Assignment Status (Compliance)",
               "exportedParameters": [
@@ -2404,10 +2404,49 @@ var wbConfig='''
       "styleSettings": {
         "showBorder": true
       }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let applications = datatable(application:string, appTag:string)\n[\n   \"nginx\", \"Nginx\",\n];\nlet mrt=amsplinuxdiscovery_CL | where TimeGenerated > ago(24h)| summarize mrt=max(TimeGenerated);\namsplinuxdiscovery_CL\n| parse RawData with RecordTime \",\" application \",\" platform \",\" version\n| extend Computer=split(_ResourceId,\"/\")[8]\n| where TimeGenerated==toscalar(mrt)\n| join (applications) on application\n| project Computer, Pack=appTag\n",
+              "size": 0,
+              "title": "Discovered Packs",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "discoveryQuery"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let mrt=amsplinuxdiscovery_CL | where TimeGenerated > ago(24h)| summarize mrt=max(TimeGenerated);\namsplinuxdiscovery_CL\n| parse RawData with RecordTime \",\" application \",\" platform \",\" version\n| where TimeGenerated==toscalar(mrt)\n| summarize by Application=application,Version=version\n\n",
+              "size": 0,
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "query - 1"
+          }
+        ]
+      },
+      "name": "discoveryGroup"
     }
   ],
   "fallbackResourceIds": [
-    "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourcegroups/amonstarterpacks3/providers/microsoft.operationalinsights/workspaces/ws-amonstar"
+    "Azure Monitor"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
