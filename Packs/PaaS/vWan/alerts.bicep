@@ -25,8 +25,7 @@ param moduleprefix string = 'vWan'
 
 // LAW based diagnostic settings alerts
 
-// Alert list
-
+// Alert list - used for log analytics alerts.
 var alertlist = [
   {
       alertRuleDescription: 'Tunnel disconnect'
@@ -40,7 +39,7 @@ var alertlist = [
       query: 'AzureDiagnostics | where Category == "TunnelDiagnosticLog" | where OperationName == "TunnelDisconnected"'
   }
 ]
-
+// Implements LA based alerts.
 module loganalyticsalerts '../../../modules/alerts/alerts.bicep' = {
   name: '${moduleprefix}-Alerts'
   scope: resourceGroup(subscriptionId, parResourceGroupName)
@@ -55,7 +54,7 @@ module loganalyticsalerts '../../../modules/alerts/alerts.bicep' = {
     workspaceId: workspaceId
   }
 }
-
+// Metric alerts
 module vWanPacketEgressDropCountAlert '../../../modules/alerts/PaaS/metricAlertDynamic.bicep' = {
   name: '${uniqueString(deployment().name)}-vWanPacketDrop'
   params: {
