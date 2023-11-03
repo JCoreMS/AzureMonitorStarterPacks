@@ -55,6 +55,10 @@ param (
     [Parameter()]
     [switch]
     $skipMainSolutionSetup,
+    # specify to skip the deployment of the main solution? (workbooks, alerts, etc)
+    [Parameter()]
+    [switch]
+    $skipDiscoverySetup,
     # specify to skip the deployment of Pack-specific resources
     [Parameter()]
     [switch]
@@ -90,7 +94,7 @@ param (
 )
 $solutionVersion="0.1.0"
 $allowedGrafanaRegions=('southcentralus,westcentralus,westeurope,eastus,eastus2,northeurope,uksouth,australiaeast,swedencentral,westus,westus2,westus3,southeastasia,canadacentral,centralindia,eastasia').split(",")
-
+$galleryname='monstargallery2'
 if ([string]::IsNullOrEmpty($grafanalocation)) {
     $grafanalocation=$location
 }
@@ -104,7 +108,7 @@ if ($grafanalocation -notin $allowedGrafanaRegions) {
 Write-Output "Installing/Loading Azure Graph module."
 if ($null -eq (get-module Az.ResourceGraph)) {
     try {
-        install-module az.resourcegraph -Force
+        install-module az.resourcegraph -AllowPrerelease -Force
         import-module az.ResourceGraph #-Force
     }
     catch {
@@ -273,7 +277,7 @@ if (!($skipMainSolutionSetup)) {
     $existingSAs=Get-AzStorageAccount -ResourceGroupName $solutionResourceGroup -ErrorAction SilentlyContinue
     if ($existingSAs) {
         if ($existingSAs.count -gt 1) {
-            $storageaccountName=(new-list -objectList $existingSAs -type "StorageAccount" -fieldName1 "StorageAccountName" -fieldName2 "ResourceGroupName").StorageAccountName
+            $storageaccountName=(create-list -objectList $existingSAs -type "StorageAccount" -fieldName1 "StorageAccountName" -fieldName2 "ResourceGroupName").StorageAccountName
         }
         else {
             $storageaccountName=$existingSAs.StorageAccountName
@@ -306,6 +310,7 @@ if (!($skipMainSolutionSetup)) {
         subscriptionId=$sub.Id
         resourceGroupName=$solutionResourceGroup
         mgname=$MGName
+        imageGalleryName=$galleryname
     }
     Write-Host "Deploying the backend components(function, logic app and workbook)."
     try {
@@ -321,21 +326,49 @@ if (!($skipMainSolutionSetup)) {
         return
     }
 }
+# Fetches dceId:
+$dceName="DCE-$solutionTag-$location"
+$dceId="/subscriptions/$($sub.Id)/resourceGroups/$solutionResourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$dceName"
+if (!(Get-AzResource -ResourceId $dceId -ErrorAction SilentlyContinue)) {
+    Write-Host "Endpoint $dceName ($dceId) not found."
+    break
+}
+else {
+    Write-Host "Using existing Data Collection Endpoint $dceName"
+}
+#region Discovery setup
+if (!($skipDiscoverySetup)) {
+    $parameters=@{
+        functionname=$functionName
+        location=$location
+        storageAccountName=$storageAccountName
+        lawresourceid=$ws.ResourceId
+        appInsightsLocation=$location
+        solutionTag=$solutionTag
+        solutionVersion=$solutionVersion
+        currentUserIdObject=$userId
+        grafanaName=$grafanaName
+        grafanalocation=$grafanalocation
+        subscriptionId=$sub.Id
+        resourceGroupName=$solutionResourceGroup
+        mgname=$MGName
+        imageGalleryName=$galleryname
+        tableName='AMSPDiscovery'
+        userManagedIdentityResourceId=$packsUserManagedIdentityResourceId
+        assignmentLevel=$assignmentLevel
+        dceId=$dceId
+    }
+    New-AzManagementGroupDeployment -name "discovery$(get-date -format "ddmmyyHHmmss")" -ManagementGroupId $MGName -location $location `
+        -TemplateFile './setup/Discovery/Windows/discovery.bicep' -templateParameterObject $parameters -ErrorAction Stop # | Out-Null #-Verbose
+}
+#endregion
+
+
 # Reads the packs.json file
 if (!($skipPacksSetup)) {
     Write-Host "Found the following ENABLED packs in packs.json config file:"
-
     $packs=Get-Content -Path $packsFilePath | ConvertFrom-Json| Where-Object {$_.Status -eq 'Enabled'}
     $packs | ForEach-Object {Write-Host "$($_.PackName) - $($_.Status)"}
-    $dceName="DCE-$solutionTag-$location"
-    $dceId="/subscriptions/$($sub.Id)/resourceGroups/$solutionResourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$dceName"
-    if (!(Get-AzResource -ResourceId $dceId -ErrorAction SilentlyContinue)) {
-        Write-Host "Endpoint $dceName ($dceId) not found."
-        break
-    }
-    else {
-        Write-Host "Using existing Data Collection Endpoint $dceName"
-    }
     # Look for existing user managed identity. 
     if ([string]::IsNullOrEmpty($packsUserManagedIdentityPrincipalId)) {
         # Fetch existing managed identity. Name should be:

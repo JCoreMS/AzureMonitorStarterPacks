@@ -21,6 +21,9 @@ param solutionVersion string
 param subscriptionId string
 param resourceGroupName string
 param mgname string
+
+param imageGalleryName string
+
 var linuxDiscoveryTag = 'LxOS'
 
 var packPolicyRoleDefinitionIds=[
@@ -61,7 +64,7 @@ module gallery 'modules/aig.bicep' = {
   name: 'gallery'
   scope: resourceGroup(subscriptionId, resourceGroupName)
   params: {
-    galleryname: 'monstargallery2'
+    galleryname: imageGalleryName
     location: location
   }
 }

@@ -114,7 +114,7 @@ module nginxcollector '../../../modules/aig/aigapp.bicep' = {
   }
 }
 
-module upload 'uploadDS.bicep' = {
+module upload '../../../modules/DS/uploadDS.bicep' = {
   name: 'upload-${packtag}'
   scope: resourceGroup(subscriptionId, resourceGroupName)
   params: {
