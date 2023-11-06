@@ -17,7 +17,7 @@ var roledefinitionIds=[
 ]
 var dcrName = split (dcrId,'/')[8]
 
-module policyVM './associacionpolicyVM.bicep' = {
+module policyVM '../modules/associacionpolicyVM.bicep' = {
   name: 'associationpolicyVM-${packtag}-${dcrName}'
   scope: managementGroup(mgname)
   params: {
@@ -30,17 +30,27 @@ module policyVM './associacionpolicyVM.bicep' = {
     roledefinitionIds: roledefinitionIds
   }
 }
-
-//module policyAssignment {}
-// param policyAssignmentName string = 'audit-vm-manageddisks'
-// param policyDefinitionID string = '/providers/Microsoft.Authorization/policyDefinitions/06a78e20-9358-41c9-923c-fb736d382a4d'
-
-module vmassignment './assignment.bicep' = if(assignmentLevel == 'managementGroup') {
+module vmassignment '../modules/assignment.bicep' = if(assignmentLevel == 'managementGroup') {
   dependsOn: [
     policyVM
   ]
   name: 'Assignment-${packtag}-${ruleshortname}-vm'
   scope: managementGroup(mgname)
+  params: {
+    policyDefinitionId: policyVM.outputs.policyId
+    assignmentName: '${packtag}-${ruleshortname}-vm'
+    location: location
+    //roledefinitionIds: roledefinitionIds
+    solutionTag: solutionTag
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+  }
+}
+module vmassignmentsub '../modules/sub/assignment.bicep' = if(assignmentLevel != 'managementGroup') {
+  dependsOn: [
+    policyVM
+  ]
+  name: 'AssignSub-${packtag}-${ruleshortname}-vm'
+  scope: subscription(subscriptionId)
   params: {
     policyDefinitionId: policyVM.outputs.policyId
     assignmentName: '${packtag}-${ruleshortname}-vm'

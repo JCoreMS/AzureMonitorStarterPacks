@@ -1,5 +1,5 @@
-targetScope = 'managementGroup'
-param vmapplicationResourceId string
+targetScope = 'subscription'
+param DCRId string
 param policyName string
 param policyDisplayName string
 param policyDescription string
@@ -10,7 +10,6 @@ param roledefinitionIds array =[
   '/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293'
   // '/providers/Microsoft.Authorization/roleDefinitions/4a9ae827-6dc8-4573-8ac7-8239d42aa03f' // Tag Contributor
 ]
-var vmApplicationName = split(vmapplicationResourceId, '/')[10]
 
 resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
   name: policyName
@@ -40,6 +39,13 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         }
         defaultValue: packtag
       }
+      // DCRName: {
+      //   type: 'String'
+      //   metadata: {
+      //     displayName: 'Name of the Data Collection Rule'
+      //     description: 'The Name of the Data Collection Rule to be associated with the virtual machine.'
+      //   }
+      // }
       effect: {
         type: 'String'
         metadata: {
@@ -52,13 +58,13 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
         ]
         defaultValue: 'DeployIfNotExists'
       }
-      vmapplicationId: {
+      DCRid: {
         type: 'String'
         metadata: {
-          displayName: 'applicationId'
-          description: 'the VM application ID to assign to the VM'
+          displayName: 'DCRId'
+          description: 'The value of the DCRId.'
         }
-        defaultValue: vmapplicationResourceId
+        defaultValue: DCRId
       }
     }
     policyRule: {
@@ -77,64 +83,73 @@ resource policy 'Microsoft.Authorization/policyDefinitions@2021-06-01' = {
       then: {
         effect: '[parameters(\'effect\')]'
         details: {
-          type: 'Microsoft.Compute/virtualMachines'
-          name: '[field(\'name\')]' 
-          existenceCondition:{
-            allOf: [
-              {
-                count: {
-                  field: 'Microsoft.Compute/virtualMachines/applicationProfile.galleryApplications[*]'
-                  where: {
-                    field: 'Microsoft.Compute/virtualMachines/applicationProfile.galleryApplications[*].packageReferenceId'
-                    equals: '[parameters(\'vmapplicationId\')]'
-                  }
-                }
-                greater: 0
-              }
-            ]
-          }
+          type: 'Microsoft.Insights/dataCollectionRuleAssociations'
+          name: 'MonStar-${packtag}-${split(DCRId,'/')[8]}' 
           roleDefinitionIds: roledefinitionIds
           deployment: {
             properties: {
               mode: 'incremental'
               template: {
-                '$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json'
+                '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
                 contentVersion: '1.0.0.0'
                 parameters: {
+                  resourceGroup: {
+                    type: 'string'
+                  }
                   vmName: {
                     type: 'string'
                   }
-                  location: {
+                  DCRId2: {
                     type: 'string'
                   }
-                  vmapplicationId: {
+                  packTag: {
                     type: 'string'
                   }
+
                 }
                 variables: {
-                  vmApplicationName: vmApplicationName
+                  locationLongNameToShortMap: {
+                    canadacentral: 'CCA'
+                    canadaeast: 'CCA'
+                    centralus: 'CUS'
+                    eastus2euap: 'eus2p'
+                    eastus: 'EUS'
+                    eastus2: 'EUS2'
+                    southcentralus: 'SCUS'
+                    westcentralus: 'WCUS'
+                    westus: 'WUS'
+                    westus2: 'WUS2'
+                  }
+                  DCRName: '[split(parameters(\'DCRId2\'),\'/\')[8]]' //'AzMonPacks-IISBasicIISMonitoring'
+                  //dcrId: '[concat(\'/subscriptions/\', variables(\'subscriptionId\'), \'/resourceGroups\', variables('defaultRGName'), '/providers/Microsoft.Insights/dataCollectionRules/', variables('dcrName'))]'
+                  //DcrId: '[resourceId(\'Microsoft.Insights/dataCollectionRules\', variables (\'DCRName\'))]'
+                  subscriptionId: '[subscription().subscriptionId]'
+                  dcraName: '[concat(parameters(\'vmName\'),\'/Microsoft.Insights/MonStar-\',parameters(\'packTag\'),\'-\',split(parameters(\'DCRId2\'),\'/\')[8])]'
                 }
                 resources: [
                   {
-                    apiVersion: '2021-07-01'
-                    type: 'Microsoft.Compute/virtualMachines/VMapplications'
-                    name: '[concat(parameters(\'vmName\'), \'/\',variables(\'vmApplicationName\'))]'
-                    location: '[parameters(\'location\')]'
+                    type: 'Microsoft.Compute/virtualMachines/providers/dataCollectionRuleAssociations'
+                    name: '[variables(\'dcraName\')]'
+                    apiVersion: '2021-04-01'
                     properties: {
-                      packageReferenceId: '[parameters(\'vmapplicationId\')]'
+                      description: 'Association of data collection rule for Azure Monitor Starter Packs for VMs'
+                      dataCollectionRuleId: '[parameters(\'DCRId2\')]'
                     }
                   }
                 ]
               }
               parameters: {
+                resourceGroup: {
+                  value: '[resourceGroup().name]'
+                }
                 vmName: {
                   value: '[field(\'name\')]'
                 }
-                location: {
-                  value: '[field(\'location\')]'
+                DCRId2: {
+                  value: '[parameters(\'DCRId\')]'
                 }
-                vmapplicationId: {
-                  value: '[parameters(\'vmapplicationId\')]'
+                packTag: {
+                  value: '[parameters(\'tagValue\')]'
                 }
               }
             }

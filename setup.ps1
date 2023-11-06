@@ -337,29 +337,51 @@ else {
     Write-Host "Using existing Data Collection Endpoint $dceName"
 }
 #region Discovery setup
+$existingSAs=Get-AzStorageAccount -ResourceGroupName $solutionResourceGroup -ErrorAction SilentlyContinue
+if ($existingSAs) {
+    if ($existingSAs.count -gt 1) {
+        $storageaccountName=(create-list -objectList $existingSAs -type "StorageAccount" -fieldName1 "StorageAccountName" -fieldName2 "ResourceGroupName").StorageAccountName
+    }
+    else {
+        $storageaccountName=$existingSAs.StorageAccountName
+        Write-Output "Using existing storage account $storageaccountName."
+    }
+}
+else {
+    $storageaccountName = "azmonstarpacks$randomstoragechars"
+    Write-Host "Using storage account name: $storageaccountName"
+}
+if ([string]::IsNullOrEmpty($functionUserManagedIdentityPrincipalId)) {
+    # Fetch existing managed identity. Name should be:
+    try {
+        $functionUserManagedIdentityResourceId=(get-azresource -ResourceGroupName $solutionResourceGroup -ResourceType 'Microsoft.ManagedIdentity/userAssignedIdentities' -Name 'functionUserManagedIdentity').ResourceId
+        $functionUserManagedIdentityPrincipalId=(Get-AzADServicePrincipal -DisplayName 'functionUserManagedIdentity').Id
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
+        "Error fetching function user managed identity 'functionUserManagedIdentity'. Stopping."
+        break
+    }
+}
+
 if (!($skipDiscoverySetup)) {
     $parameters=@{
-        functionname=$functionName
         location=$location
         storageAccountName=$storageAccountName
         lawresourceid=$ws.ResourceId
-        appInsightsLocation=$location
         solutionTag=$solutionTag
         solutionVersion=$solutionVersion
-        currentUserIdObject=$userId
-        grafanaName=$grafanaName
-        grafanalocation=$grafanalocation
         subscriptionId=$sub.Id
         resourceGroupName=$solutionResourceGroup
         mgname=$MGName
         imageGalleryName=$galleryname
         tableName='AMSPDiscovery'
-        userManagedIdentityResourceId=$packsUserManagedIdentityResourceId
+        userManagedIdentityResourceId=$functionUserManagedIdentityResourceId
         assignmentLevel=$assignmentLevel
         dceId=$dceId
     }
-    New-AzManagementGroupDeployment -name "discovery$(get-date -format "ddmmyyHHmmss")" -ManagementGroupId $MGName -location $location `
-        -TemplateFile './setup/Discovery/Windows/discovery.bicep' -templateParameterObject $parameters -ErrorAction Stop # | Out-Null #-Verbose
+    New-AzManagementGroupDeployment -name "discoveryWindows$(get-date -format "ddmmyyHHmmss")" -ManagementGroupId $MGName -location $location `
+        -TemplateFile './setup/Discovery/discovery.bicep' -templateParameterObject $parameters -ErrorAction Stop # | Out-Null #-Verbose
 }
 #endregion
 

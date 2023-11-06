@@ -5,6 +5,7 @@ param storageAccountName string
 param sasExpiry string = dateTimeAdd(utcNow(), 'PT2H')
 param fileURL string
 param containerName string
+param resourceName string
 
 var filename = split(fileURL, '/')[length(split(fileURL, '/')) - 1]
 var tempfilename = 'download.tmp'
@@ -21,7 +22,7 @@ resource packStorage 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
 }
 
 resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
-  name: 'deployscript-MonstarPacks'
+  name: resourceName
   tags: {
     '${solutionTag}': 'deploymentScript'
     '${solutionTag}-Version': solutionVersion
@@ -46,7 +47,7 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
         value: fileURL
       }
     ]
-    scriptContent: 'wget $CONTENT && az storage blob upload -f ${filename} -c ${containerName} -n ${filename} --overwrite'
+    scriptContent: 'wget $CONTENT && az storage blob upload -f ${filename} -c ${containerName} -n ${filename} ' //--overwrite'
   }
 }
 output fileURL string = '${packStorage.properties.primaryEndpoints.blob}${containerName}/${filename}?${(packStorage.listAccountSAS(packStorage.apiVersion, sasConfig).accountSasToken)}'

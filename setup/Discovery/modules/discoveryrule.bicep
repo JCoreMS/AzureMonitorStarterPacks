@@ -9,12 +9,12 @@ param OS string
 @description('Specifies the resource id of the data collection endpoint.')
 param endpointResourceId string
 
-var tableNameToUse = 'CustomAzMA${tableName}_CL'
+var tableNameToUse = tableName
 var streamName= 'Custom-${tableNameToUse}'
 var lawFriendlyName = split(lawResourceId,'/')[8]
 
 resource fileCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' = {
-  name: 'AMSP-DCR to collect ${tableName} data for ${OS} VMs'
+  name: 'AMSP-Disc-${OS}'
   location: location
   tags: {
     '${solutionTag}': packtag
