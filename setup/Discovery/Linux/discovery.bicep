@@ -73,7 +73,7 @@ module linuxDiscovery '../../../modules/aig/aigappversion.bicep' = {
 module applicationPolicy '../../../modules/policies/mg/vmapplicationpolicy.bicep' = {
   name: 'applicationPolicy-${appName}'
   params: {
-    packtag: 'linusdiscovery'
+    packtag: 'LxOS'
     policyDescription: 'Install ${appName} to ${OS} VMs'
     policyName: 'Install ${appName}'
     policyDisplayName: 'Install ${appName} to ${OS} VMs'
@@ -82,6 +82,36 @@ module applicationPolicy '../../../modules/policies/mg/vmapplicationpolicy.bicep
     roledefinitionIds: [
       '/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
     ]
+  }
+}
+module vmapplicationAssignment '../modules/assignment.bicep' = if(assignmentLevel == 'managementGroup') {
+  dependsOn: [
+    applicationPolicy
+  ]
+  name: 'Assignment-${ruleshortname}'
+  scope: managementGroup(mgname)
+  params: {
+    policyDefinitionId: applicationPolicy.outputs.policyId
+    assignmentName: '${ruleshortname}-application'
+    location: location
+    //roledefinitionIds: roledefinitionIds
+    solutionTag: solutionTag
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+  }
+}
+module vmassignmentsub '../modules/sub/assignment.bicep' = if(assignmentLevel != 'managementGroup') {
+  dependsOn: [
+    applicationPolicy
+  ]
+  name: 'AssignSub-${ruleshortname}'
+  scope: subscription(subscriptionId)
+  params: {
+    policyDefinitionId: applicationPolicy.outputs.policyId
+    assignmentName: '${ruleshortname}-application'
+    location: location
+    //roledefinitionIds: roledefinitionIds
+    solutionTag: solutionTag
+    userManagedIdentityResourceId: userManagedIdentityResourceId
   }
 }
 // Table to receive the data
@@ -116,7 +146,7 @@ module LinuxDiscoveryDCR '../modules/discoveryrule.bicep' = {
   }
 }
 
-// Policy to assign DCR to all Windows VMs (in which context? MG if we want to use the same DCR for all subscriptions?)
+// Policy to assign DCR to all Linux VMs (in which context? MG if we want to use the same DCR for all subscriptions?)
 module policysetup '../modules/policies.bicep' = {
   name: 'policysetup-linuxdiscovery'
   params: {
