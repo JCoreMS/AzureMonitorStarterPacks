@@ -4,7 +4,7 @@ param grafanaName string
 param location string
 param solutionTag string
 param solutionVersion string
-param userObjectId string
+//param userObjectId string
 param utcValue string = utcNow()
 param lawresourceId string
 
@@ -19,7 +19,7 @@ var MonitoringContributorRoleId = '749f88d5-cbae-40b8-bcfc-e573ddc772fa' // Moni
 resource AzureManagedGrafana 'Microsoft.Dashboard/grafana@2022-08-01' = {
   name: grafanaName
   tags: {
-    '${solutionTag}': 'storageaccount'
+    '${solutionTag}': 'grafana'
     '${solutionTag}-Version': solutionVersion
   }
   sku: {
@@ -31,16 +31,16 @@ resource AzureManagedGrafana 'Microsoft.Dashboard/grafana@2022-08-01' = {
   location: location
 }
 
-resource amgAdminRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(resourceGroup().id,grafanaName,GrafanaAdminRoleId)
-  scope: AzureManagedGrafana
-  properties: {
-    description: '${solutionTag}-GrafanaAdmin-${userObjectId}-${utcValue}'
-    principalId: userObjectId
-    principalType: 'User'
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', GrafanaAdminRoleId)
-  }
-}
+// resource amgAdminRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+//   name: guid(resourceGroup().id,grafanaName,GrafanaAdminRoleId)
+//   scope: AzureManagedGrafana
+//   properties: {
+//     description: '${solutionTag}-GrafanaAdmin-${userObjectId}-${utcValue}'
+//     principalId: userObjectId
+//     principalType: 'User'
+//     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', GrafanaAdminRoleId)
+//   }
+// }
 
 module grafanaReadPermissions '../../../../modules/rbac/subscription/roleassignment.bicep' = {
   name: 'grafanaReadPermissions'

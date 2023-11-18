@@ -104,7 +104,7 @@ if ($grafanalocation -notin $allowedGrafanaRegions) {
 Write-Output "Installing/Loading Azure Graph module."
 if ($null -eq (get-module Az.ResourceGraph)) {
     try {
-        install-module az.resourcegraph -AllowPrerelease -Force
+        install-module az.resourcegraph #-Force # if -Force is used, it causes issues in the CLI (older Az.Account module is loaded)
         import-module az.ResourceGraph #-Force
     }
     catch {
@@ -200,15 +200,12 @@ $userId=(Get-AzADUser -SignedIn).Id
 
 # Az available for Grafana setup of the modules? Only test if packs are to be deployed.
 if (!($skipPacksSetup)) {
-    $azAvailable=$false
-    try {
-        az
-        $azAvailable=$true
-    }
-    catch {
-        "didn't find az"
-        $azAvailable=$false
-    }
+
+    # check whether Azure CLI is installed
+    if (Get-Command 'az.*' -ErrorAction SilentlyContinue) {
+        $azAvailable=$true}
+    else {$azAvailable=$false}
+
     if ($azAvailable) {
         az extension add --name amg
         $azloggedIn=$false
@@ -273,7 +270,7 @@ if (!($skipMainSolutionSetup)) {
     $existingSAs=Get-AzStorageAccount -ResourceGroupName $solutionResourceGroup -ErrorAction SilentlyContinue
     if ($existingSAs) {
         if ($existingSAs.count -gt 1) {
-            $storageaccountName=(create-list -objectList $existingSAs -type "StorageAccount" -fieldName1 "StorageAccountName" -fieldName2 "ResourceGroupName").StorageAccountName
+            $storageaccountName=(new-list -objectList $existingSAs -type "StorageAccount" -fieldName1 "StorageAccountName" -fieldName2 "ResourceGroupName").StorageAccountName
         }
         else {
             $storageaccountName=$existingSAs.StorageAccountName

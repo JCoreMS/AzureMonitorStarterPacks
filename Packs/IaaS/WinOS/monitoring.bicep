@@ -1,13 +1,21 @@
 targetScope = 'managementGroup'
-param rulename string
+@description('Name of the DCR rule to be created')
+param rulename string = 'AMSP-Windows-OS'
+@description('Name of the Action Group to be used or created.')
 param actionGroupName string
+@description('Email receiver names to be used for the Action Group if being created.')
 param emailreceivers array = []
+@description('Email addresses to be used for the Action Group if being created.')
 param emailreiceversemails array  = []
+@description('If set to true, a new Action group will be created')
 param useExistingAG bool = false
+@description('Name of the existing resource group to be used for the Action Group if existing.')
 param existingAGRG string = ''
+@description('location for the deployment.')
 param location string //= resourceGroup().location
+@description('Full resource ID of the log analytics workspace to be used for the deployment.')
 param workspaceId string
-param packtag string
+param packtag string = 'WinOS'
 param solutionTag string
 param solutionVersion string
 param dceId string
@@ -16,6 +24,7 @@ param mgname string // this the last part of the management group id
 param subscriptionId string
 param resourceGroupId string
 param assignmentLevel string
+param grafanaName string
 
 var ruleshortname = 'VMI-OS'
 var resourceGroupName = split(resourceGroupId, '/')[4]
@@ -78,6 +87,21 @@ module policysetup '../../../modules/policies/mg/policiesDCR.bicep' = {
     subscriptionId: subscriptionId
   }
 }
+// // Grafana upload and install
+// module grafana 'ds.bicep' = {
+//   name: 'grafana'
+//   scope: resourceGroup(subscriptionId, resourceGroupName)
+//   params: {
+//     fileName: 'grafana.json'
+//     grafanaName: grafanaName
+//     location: location
+//     resourceGroupName: resourceGroupName
+//     solutionTag: solutionTag
+//     solutionVersion: solutionVersion
+//     packsManagedIdentityResourceId: userManagedIdentityResourceId
+//   }
+// }
+
 // Azure recommended Alerts for VMs
 // These are the (very) basic recommeded alerts for VM, based on platform metrics
 // module vmrecommended 'AzureBasicMetricAlerts.bicep' = if (enableBasicVMPlatformAlerts) {
