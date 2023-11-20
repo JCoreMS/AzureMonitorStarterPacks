@@ -111,7 +111,7 @@ module backend '../backend/code/backend.bicep' = {
   }
 }
 
-module AllPacks '../../Packs/IaaS/AllIaaSPacks.bicep' = if (deployPacks) {
+module AllPacks '../../Packs/AllPacks.bicep' = if (deployPacks) {
   name: 'DeployAllPacks'
   dependsOn: [
     backend
@@ -133,5 +133,7 @@ module AllPacks '../../Packs/IaaS/AllIaaSPacks.bicep' = if (deployPacks) {
     emailreiceversemails: emailreiceversemails
     existingAGRG: existingAGRG
     grafanaName: grafanaName
+    LogAnalyticsResourceId: createNewLogAnalyticsWS ? logAnalytics.outputs.lawresourceid : existingLogAnalyticsWSId
+    packsUserManagedResourceId: backend.outputs.packsUserManagedResourceId
   }
 }

@@ -40,7 +40,7 @@ var alertlist = [
   }
 ]
 // Implements LA based alerts.
-module loganalyticsalerts '../../../modules/alerts/alerts.bicep' = {
+module loganalyticsalerts '../../../../modules/alerts/alerts.bicep' = {
   name: '${moduleprefix}-Alerts'
   scope: resourceGroup(subscriptionId, parResourceGroupName)
   params: {
@@ -55,7 +55,7 @@ module loganalyticsalerts '../../../modules/alerts/alerts.bicep' = {
   }
 }
 // Metric alerts
-module vWanPacketEgressDropCountAlert '../../../modules/alerts/PaaS/metricAlertDynamic.bicep' = {
+module vWanPacketEgressDropCountAlert '../../../../modules/alerts/PaaS/metricAlertDynamic.bicep' = {
   name: '${uniqueString(deployment().name)}-vWanPacketDrop'
   params: {
       assignmentLevel: assignmentLevel
@@ -87,7 +87,7 @@ module vWanPacketEgressDropCountAlert '../../../modules/alerts/PaaS/metricAlertD
   }
 }
 
-module vWanTunnelIngressBytes '../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
+module vWanTunnelIngressBytes '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
   name: '${uniqueString(deployment().name)}-vWanTunnetIgBytes'
   params: {
       assignmentLevel: assignmentLevel
@@ -117,7 +117,7 @@ module vWanTunnelIngressBytes '../../../modules/alerts/PaaS/metricAlertStaticThr
   }
 }
 
-module TunnelEgressBytes '../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
+module TunnelEgressBytes '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
   name: '${uniqueString(deployment().name)}-TunnelEgressBytes'
   params: {
       assignmentLevel: assignmentLevel
@@ -146,7 +146,7 @@ module TunnelEgressBytes '../../../modules/alerts/PaaS/metricAlertStaticThreshol
       operator: 'LessThan'
   }
 }
-module TunnelAverageBandwidthAlert '../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
+module TunnelAverageBandwidthAlert '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
   name: '${uniqueString(deployment().name)}-TunnelAverageBandwidth'
   params: {
       assignmentLevel: assignmentLevel
@@ -175,7 +175,7 @@ module TunnelAverageBandwidthAlert '../../../modules/alerts/PaaS/metricAlertStat
       operator: 'LessThan'
   }
 }
-module BGPPeerStatus '../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
+module BGPPeerStatus '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
   name: '${uniqueString(deployment().name)}-BGPPeerStatus'
   params: {
       assignmentLevel: assignmentLevel

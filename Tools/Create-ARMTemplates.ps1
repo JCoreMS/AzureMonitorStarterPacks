@@ -44,6 +44,22 @@ $mainMonstarPacksFiles = @"
         {
             "Folder":"./Packs/IaaS/Nginx",
             "File":"monitoring.bicep"
+        },
+        {
+            "Folder":"./Packs/Platform/KeyVault",
+            "File":"monitoring.bicep"
+        },
+        {
+            "Folder":"./Packs/Platform/Network/vWan",
+            "File":"monitoring.bicep"
+        },
+        {
+            "Folder":"./Packs/PaaS/Storage",
+            "File":"monitoring.bicep"
+        },
+        {
+            "Folder":"./Packs/Platform/Network/LoadBalancers",
+            "File":"monitoring.bicep"
         }
 ]
 "@ | ConvertFrom-Json

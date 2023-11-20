@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "8019514232739838466"
+      "templateHash": "14834855249290296823"
     }
   },
   "parameters": {
@@ -450,7 +450,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "16154953958319206945"
+              "templateHash": "11759814391945158498"
             }
           },
           "parameters": {
@@ -590,7 +590,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "17921040337123514091"
+                      "templateHash": "3450986469365449846"
                     }
                   },
                   "parameters": {
@@ -690,7 +690,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "982917926388079909"
+                              "templateHash": "3013339342960298275"
                             }
                           },
                           "parameters": {
@@ -698,7 +698,8 @@
                               "type": "string",
                               "allowedValues": [
                                 "rows",
-                                "Aggregated"
+                                "Aggregated",
+                                "metric"
                               ]
                             },
                             "alertRuleName": {
@@ -736,6 +737,18 @@
                             },
                             "query": {
                               "type": "string"
+                            },
+                            "metricName": {
+                              "type": "string",
+                              "defaultValue": ""
+                            },
+                            "metricNameSpace": {
+                              "type": "string",
+                              "defaultValue": ""
+                            },
+                            "timeAggregation": {
+                              "type": "string",
+                              "defaultValue": "Average"
                             },
                             "packtag": {
                               "type": "string"
@@ -1010,7 +1023,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "17705228431369681648"
+                                      "templateHash": "4589845641134845923"
                                     }
                                   },
                                   "parameters": {
@@ -1065,6 +1078,10 @@
                                     "metricMeasureColumn": {
                                       "type": "string"
                                     },
+                                    "timeAggregation": {
+                                      "type": "string",
+                                      "defaultValue": "Average"
+                                    },
                                     "operator": {
                                       "type": "string",
                                       "allowedValues": [
@@ -1105,7 +1122,7 @@
                                           "allOf": [
                                             {
                                               "query": "[parameters('query')]",
-                                              "timeAggregation": "Average",
+                                              "timeAggregation": "[parameters('timeAggregation')]",
                                               "metricMeasureColumn": "[parameters('metricMeasureColumn')]",
                                               "dimensions": [
                                                 {
@@ -1132,6 +1149,168 @@
                                             "[parameters('actionGroupResourceId')]"
                                           ],
                                           "customProperties": {}
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            {
+                              "condition": "[equals(parameters('alertType'), 'metric')]",
+                              "type": "Microsoft.Resources/deployments",
+                              "apiVersion": "2022-09-01",
+                              "name": "[format('metricalert-{0}-{1}', parameters('packtag'), parameters('alertRuleName'))]",
+                              "properties": {
+                                "expressionEvaluationOptions": {
+                                  "scope": "inner"
+                                },
+                                "mode": "Incremental",
+                                "parameters": {
+                                  "alertrulename": {
+                                    "value": "[parameters('alertRuleName')]"
+                                  },
+                                  "metricName": {
+                                    "value": "[parameters('metricName')]"
+                                  },
+                                  "resourceId": {
+                                    "value": "[parameters('scope')]"
+                                  },
+                                  "severity": {
+                                    "value": "[parameters('alertRuleSeverity')]"
+                                  },
+                                  "metricNamespace": {
+                                    "value": "[parameters('metricNameSpace')]"
+                                  },
+                                  "timeAggregation": {
+                                    "value": "[parameters('timeAggregation')]"
+                                  },
+                                  "location": {
+                                    "value": "[parameters('location')]"
+                                  },
+                                  "windowSize": {
+                                    "value": "[parameters('windowSize')]"
+                                  },
+                                  "evaluationFrequency": {
+                                    "value": "[parameters('evaluationFrequency')]"
+                                  },
+                                  "packtag": {
+                                    "value": "[parameters('packtag')]"
+                                  },
+                                  "solutionTag": {
+                                    "value": "[parameters('solutionTag')]"
+                                  },
+                                  "threshold": {
+                                    "value": "[parameters('threshold')]"
+                                  }
+                                },
+                                "template": {
+                                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                  "contentVersion": "1.0.0.0",
+                                  "metadata": {
+                                    "_generator": {
+                                      "name": "bicep",
+                                      "version": "0.20.4.51522",
+                                      "templateHash": "5413314615581930908"
+                                    }
+                                  },
+                                  "parameters": {
+                                    "alertrulename": {
+                                      "type": "string"
+                                    },
+                                    "location": {
+                                      "type": "string",
+                                      "defaultValue": "global"
+                                    },
+                                    "resourceId": {
+                                      "type": "string"
+                                    },
+                                    "metricName": {
+                                      "type": "string"
+                                    },
+                                    "metricNamespace": {
+                                      "type": "string",
+                                      "defaultValue": "Microsoft.Compute/virtualMachines"
+                                    },
+                                    "threshold": {
+                                      "type": "int"
+                                    },
+                                    "timeAggregation": {
+                                      "type": "string",
+                                      "defaultValue": "Average"
+                                    },
+                                    "packtag": {
+                                      "type": "string"
+                                    },
+                                    "solutionTag": {
+                                      "type": "string"
+                                    },
+                                    "severity": {
+                                      "type": "int"
+                                    },
+                                    "operator": {
+                                      "type": "string",
+                                      "defaultValue": "GreaterThan",
+                                      "allowedValues": [
+                                        "GreaterThan",
+                                        "GreaterThanOrEqual",
+                                        "LessThan",
+                                        "LessThanOrEqual"
+                                      ]
+                                    },
+                                    "evaluationFrequency": {
+                                      "type": "string",
+                                      "defaultValue": "PT5M",
+                                      "allowedValues": [
+                                        "PT1M",
+                                        "PT5M",
+                                        "PT15M",
+                                        "PT30M",
+                                        "PT1H"
+                                      ]
+                                    },
+                                    "windowSize": {
+                                      "type": "string",
+                                      "defaultValue": "PT5M",
+                                      "allowedValues": [
+                                        "PT1M",
+                                        "PT5M",
+                                        "PT15M",
+                                        "PT30M",
+                                        "PT1H"
+                                      ]
+                                    }
+                                  },
+                                  "resources": [
+                                    {
+                                      "type": "Microsoft.Insights/metricAlerts",
+                                      "apiVersion": "2018-03-01",
+                                      "name": "[parameters('alertrulename')]",
+                                      "location": "[parameters('location')]",
+                                      "tags": {
+                                        "[format('{0}', parameters('solutionTag'))]": "[parameters('packtag')]"
+                                      },
+                                      "properties": {
+                                        "scopes": [
+                                          "[parameters('resourceId')]"
+                                        ],
+                                        "severity": "[parameters('severity')]",
+                                        "enabled": true,
+                                        "evaluationFrequency": "[parameters('evaluationFrequency')]",
+                                        "windowSize": "[parameters('windowSize')]",
+                                        "criteria": {
+                                          "allOf": [
+                                            {
+                                              "threshold": "[parameters('threshold')]",
+                                              "name": "[parameters('metricName')]",
+                                              "metricNamespace": "[parameters('metricNamespace')]",
+                                              "metricName": "[parameters('metricName')]",
+                                              "operator": "[parameters('operator')]",
+                                              "timeAggregation": "[parameters('timeAggregation')]",
+                                              "criterionType": "StaticThresholdCriterion"
+                                            }
+                                          ],
+                                          "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
                                         }
                                       }
                                     }

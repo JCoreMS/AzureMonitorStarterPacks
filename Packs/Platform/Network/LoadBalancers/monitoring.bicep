@@ -2,10 +2,6 @@ targetScope = 'managementGroup'
 param workspaceId string
 param packtag string
 param solutionTag string
-var resourceTypes = [
-  'Microsoft.Network/vpngateways'
-  'Microsoft.Network/expressRouteGateways'
-]
 
 param location string //= resourceGroup().location
 param subscriptionId string
@@ -18,14 +14,15 @@ param emailreiceversemails array = []
 param useExistingAG bool 
 param existingAGRG string = ''
 param resourceGroupId string
-param solutionVersion string
+//param solutionVersion string
 
+var resourceType = 'Microsoft.KeyVault/vaults'
 //var resourceShortType = split(resourceType, '/')[1]
 
 var resourceGroupName = split(resourceGroupId, '/')[4]
 
 // Action Group - the action group is either created or can reference an existing action group, depending on the useExistingAG parameter
-module ag '../../../modules/actiongroups/ag.bicep' = {
+module ag '../../../../modules/actiongroups/ag.bicep' = {
   name: actionGroupName
   params: {
     actionGroupName: actionGroupName
@@ -40,21 +37,21 @@ module ag '../../../modules/actiongroups/ag.bicep' = {
   }
 }
 
-module diagnosticsPolicy '../../../modules/policies/mg/diagnostics/associacionpolicyDiag.bicep' = [for (rt,i) in resourceTypes: {
-  name: 'associacionpolicy-${packtag}-${split(rt, '/')[1]}'
+module diagnosticsPolicy '../../../../modules/policies/mg/diagnostics/associacionpolicyDiag.bicep' = {
+  name: 'associacionpolicy-${packtag}-${split(resourceType, '/')[1]}'
   params: {
     logAnalyticsWSResourceId: workspaceId
     packtag: packtag
     solutionTag: solutionTag
-    policyDescription: 'Policy to associate the diagnostics setting for ${split(rt, '/')[1]} resources the tagged with ${packtag} tag.'
-    policyDisplayName: 'Associate the diagnostics with the ${split(rt, '/')[1]} resources tagged with ${packtag} tag.'
-    policyName: 'Associate-diagnostics-${packtag}-${split(rt, '/')[1]}'
-    resourceType: rt
+    policyDescription: 'Policy to associate the diagnostics setting for ${split(resourceType, '/')[1]} resources the tagged with ${packtag} tag.'
+    policyDisplayName: 'Associate the diagnostics with the ${split(resourceType, '/')[1]} resources tagged with ${packtag} tag.'
+    policyName: 'Associate-diagnostics-${packtag}-${split(resourceType, '/')[1]}'
+    resourceType: resourceType
   }
-}]
+}
 
-module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for (rt,i) in resourceTypes: {
-  name: 'diagassignment-${packtag}-${split(rt, '/')[1]}'
+module policyassignment '../../../../modules/policies/mg/policiesDiag.bicep' =  {
+  name: 'diagassignment-${packtag}-${split(resourceType, '/')[1]}'
   dependsOn: [
     diagnosticsPolicy
   ]
@@ -62,18 +59,17 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = [for
     location: location
     mgname: mgname
     packtag: packtag
-    policydefinitionId: diagnosticsPolicy[i].outputs.policyId
-    resourceType: rt
+    policydefinitionId: diagnosticsPolicy.outputs.policyId
+    resourceType: resourceType
     solutionTag: solutionTag
     subscriptionId: subscriptionId 
     userManagedIdentityResourceId: userManagedIdentityResourceId
     assignmentLevel: assignmentLevel
     policyType: 'diag'
   }
-}]
+}
 
-
-module vWanAlerts 'alerts.bicep' = {
+module KVAlert 'Alerts.bicep' = {
   name: 'Keyvault-Alerts'
   params: {
     packTag: packtag
@@ -82,12 +78,9 @@ module vWanAlerts 'alerts.bicep' = {
     parResourceGroupName: resourceGroupName
     subscriptionId: subscriptionId
     mgname: mgname
-    resourceType: 'Microsoft.Network/vpngateways'
+    resourceType: resourceType
     assignmentLevel: assignmentLevel
     userManagedIdentityResourceId: userManagedIdentityResourceId
     AGId: ag.outputs.actionGroupResourceId
-    solutionVersion: solutionVersion
-    location: location
-    workspaceId: workspaceId
   }
 }

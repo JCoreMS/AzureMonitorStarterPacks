@@ -30,9 +30,9 @@ var lawFriendlyName = split(lawResourceId,'/')[8]
 
 resource fileCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' = {
   name: ruleName
-  dependsOn: [
-    table
-  ]
+  // dependsOn: [
+  //   table
+  // ]
   location: location
   tags: {
     '${solutionTag}': packtag

@@ -101,7 +101,7 @@ module dcrbasicvmMonitoring '../../../modules/DCRs/dcr-basicWinVM.bicep' = {
     dceId: dceId
   }
 }
-module policysetup '../../../modules/policies/mg/policies.bicep' = {
+module policysetup '../../../modules/policies/mg/policiesDCR.bicep' = {
   name: 'policysetup-${packtag}'
   params: {
     dcrId: dcrbasicvmMonitoring.outputs.dcrId

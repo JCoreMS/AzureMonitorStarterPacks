@@ -170,7 +170,7 @@ module dcrbasicvmMonitoring '../../../modules/DCRs/dcr-basicWinVM.bicep' = {
     dceId: dceId
   }
 }
-module policysetup '../../../modules/policies/mg/policies.bicep' = {
+module policysetup '../../../modules/policies/mg/policiesDCR.bicep' = {
   name: 'policysetup-${packtag}'
   params: {
     dcrId: dcrbasicvmMonitoring.outputs.dcrId
@@ -199,7 +199,7 @@ module dcrIISLogsMonitoring '../../../modules/DCRs/filecollectionWinIIS.bicep' =
     tableName: 'IISLogs'
   }
 }
-module policysetupIISLogs '../../../modules/policies/mg/policies.bicep' = {
+module policysetupIISLogs '../../../modules/policies/mg/policiesDCR.bicep' = {
   name: 'policysetup-${packtag}-IISLogs'
   scope: managementGroup(mgname)
   params: {

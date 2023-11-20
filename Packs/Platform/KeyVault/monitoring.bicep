@@ -14,7 +14,7 @@ param emailreiceversemails array = []
 param useExistingAG bool 
 param existingAGRG string = ''
 param resourceGroupId string
-param solutionVersion string
+//param solutionVersion string
 
 var resourceType = 'Microsoft.KeyVault/vaults'
 //var resourceShortType = split(resourceType, '/')[1]
