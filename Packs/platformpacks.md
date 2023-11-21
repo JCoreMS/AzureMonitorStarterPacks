@@ -11,7 +11,7 @@ To deploy all Platform packs, click the icon below:
 This pack leverages Metric and Activity alerts. It implements the following:
 
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzureMonitorStarterPacks%2FvWan%2FPacks%2FPlatform%2FKeyVault%2Fmonitoring.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzureMonitorStarterPacks%2FvWan%2FPacks%2FCustomSetup%2Fsetup.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FFehsecorp%2FAzureMonitorStarterPacks%2FvWan%2FPacks%2FPlatform%2FKeyVault%2Fmonitoring.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzureMonitorStarterPacks%2FvWan%2FPacks%2FCustomSetup%2Fsetup.json)
 
 # Using ARM and Bicep Templates.
 
