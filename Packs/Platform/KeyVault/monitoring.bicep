@@ -1,7 +1,7 @@
 targetScope = 'managementGroup'
 
 @description('Name of the DCR rule to be created')
-param rulename string = 'AMSP-Windows-PS2016'
+param rulename string = ''
 @description('Name of the Action Group to be used or created.')
 param actionGroupName string
 @description('Email receiver names to be used for the Action Group if being created.')
@@ -16,7 +16,7 @@ param existingAGRG string = ''
 param location string //= resourceGroup().location
 @description('Full resource ID of the log analytics workspace to be used for the deployment.')
 param workspaceId string
-param packtag string = 'PS2016'
+param packtag string = 'KeyVault'
 param solutionTag string = 'MonitorStarterPacks'
 param solutionVersion string = '0.1.0'
 @description('Full resource ID of the data collection endpoint to be used for the deployment.')
@@ -52,37 +52,37 @@ module ag '../../../modules/actiongroups/ag.bicep' = {
   }
 }
 
-module diagnosticsPolicy '../../../modules/policies/mg/diagnostics/associacionpolicyDiag.bicep' = {
-  name: 'associacionpolicy-${packtag}-${split(resourceType, '/')[1]}'
-  params: {
-    logAnalyticsWSResourceId: workspaceId
-    packtag: packtag
-    solutionTag: solutionTag
-    policyDescription: 'Policy to associate the diagnostics setting for ${split(resourceType, '/')[1]} resources the tagged with ${packtag} tag.'
-    policyDisplayName: 'Associate the diagnostics with the ${split(resourceType, '/')[1]} resources tagged with ${packtag} tag.'
-    policyName: 'Associate-diagnostics-${packtag}-${split(resourceType, '/')[1]}'
-    resourceType: resourceType
-  }
-}
+// module diagnosticsPolicy '../../../modules/policies/mg/diagnostics/associacionpolicyDiag.bicep' = {
+//   name: 'associacionpolicy-${packtag}-${split(resourceType, '/')[1]}'
+//   params: {
+//     logAnalyticsWSResourceId: workspaceId
+//     packtag: packtag
+//     solutionTag: solutionTag
+//     policyDescription: 'Policy to associate the diagnostics setting for ${split(resourceType, '/')[1]} resources the tagged with ${packtag} tag.'
+//     policyDisplayName: 'Associate the diagnostics with the ${split(resourceType, '/')[1]} resources tagged with ${packtag} tag.'
+//     policyName: 'Associate-diagnostics-${packtag}-${split(resourceType, '/')[1]}'
+//     resourceType: resourceType
+//   }
+// }
 
-module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' =  {
-  name: 'diagassignment-${packtag}-${split(resourceType, '/')[1]}'
-  dependsOn: [
-    diagnosticsPolicy
-  ]
-  params: {
-    location: location
-    mgname: mgname
-    packtag: packtag
-    policydefinitionId: diagnosticsPolicy.outputs.policyId
-    resourceType: resourceType
-    solutionTag: solutionTag
-    subscriptionId: subscriptionId 
-    userManagedIdentityResourceId: userManagedIdentityResourceId
-    assignmentLevel: assignmentLevel
-    policyType: 'diag'
-  }
-}
+// module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' =  {
+//   name: 'diagassignment-${packtag}-${split(resourceType, '/')[1]}'
+//   dependsOn: [
+//     diagnosticsPolicy
+//   ]
+//   params: {
+//     location: location
+//     mgname: mgname
+//     packtag: packtag
+//     policydefinitionId: diagnosticsPolicy.outputs.policyId
+//     resourceType: resourceType
+//     solutionTag: solutionTag
+//     subscriptionId: subscriptionId 
+//     userManagedIdentityResourceId: userManagedIdentityResourceId
+//     assignmentLevel: assignmentLevel
+//     policyType: 'diag'
+//   }
+// }
 
 module KVAlert 'Alerts.bicep' = {
   name: 'Keyvault-Alerts'
