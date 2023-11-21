@@ -5,24 +5,86 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "3423570060483269263"
+      "templateHash": "6156332957923332573"
     }
   },
   "parameters": {
-    "workspaceId": {
-      "type": "string"
+    "rulename": {
+      "type": "string",
+      "defaultValue": "AMSP-Windows-PS2016",
+      "metadata": {
+        "description": "Name of the DCR rule to be created"
+      }
     },
-    "packtag": {
-      "type": "string"
+    "actionGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Action Group to be used or created."
+      }
     },
-    "solutionTag": {
-      "type": "string"
+    "emailreceivers": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Email receiver names to be used for the Action Group if being created."
+      }
+    },
+    "emailreiceversemails": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Email addresses to be used for the Action Group if being created."
+      }
+    },
+    "useExistingAG": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "If set to true, a new Action group will be created"
+      }
+    },
+    "existingAGRG": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the existing resource group to be used for the Action Group if existing."
+      }
     },
     "location": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "location for the deployment."
+      }
+    },
+    "workspaceId": {
+      "type": "string",
+      "metadata": {
+        "description": "Full resource ID of the log analytics workspace to be used for the deployment."
+      }
+    },
+    "packtag": {
+      "type": "string",
+      "defaultValue": "PS2016"
+    },
+    "solutionTag": {
+      "type": "string",
+      "defaultValue": "MonitorStarterPacks"
+    },
+    "solutionVersion": {
+      "type": "string",
+      "defaultValue": "0.1.0"
+    },
+    "dceId": {
+      "type": "string",
+      "metadata": {
+        "description": "Full resource ID of the data collection endpoint to be used for the deployment."
+      }
     },
     "subscriptionId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Full resource ID of the user managed identity to be used for the deployment"
+      }
     },
     "userManagedIdentityResourceId": {
       "type": "string"
@@ -33,26 +95,10 @@
     "assignmentLevel": {
       "type": "string"
     },
-    "actionGroupName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "emailreceivers": {
-      "type": "array",
-      "defaultValue": []
-    },
-    "emailreiceversemails": {
-      "type": "array",
-      "defaultValue": []
-    },
-    "useExistingAG": {
-      "type": "bool"
-    },
-    "existingAGRG": {
-      "type": "string",
-      "defaultValue": ""
-    },
     "resourceGroupId": {
+      "type": "string"
+    },
+    "grafanaName": {
       "type": "string"
     }
   },
