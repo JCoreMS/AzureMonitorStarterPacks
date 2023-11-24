@@ -5,13 +5,13 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "172531741256046605"
+      "templateHash": "15956014013982190254"
     }
   },
   "parameters": {
     "packtag": {
       "type": "string",
-      "defaultValue": "KeyVault"
+      "defaultValue": "Storage"
     },
     "solutionTag": {
       "type": "string",

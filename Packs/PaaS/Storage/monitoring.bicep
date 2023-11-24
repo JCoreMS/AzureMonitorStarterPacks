@@ -1,5 +1,5 @@
 targetScope = 'managementGroup'
-param packtag string = 'KeyVault'
+param packtag string = 'Storage'
 param solutionTag string = 'MonitorStarterPacks'
 param solutionVersion string = '0.1.0'
 @description('Name of the DCR rule to be created')
