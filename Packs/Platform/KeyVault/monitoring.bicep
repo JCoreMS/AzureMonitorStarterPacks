@@ -1,5 +1,8 @@
 targetScope = 'managementGroup'
 
+param packtag string = 'KeyVault'
+param solutionTag string = 'MonitorStarterPacks'
+param solutionVersion string = '0.1.0'
 @description('Name of the DCR rule to be created')
 param rulename string = ''
 @description('Name of the Action Group to be used or created.')
@@ -16,9 +19,7 @@ param existingAGRG string = ''
 param location string //= resourceGroup().location
 @description('Full resource ID of the log analytics workspace to be used for the deployment.')
 param workspaceId string
-param packtag string = 'KeyVault'
-param solutionTag string = 'MonitorStarterPacks'
-param solutionVersion string = '0.1.0'
+
 @description('Full resource ID of the data collection endpoint to be used for the deployment.')
 param dceId string
 @description('Full resource ID of the user managed identity to be used for the deployment')
@@ -31,10 +32,12 @@ param resourceGroupId string
 param grafanaName string
 //param solutionVersion string
 
+var resourceGroupName = split(resourceGroupId, '/')[4]
+
 var resourceType = 'Microsoft.KeyVault/vaults'
 //var resourceShortType = split(resourceType, '/')[1]
 
-var resourceGroupName = split(resourceGroupId, '/')[4]
+
 
 // Action Group - the action group is either created or can reference an existing action group, depending on the useExistingAG parameter
 module ag '../../../modules/actiongroups/ag.bicep' = {
