@@ -5,10 +5,22 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "2142463182387686533"
+      "templateHash": "14542709411079977076"
     }
   },
   "parameters": {
+    "packtag": {
+      "type": "string",
+      "defaultValue": "Storage"
+    },
+    "solutionTag": {
+      "type": "string",
+      "defaultValue": "MonitorStarterPacks"
+    },
+    "solutionVersion": {
+      "type": "string",
+      "defaultValue": "0.1.0"
+    },
     "rulename": {
       "type": "string",
       "defaultValue": "",
@@ -62,18 +74,6 @@
         "description": "Full resource ID of the log analytics workspace to be used for the deployment."
       }
     },
-    "packtag": {
-      "type": "string",
-      "defaultValue": "KeyVault"
-    },
-    "solutionTag": {
-      "type": "string",
-      "defaultValue": "MonitorStarterPacks"
-    },
-    "solutionVersion": {
-      "type": "string",
-      "defaultValue": "0.1.0"
-    },
     "dceId": {
       "type": "string",
       "metadata": {
@@ -103,8 +103,8 @@
     }
   },
   "variables": {
-    "resourceType": "Microsoft.KeyVault/vaults",
-    "resourceGroupName": "[split(parameters('resourceGroupId'), '/')[4]]"
+    "resourceGroupName": "[split(parameters('resourceGroupId'), '/')[4]]",
+    "resourceType": "Microsoft.KeyVault/vaults"
   },
   "resources": [
     {
