@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "10466534845351068860"
+      "templateHash": "5564640913623618384"
     }
   },
   "parameters": {
@@ -3476,7 +3476,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "4348740197488695571"
+              "templateHash": "5357687670414804235"
             }
           },
           "parameters": {
@@ -25322,7 +25322,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "11230407458399148487"
+                      "templateHash": "17787212531787939890"
                     }
                   },
                   "parameters": {
@@ -25459,6 +25459,12 @@
                           },
                           "packtag": {
                             "value": "KeyVault"
+                          },
+                          "grafanaName": {
+                            "value": "[parameters('grafanaName')]"
+                          },
+                          "dceId": {
+                            "value": "[parameters('dceId')]"
                           }
                         },
                         "template": {
@@ -25468,24 +25474,86 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "3423570060483269263"
+                              "templateHash": "2142463182387686533"
                             }
                           },
                           "parameters": {
-                            "workspaceId": {
-                              "type": "string"
+                            "rulename": {
+                              "type": "string",
+                              "defaultValue": "",
+                              "metadata": {
+                                "description": "Name of the DCR rule to be created"
+                              }
                             },
-                            "packtag": {
-                              "type": "string"
+                            "actionGroupName": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Name of the Action Group to be used or created."
+                              }
                             },
-                            "solutionTag": {
-                              "type": "string"
+                            "emailreceivers": {
+                              "type": "array",
+                              "defaultValue": [],
+                              "metadata": {
+                                "description": "Email receiver names to be used for the Action Group if being created."
+                              }
+                            },
+                            "emailreiceversemails": {
+                              "type": "array",
+                              "defaultValue": [],
+                              "metadata": {
+                                "description": "Email addresses to be used for the Action Group if being created."
+                              }
+                            },
+                            "useExistingAG": {
+                              "type": "bool",
+                              "defaultValue": false,
+                              "metadata": {
+                                "description": "If set to true, a new Action group will be created"
+                              }
+                            },
+                            "existingAGRG": {
+                              "type": "string",
+                              "defaultValue": "",
+                              "metadata": {
+                                "description": "Name of the existing resource group to be used for the Action Group if existing."
+                              }
                             },
                             "location": {
-                              "type": "string"
+                              "type": "string",
+                              "metadata": {
+                                "description": "location for the deployment."
+                              }
+                            },
+                            "workspaceId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Full resource ID of the log analytics workspace to be used for the deployment."
+                              }
+                            },
+                            "packtag": {
+                              "type": "string",
+                              "defaultValue": "KeyVault"
+                            },
+                            "solutionTag": {
+                              "type": "string",
+                              "defaultValue": "MonitorStarterPacks"
+                            },
+                            "solutionVersion": {
+                              "type": "string",
+                              "defaultValue": "0.1.0"
+                            },
+                            "dceId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Full resource ID of the data collection endpoint to be used for the deployment."
+                              }
                             },
                             "subscriptionId": {
-                              "type": "string"
+                              "type": "string",
+                              "metadata": {
+                                "description": "Full resource ID of the user managed identity to be used for the deployment"
+                              }
                             },
                             "userManagedIdentityResourceId": {
                               "type": "string"
@@ -25496,26 +25564,10 @@
                             "assignmentLevel": {
                               "type": "string"
                             },
-                            "actionGroupName": {
-                              "type": "string",
-                              "defaultValue": ""
-                            },
-                            "emailreceivers": {
-                              "type": "array",
-                              "defaultValue": []
-                            },
-                            "emailreiceversemails": {
-                              "type": "array",
-                              "defaultValue": []
-                            },
-                            "useExistingAG": {
-                              "type": "bool"
-                            },
-                            "existingAGRG": {
-                              "type": "string",
-                              "defaultValue": ""
-                            },
                             "resourceGroupId": {
+                              "type": "string"
+                            },
+                            "grafanaName": {
                               "type": "string"
                             }
                           },
@@ -25716,519 +25768,6 @@
                                   }
                                 }
                               }
-                            },
-                            {
-                              "type": "Microsoft.Resources/deployments",
-                              "apiVersion": "2022-09-01",
-                              "name": "[format('associacionpolicy-{0}-{1}', parameters('packtag'), split(variables('resourceType'), '/')[1])]",
-                              "location": "[deployment().location]",
-                              "properties": {
-                                "expressionEvaluationOptions": {
-                                  "scope": "inner"
-                                },
-                                "mode": "Incremental",
-                                "parameters": {
-                                  "logAnalyticsWSResourceId": {
-                                    "value": "[parameters('workspaceId')]"
-                                  },
-                                  "packtag": {
-                                    "value": "[parameters('packtag')]"
-                                  },
-                                  "solutionTag": {
-                                    "value": "[parameters('solutionTag')]"
-                                  },
-                                  "policyDescription": {
-                                    "value": "[format('Policy to associate the diagnostics setting for {0} resources the tagged with {1} tag.', split(variables('resourceType'), '/')[1], parameters('packtag'))]"
-                                  },
-                                  "policyDisplayName": {
-                                    "value": "[format('Associate the diagnostics with the {0} resources tagged with {1} tag.', split(variables('resourceType'), '/')[1], parameters('packtag'))]"
-                                  },
-                                  "policyName": {
-                                    "value": "[format('Associate-diagnostics-{0}-{1}', parameters('packtag'), split(variables('resourceType'), '/')[1])]"
-                                  },
-                                  "resourceType": {
-                                    "value": "[variables('resourceType')]"
-                                  }
-                                },
-                                "template": {
-                                  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                                  "contentVersion": "1.0.0.0",
-                                  "metadata": {
-                                    "_generator": {
-                                      "name": "bicep",
-                                      "version": "0.20.4.51522",
-                                      "templateHash": "5650628738557434312"
-                                    }
-                                  },
-                                  "parameters": {
-                                    "policyName": {
-                                      "type": "string"
-                                    },
-                                    "policyDisplayName": {
-                                      "type": "string"
-                                    },
-                                    "policyDescription": {
-                                      "type": "string"
-                                    },
-                                    "packtag": {
-                                      "type": "string"
-                                    },
-                                    "solutionTag": {
-                                      "type": "string"
-                                    },
-                                    "logAnalyticsWSResourceId": {
-                                      "type": "string"
-                                    },
-                                    "resourceType": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  "resources": [
-                                    {
-                                      "type": "Microsoft.Authorization/policyDefinitions",
-                                      "apiVersion": "2021-06-01",
-                                      "name": "[parameters('policyName')]",
-                                      "properties": {
-                                        "description": "[parameters('policyDescription')]",
-                                        "displayName": "[format('[AMSP]-{0}', parameters('policyDisplayName'))]",
-                                        "metadata": {
-                                          "category": "Monitoring",
-                                          "[format('{0}', parameters('solutionTag'))]": "[parameters('packtag')]"
-                                        },
-                                        "policyType": "Custom",
-                                        "mode": "Indexed",
-                                        "parameters": {
-                                          "tagName": {
-                                            "type": "String",
-                                            "metadata": {
-                                              "displayName": "Tag name",
-                                              "description": "A tag to apply the association conditionally."
-                                            },
-                                            "defaultValue": "[parameters('solutionTag')]"
-                                          },
-                                          "tagValue": {
-                                            "type": "String",
-                                            "metadata": {
-                                              "displayName": "Tag value",
-                                              "description": "The value of the tag."
-                                            },
-                                            "defaultValue": "[parameters('packtag')]"
-                                          },
-                                          "resourceType": {
-                                            "type": "String",
-                                            "metadata": {
-                                              "displayName": "Resource Type",
-                                              "description": "The the full Microsoft.ResourceProvider/resourceType format of the resource type to apply the policy to."
-                                            },
-                                            "defaultValue": "[parameters('packtag')]"
-                                          },
-                                          "effect": {
-                                            "type": "String",
-                                            "metadata": {
-                                              "displayName": "Effect",
-                                              "description": "Enable or disable the execution of the policy"
-                                            },
-                                            "allowedValues": [
-                                              "DeployIfNotExists",
-                                              "Disabled"
-                                            ],
-                                            "defaultValue": "DeployIfNotExists"
-                                          },
-                                          "logAnalyticsWSResourceId": {
-                                            "type": "String",
-                                            "metadata": {
-                                              "displayName": "LAW Id",
-                                              "description": "The Id of the Log Analytics workspace."
-                                            },
-                                            "defaultValue": "[parameters('logAnalyticsWSResourceId')]"
-                                          }
-                                        },
-                                        "policyRule": {
-                                          "if": {
-                                            "allOf": [
-                                              {
-                                                "field": "[[concat('tags[', parameters('tagName'), ']')]",
-                                                "contains": "[[parameters('tagValue')]"
-                                              },
-                                              {
-                                                "field": "type",
-                                                "equals": "[parameters('resourceType')]"
-                                              }
-                                            ]
-                                          },
-                                          "then": {
-                                            "effect": "[[parameters('effect')]",
-                                            "details": {
-                                              "roleDefinitionIds": [
-                                                "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
-                                              ],
-                                              "type": "Microsoft.Insights/diagnosticSettings",
-                                              "existenceCondition": {
-                                                "allOf": [
-                                                  {
-                                                    "count": {
-                                                      "field": "Microsoft.Insights/diagnosticSettings/logs[*]",
-                                                      "where": {
-                                                        "allOf": [
-                                                          {
-                                                            "field": "Microsoft.Insights/diagnosticSettings/logs[*].enabled",
-                                                            "equals": true
-                                                          },
-                                                          {
-                                                            "field": "microsoft.insights/diagnosticSettings/logs[*].categoryGroup",
-                                                            "equals": "allLogs"
-                                                          }
-                                                        ]
-                                                      }
-                                                    },
-                                                    "equals": 1
-                                                  },
-                                                  {
-                                                    "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
-                                                    "equals": "[parameters('logAnalyticsWSResourceId')]"
-                                                  }
-                                                ]
-                                              },
-                                              "deployment": {
-                                                "properties": {
-                                                  "mode": "incremental",
-                                                  "template": {
-                                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                                    "contentVersion": "1.0.0.0",
-                                                    "parameters": {
-                                                      "resourceType": {
-                                                        "type": "string"
-                                                      },
-                                                      "logAnalyticsWSResourceId": {
-                                                        "type": "string"
-                                                      },
-                                                      "packTag": {
-                                                        "type": "string"
-                                                      },
-                                                      "resourceName": {
-                                                        "type": "string"
-                                                      }
-                                                    },
-                                                    "variables": {},
-                                                    "resources": [
-                                                      {
-                                                        "type": "[format('{0}/providers/diagnosticSettings', parameters('resourceType'))]",
-                                                        "name": "[[concat(parameters('resourceName'), '/Microsoft.Insights/', 'AMSP-', parameters('packTag'))]",
-                                                        "apiVersion": "2021-05-01-preview",
-                                                        "properties": {
-                                                          "workspaceId": "[[parameters('logAnalyticsWSResourceId')]",
-                                                          "logs": [
-                                                            {
-                                                              "categoryGroup": "allLogs",
-                                                              "enabled": true
-                                                            }
-                                                          ]
-                                                        }
-                                                      }
-                                                    ]
-                                                  },
-                                                  "parameters": {
-                                                    "resourceType": {
-                                                      "value": "[[parameters('resourceType')]"
-                                                    },
-                                                    "logAnalyticsWSResourceId": {
-                                                      "value": "[[parameters('logAnalyticsWSResourceId')]"
-                                                    },
-                                                    "packTag": {
-                                                      "value": "[[parameters('tagValue')]"
-                                                    },
-                                                    "resourceName": {
-                                                      "value": "[[field('name')]"
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "outputs": {
-                                    "policyId": {
-                                      "type": "string",
-                                      "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('policyName'))]"
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            {
-                              "type": "Microsoft.Resources/deployments",
-                              "apiVersion": "2022-09-01",
-                              "name": "[format('diagassignment-{0}-{1}', parameters('packtag'), split(variables('resourceType'), '/')[1])]",
-                              "location": "[deployment().location]",
-                              "properties": {
-                                "expressionEvaluationOptions": {
-                                  "scope": "inner"
-                                },
-                                "mode": "Incremental",
-                                "parameters": {
-                                  "location": {
-                                    "value": "[parameters('location')]"
-                                  },
-                                  "mgname": {
-                                    "value": "[parameters('mgname')]"
-                                  },
-                                  "packtag": {
-                                    "value": "[parameters('packtag')]"
-                                  },
-                                  "policydefinitionId": {
-                                    "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', format('associacionpolicy-{0}-{1}', parameters('packtag'), split(variables('resourceType'), '/')[1])), '2022-09-01').outputs.policyId.value]"
-                                  },
-                                  "resourceType": {
-                                    "value": "[variables('resourceType')]"
-                                  },
-                                  "solutionTag": {
-                                    "value": "[parameters('solutionTag')]"
-                                  },
-                                  "subscriptionId": {
-                                    "value": "[parameters('subscriptionId')]"
-                                  },
-                                  "userManagedIdentityResourceId": {
-                                    "value": "[parameters('userManagedIdentityResourceId')]"
-                                  },
-                                  "assignmentLevel": {
-                                    "value": "[parameters('assignmentLevel')]"
-                                  },
-                                  "policyType": {
-                                    "value": "diag"
-                                  }
-                                },
-                                "template": {
-                                  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                                  "contentVersion": "1.0.0.0",
-                                  "metadata": {
-                                    "_generator": {
-                                      "name": "bicep",
-                                      "version": "0.20.4.51522",
-                                      "templateHash": "196652062591472434"
-                                    }
-                                  },
-                                  "parameters": {
-                                    "packtag": {
-                                      "type": "string"
-                                    },
-                                    "solutionTag": {
-                                      "type": "string"
-                                    },
-                                    "location": {
-                                      "type": "string"
-                                    },
-                                    "userManagedIdentityResourceId": {
-                                      "type": "string"
-                                    },
-                                    "assignmentSuffix": {
-                                      "type": "string",
-                                      "defaultValue": ""
-                                    },
-                                    "mgname": {
-                                      "type": "string"
-                                    },
-                                    "assignmentLevel": {
-                                      "type": "string",
-                                      "defaultValue": "managementGroup"
-                                    },
-                                    "subscriptionId": {
-                                      "type": "string"
-                                    },
-                                    "resourceType": {
-                                      "type": "string"
-                                    },
-                                    "policyType": {
-                                      "type": "string",
-                                      "allowedValues": [
-                                        "diag",
-                                        "alert"
-                                      ]
-                                    },
-                                    "policydefinitionId": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  "variables": {
-                                    "resourceShortType": "[split(parameters('resourceType'), '/')[1]]"
-                                  },
-                                  "resources": [
-                                    {
-                                      "condition": "[equals(parameters('assignmentLevel'), 'managementGroup')]",
-                                      "type": "Microsoft.Resources/deployments",
-                                      "apiVersion": "2022-09-01",
-                                      "name": "[format('AM-{0}-{1}-{2}', parameters('packtag'), variables('resourceShortType'), parameters('assignmentSuffix'))]",
-                                      "scope": "[format('Microsoft.Management/managementGroups/{0}', parameters('mgname'))]",
-                                      "location": "[deployment().location]",
-                                      "properties": {
-                                        "expressionEvaluationOptions": {
-                                          "scope": "inner"
-                                        },
-                                        "mode": "Incremental",
-                                        "parameters": {
-                                          "policyDefinitionId": {
-                                            "value": "[parameters('policydefinitionId')]"
-                                          },
-                                          "assignmentName": {
-                                            "value": "[format('{0}-{1}-{2}', parameters('packtag'), variables('resourceShortType'), parameters('assignmentSuffix'))]"
-                                          },
-                                          "location": {
-                                            "value": "[parameters('location')]"
-                                          },
-                                          "solutionTag": {
-                                            "value": "[parameters('solutionTag')]"
-                                          },
-                                          "userManagedIdentityResourceId": {
-                                            "value": "[parameters('userManagedIdentityResourceId')]"
-                                          }
-                                        },
-                                        "template": {
-                                          "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                                          "contentVersion": "1.0.0.0",
-                                          "metadata": {
-                                            "_generator": {
-                                              "name": "bicep",
-                                              "version": "0.20.4.51522",
-                                              "templateHash": "18204016525654709950"
-                                            }
-                                          },
-                                          "parameters": {
-                                            "policyDefinitionId": {
-                                              "type": "string"
-                                            },
-                                            "assignmentName": {
-                                              "type": "string"
-                                            },
-                                            "location": {
-                                              "type": "string"
-                                            },
-                                            "solutionTag": {
-                                              "type": "string"
-                                            },
-                                            "userManagedIdentityResourceId": {
-                                              "type": "string"
-                                            }
-                                          },
-                                          "variables": {
-                                            "loc2": "[trim(parameters('location'))]"
-                                          },
-                                          "resources": [
-                                            {
-                                              "type": "Microsoft.Authorization/policyAssignments",
-                                              "apiVersion": "2022-06-01",
-                                              "name": "[parameters('assignmentName')]",
-                                              "identity": {
-                                                "type": "UserAssigned",
-                                                "userAssignedIdentities": {
-                                                  "[format('{0}', parameters('userManagedIdentityResourceId'))]": {}
-                                                }
-                                              },
-                                              "location": "[variables('loc2')]",
-                                              "properties": {
-                                                "policyDefinitionId": "[parameters('policyDefinitionId')]",
-                                                "displayName": "[parameters('assignmentName')]",
-                                                "enforcementMode": "Default",
-                                                "metadata": {
-                                                  "createdBy": "[parameters('solutionTag')]"
-                                                }
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      }
-                                    },
-                                    {
-                                      "condition": "[not(equals(parameters('assignmentLevel'), 'managementGroup'))]",
-                                      "type": "Microsoft.Resources/deployments",
-                                      "apiVersion": "2022-09-01",
-                                      "name": "[format('AM-{0}-{1}-{2}', parameters('packtag'), variables('resourceShortType'), parameters('assignmentSuffix'))]",
-                                      "subscriptionId": "[parameters('subscriptionId')]",
-                                      "location": "[deployment().location]",
-                                      "properties": {
-                                        "expressionEvaluationOptions": {
-                                          "scope": "inner"
-                                        },
-                                        "mode": "Incremental",
-                                        "parameters": {
-                                          "policyDefinitionId": {
-                                            "value": "[parameters('policydefinitionId')]"
-                                          },
-                                          "assignmentName": {
-                                            "value": "[format('{0}-{1}-{2}-{3}', parameters('packtag'), variables('resourceShortType'), parameters('policyType'), parameters('assignmentSuffix'))]"
-                                          },
-                                          "location": {
-                                            "value": "[parameters('location')]"
-                                          },
-                                          "solutionTag": {
-                                            "value": "[parameters('solutionTag')]"
-                                          },
-                                          "userManagedIdentityResourceId": {
-                                            "value": "[parameters('userManagedIdentityResourceId')]"
-                                          }
-                                        },
-                                        "template": {
-                                          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
-                                          "contentVersion": "1.0.0.0",
-                                          "metadata": {
-                                            "_generator": {
-                                              "name": "bicep",
-                                              "version": "0.20.4.51522",
-                                              "templateHash": "15632908880880169790"
-                                            }
-                                          },
-                                          "parameters": {
-                                            "policyDefinitionId": {
-                                              "type": "string"
-                                            },
-                                            "assignmentName": {
-                                              "type": "string"
-                                            },
-                                            "location": {
-                                              "type": "string"
-                                            },
-                                            "solutionTag": {
-                                              "type": "string"
-                                            },
-                                            "userManagedIdentityResourceId": {
-                                              "type": "string"
-                                            }
-                                          },
-                                          "variables": {
-                                            "loc2": "[trim(parameters('location'))]"
-                                          },
-                                          "resources": [
-                                            {
-                                              "type": "Microsoft.Authorization/policyAssignments",
-                                              "apiVersion": "2022-06-01",
-                                              "name": "[parameters('assignmentName')]",
-                                              "identity": {
-                                                "type": "UserAssigned",
-                                                "userAssignedIdentities": {
-                                                  "[format('{0}', parameters('userManagedIdentityResourceId'))]": {}
-                                                }
-                                              },
-                                              "location": "[variables('loc2')]",
-                                              "properties": {
-                                                "policyDefinitionId": "[parameters('policyDefinitionId')]",
-                                                "displayName": "[parameters('assignmentName')]",
-                                                "enforcementMode": "Default",
-                                                "metadata": {
-                                                  "createdBy": "[parameters('solutionTag')]"
-                                                }
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      }
-                                    }
-                                  ]
-                                }
-                              },
-                              "dependsOn": [
-                                "[extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', format('associacionpolicy-{0}-{1}', parameters('packtag'), split(variables('resourceType'), '/')[1]))]"
-                              ]
                             },
                             {
                               "type": "Microsoft.Resources/deployments",

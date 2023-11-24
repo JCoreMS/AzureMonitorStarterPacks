@@ -18,39 +18,24 @@ param parResourceGroupTags object = {
 }
 param parAlertState string = 'true'
 
-module ALBDataPathAvail '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
-    name: '${uniqueString(deployment().name)}-ALBDataPathAvailabilityAlert'
+module ALBDipPathAvail '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
+    name: '${uniqueString(deployment().name)}-ALBDipAvailabilityAlert'
     params: {
-        assignmentLevel: assignmentLevel
-        policyLocation: policyLocation
-        mgname: mgname
-        packTag: packTag
-        resourceType: resourceType
-        solutionTag: solutionTag
-        subscriptionId: subscriptionId
-        userManagedIdentityResourceId: userManagedIdentityResourceId
-        deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
-        alertname: 'Deploy_ALB_Availability_Alert'
-        alertDisplayName: '[AMSP] Deploy ALB Availability Alert'
-        alertDescription: 'AMSP policy to deploy ALB availability alerts Alert'
+        alertname: 'AMSP - Load Balancer Dip Availability'
+        alertDisplayName: '[AMSP] Load Balancer Dip Availability'
+        alertDescription: 'AMSP policy to deploy Load Balancer Dip Availability'
         metricNamespace: 'Microsoft.Network/loadBalancers'
-        parAlertSeverity: '2'
-        parAlertState: parAlertState
-        parAutoMitigate: 'true'
+        metricName: 'DipAvailability'
+        operator: 'LessThan'
+        parAlertSeverity: '0'
+        parAutoMitigate: 'false'
         parEvaluationFrequency: 'PT1M'
         parPolicyEffect: 'deployIfNotExists'
         parWindowSize: 'PT1M'
         parThreshold: '90'
-        assignmentSuffix: 'ActALBAvl'
+        assignmentSuffix: 'ActALBDipAvl'
         AGId: AGId
-        metricName: 'VipAvailability'
-        operator: 'LessThan'
-    }
-}
-
-module ALBBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
-    name: '${uniqueString(deployment().name)}-ALBBackendAvailabilityAlert'
-    params: {
+        parAlertState: parAlertState
         assignmentLevel: assignmentLevel
         policyLocation: policyLocation
         mgname: mgname
@@ -60,20 +45,93 @@ module ALBBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThresho
         subscriptionId: subscriptionId
         userManagedIdentityResourceId: userManagedIdentityResourceId
         deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
+    }
+}
+
+module ALBUsedSNATPorts '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
+    name: '${uniqueString(deployment().name)}-ALBUsedSNATPortsAlert'
+    params: {
+        alertname: 'AMSP - Load Balancer Metric Alert for ALB Used SNAT Ports'
+        alertDisplayName: '[AMSP] Metric Alert for ALB Used SNAT Ports'
+        alertDescription: 'AMSP policy to deploy Metric Alert for ALB Used SNAT Ports'
+        metricNamespace: 'Microsoft.Network/loadBalancers'
+        metricName: 'UsedSNATPorts'
+        operator: 'GreaterThan'
+        parAlertSeverity: '1'
+        parAutoMitigate: 'false'
+        parEvaluationFrequency: 'PT1M'
+        parPolicyEffect: 'deployIfNotExists'
+        parWindowSize: 'PT1M'
+        parThreshold: '900'
+        assignmentSuffix: 'ActALBDipAvl'
+        AGId: AGId
+        parAlertState: parAlertState
+        assignmentLevel: assignmentLevel
+        policyLocation: policyLocation
+        mgname: mgname
+        packTag: packTag
+        resourceType: resourceType
+        solutionTag: solutionTag
+        subscriptionId: subscriptionId
+        userManagedIdentityResourceId: userManagedIdentityResourceId
+        deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
+    }
+}
+module ALBGlobalBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
+    name: '${uniqueString(deployment().name)}-ALBDGlobalBackendAvailAlert'
+    params: {
+        alertname: 'AMSP - Load Balancer Global Backend Availability'
+        alertDisplayName: '[AMSP] Global Backend Availability '
+        alertDescription: 'AMSP policy to deploy Global Backend Availability alert'
+        metricNamespace: 'Microsoft.Network/loadBalancers'
+        metricName: 'GlobalBackendAvailability'
+        operator: 'GreaterThan'
+        parAlertSeverity: '0'
+        parAutoMitigate: 'false'
+        parEvaluationFrequency: 'PT1M'
+        parPolicyEffect: 'deployIfNotExists'
+        parWindowSize: 'PT1M'
+        parThreshold: '90'
+        assignmentSuffix: 'ActALBGlbBEAvl'
+        AGId: AGId
+        parAlertState: parAlertState
+        assignmentLevel: assignmentLevel
+        policyLocation: policyLocation
+        mgname: mgname
+        packTag: packTag
+        resourceType: resourceType
+        solutionTag: solutionTag
+        subscriptionId: subscriptionId
+        userManagedIdentityResourceId: userManagedIdentityResourceId
+        deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
+    }
+}
+module ALBBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
+    name: '${uniqueString(deployment().name)}-ALBBackendAvailabilityAlert'
+    params: {
         alertname: 'Deploy_ALB_Availability_Alert'
         alertDisplayName: '[AMSP] Deploy ALB Global Backend Availability Alert'
         alertDescription: 'AMSP policy to deploy ALB Global Backend Alert'
         metricNamespace: 'Microsoft.Network/loadBalancers'
-        parAlertSeverity: '1'
-        parAlertState: parAlertState
-        parAutoMitigate: 'true'
+        parAlertSeverity: '0'
+        parAutoMitigate: 'false'
         parEvaluationFrequency: 'PT1M'
         parPolicyEffect: 'deployIfNotExists'
         parWindowSize: 'PT5M'
         parThreshold: '90'
         assignmentSuffix: 'ActALBAvl'
-        AGId: AGId
         metricName: 'VipAvailability'
         operator: 'LessThan'
+        parAlertState: parAlertState
+        AGId: AGId
+        assignmentLevel: assignmentLevel
+        policyLocation: policyLocation
+        mgname: mgname
+        packTag: packTag
+        resourceType: resourceType
+        solutionTag: solutionTag
+        subscriptionId: subscriptionId
+        userManagedIdentityResourceId: userManagedIdentityResourceId
+        deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
     }
 }

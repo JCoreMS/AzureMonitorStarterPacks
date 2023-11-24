@@ -43,6 +43,8 @@ module KVAlerts './KeyVault/monitoring.bicep' = {
     emailreiceversemails: emailreiceversemails
     existingAGRG: existingAGRG
     packtag: 'KeyVault'
+    grafanaName: grafanaName
+    dceId: dceId
   }
 }
 module vWan './Network/vWan/monitoring.bicep' = {

@@ -16,7 +16,7 @@ param existingAGRG string = ''
 param resourceGroupId string
 //param solutionVersion string
 
-var resourceType = 'Microsoft.KeyVault/vaults'
+var resourceType = 'Microsoft.Network/loadBalancers'
 //var resourceShortType = split(resourceType, '/')[1]
 
 var resourceGroupName = split(resourceGroupId, '/')[4]
@@ -37,40 +37,8 @@ module ag '../../../../modules/actiongroups/ag.bicep' = {
   }
 }
 
-module diagnosticsPolicy '../../../../modules/policies/mg/diagnostics/associacionpolicyDiag.bicep' = {
-  name: 'associacionpolicy-${packtag}-${split(resourceType, '/')[1]}'
-  params: {
-    logAnalyticsWSResourceId: workspaceId
-    packtag: packtag
-    solutionTag: solutionTag
-    policyDescription: 'Policy to associate the diagnostics setting for ${split(resourceType, '/')[1]} resources the tagged with ${packtag} tag.'
-    policyDisplayName: 'Associate the diagnostics with the ${split(resourceType, '/')[1]} resources tagged with ${packtag} tag.'
-    policyName: 'Associate-diagnostics-${packtag}-${split(resourceType, '/')[1]}'
-    resourceType: resourceType
-  }
-}
-
-module policyassignment '../../../../modules/policies/mg/policiesDiag.bicep' =  {
-  name: 'diagassignment-${packtag}-${split(resourceType, '/')[1]}'
-  dependsOn: [
-    diagnosticsPolicy
-  ]
-  params: {
-    location: location
-    mgname: mgname
-    packtag: packtag
-    policydefinitionId: diagnosticsPolicy.outputs.policyId
-    resourceType: resourceType
-    solutionTag: solutionTag
-    subscriptionId: subscriptionId 
-    userManagedIdentityResourceId: userManagedIdentityResourceId
-    assignmentLevel: assignmentLevel
-    policyType: 'diag'
-  }
-}
-
-module KVAlert 'Alerts.bicep' = {
-  name: 'Keyvault-Alerts'
+module LBAlerts 'Alerts.bicep' = {
+  name: 'LB-Alerts'
   params: {
     packTag: packtag
     policyLocation: location
