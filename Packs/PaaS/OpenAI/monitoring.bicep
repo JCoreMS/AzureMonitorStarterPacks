@@ -1,5 +1,5 @@
 targetScope = 'managementGroup'
-param packtag string = 'ALB'
+param packtag string = 'OperAI'
 param solutionTag string = 'MonitorStarterPacks'
 param solutionVersion string = '0.1.0'
 @description('Name of the DCR rule to be created')
@@ -35,7 +35,7 @@ var resourceType = 'Microsoft.Network/loadBalancers'
 var resourceGroupName = split(resourceGroupId, '/')[4]
 
 // Action Group - the action group is either created or can reference an existing action group, depending on the useExistingAG parameter
-module ag '../../../../modules/actiongroups/ag.bicep' = {
+module ag '../../../modules/actiongroups/ag.bicep' = {
   name: actionGroupName
   params: {
     actionGroupName: actionGroupName
@@ -63,6 +63,5 @@ module LBAlerts 'Alerts.bicep' = {
     assignmentLevel: assignmentLevel
     userManagedIdentityResourceId: userManagedIdentityResourceId
     AGId: ag.outputs.actionGroupResourceId
-    solutionVersion: solutionVersion
   }
 }

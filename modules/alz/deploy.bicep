@@ -73,3 +73,6 @@ output resourceId string = extensionResourceId(tenantResourceId('Microsoft.Manag
 
 @sys.description('Policy Definition Role Definition IDs.')
 output roleDefinitionIds array = (contains(policyDefinition.properties.policyRule.then, 'details') ? ((contains(policyDefinition.properties.policyRule.then.details, 'roleDefinitionIds') ? policyDefinition.properties.policyRule.then.details.roleDefinitionIds : [])) : [])
+
+@sys.description('Policy Id')
+output policyId string = policyDefinition.id

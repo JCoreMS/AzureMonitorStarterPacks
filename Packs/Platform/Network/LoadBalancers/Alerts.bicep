@@ -1,5 +1,6 @@
 targetScope = 'managementGroup'
 param solutionTag string
+param solutionVersion string
 param packTag string
 param subscriptionId string
 param mgname string
@@ -133,5 +134,30 @@ module ALBBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThresho
         subscriptionId: subscriptionId
         userManagedIdentityResourceId: userManagedIdentityResourceId
         deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
+    }
+}
+module policySet '../../../../modules/policies/mg/policySetGeneric.bicep' = {
+    name: 'KV-PolicySet'
+    params: {
+        initiativeDescription: 'AMSP policy to deploy Key Vault policies'
+        initiativeDisplayName: '[AMSP] Key Vault policies'
+        initiativeName: 'AMSP-KV-PolicySet'
+        solutionTag: solutionTag
+        category: 'Monitoring'
+        version: solutionVersion
+        policyDefinitions: [
+            {
+                policyDefinitionId: ALBDipPathAvail.outputs.policyId
+            }
+            {
+                policyDefinitionId: ALBUsedSNATPorts.outputs.policyId
+            }
+            {
+                policyDefinitionId: ALBGlobalBackendAvail.outputs.policyId
+            }
+            {
+                policyDefinitionId: ALBBackendAvail.outputs.policyId
+            }
+        ]
     }
 }

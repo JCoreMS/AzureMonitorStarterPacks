@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "14568411683003163851"
+      "templateHash": "13320889359313770735"
     }
   },
   "parameters": {
@@ -349,7 +349,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "11907012624893425136"
+              "templateHash": "12377061731068048380"
             }
           },
           "parameters": {
@@ -468,7 +468,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "13305175648179526634"
+                      "templateHash": "18428456296564463110"
                     }
                   },
                   "parameters": {
@@ -879,7 +879,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "13379690636991033099"
+                              "templateHash": "1887629057415201122"
                             }
                           },
                           "parameters": {
@@ -998,6 +998,13 @@
                                 "description": "Policy Definition Role Definition IDs."
                               },
                               "value": "[if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then, 'details'), if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details, 'roleDefinitionIds'), reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details.roleDefinitionIds, createArray()), createArray())]"
+                            },
+                            "policyId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Policy Id"
+                              },
+                              "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name'))]"
                             }
                           }
                         }
@@ -1379,7 +1386,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9883467047582186836"
+                      "templateHash": "12910150818715424729"
                     }
                   },
                   "parameters": {
@@ -1415,6 +1422,10 @@
                     },
                     "resourceType": {
                       "type": "string"
+                    },
+                    "timeAggregation": {
+                      "type": "string",
+                      "defaultValue": "Average"
                     },
                     "metricNamespace": {
                       "type": "string"
@@ -1845,7 +1856,7 @@
                                                     "metricName": "[[parameters('metricName')]",
                                                     "operator": "[[parameters('operator')]",
                                                     "threshold": "[[parameters('threshold')]",
-                                                    "timeAggregation": "Average",
+                                                    "timeAggregation": "[parameters('timeAggregation')]",
                                                     "criterionType": "StaticThresholdCriterion"
                                                   }
                                                 ],
@@ -1966,7 +1977,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "13379690636991033099"
+                              "templateHash": "1887629057415201122"
                             }
                           },
                           "parameters": {
@@ -2085,6 +2096,13 @@
                                 "description": "Policy Definition Role Definition IDs."
                               },
                               "value": "[if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then, 'details'), if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details, 'roleDefinitionIds'), reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details.roleDefinitionIds, createArray()), createArray())]"
+                            },
+                            "policyId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Policy Id"
+                              },
+                              "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name'))]"
                             }
                           }
                         }
@@ -2370,6 +2388,10 @@
                     "policyResourceId": {
                       "type": "string",
                       "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.resourceId.value]"
+                    },
+                    "policyId": {
+                      "type": "string",
+                      "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.policyId.value]"
                     }
                   }
                 }

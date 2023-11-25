@@ -17,7 +17,7 @@ param mgname string
 param assignmentLevel string
 param userManagedIdentityResourceId string
 param resourceType string
-
+param timeAggregation string='Average'
 param metricNamespace string
 param AGId string
 param metricName string
@@ -406,7 +406,7 @@ module metricAlert '../../alz/deploy.bicep' = {
                                                         metricName: '[parameters(\'metricName\')]'
                                                         operator: '[parameters(\'operator\')]'
                                                         threshold: '[parameters(\'threshold\')]'
-                                                        timeAggregation: 'Average'
+                                                        timeAggregation: timeAggregation
                                                         criterionType: 'StaticThresholdCriterion'
                                                     }
                                                 ]
@@ -542,3 +542,4 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = {
 }
 
 output policyResourceId string = metricAlert.outputs.resourceId
+output policyId string = metricAlert.outputs.policyId

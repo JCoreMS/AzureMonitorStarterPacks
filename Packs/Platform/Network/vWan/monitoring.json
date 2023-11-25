@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "11493202025774054607"
+      "templateHash": "9878631698337837961"
     }
   },
   "parameters": {
@@ -839,7 +839,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "6499309857851028803"
+              "templateHash": "14205888595444349289"
             }
           },
           "parameters": {
@@ -1016,7 +1016,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9524251845584344050"
+                      "templateHash": "9881467089864306289"
                     }
                   },
                   "parameters": {
@@ -1651,7 +1651,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "13379690636991033099"
+                              "templateHash": "1887629057415201122"
                             }
                           },
                           "parameters": {
@@ -1770,6 +1770,13 @@
                                 "description": "Policy Definition Role Definition IDs."
                               },
                               "value": "[if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then, 'details'), if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details, 'roleDefinitionIds'), reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details.roleDefinitionIds, createArray()), createArray())]"
+                            },
+                            "policyId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Policy Id"
+                              },
+                              "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name'))]"
                             }
                           }
                         }
@@ -2151,7 +2158,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9883467047582186836"
+                      "templateHash": "12910150818715424729"
                     }
                   },
                   "parameters": {
@@ -2187,6 +2194,10 @@
                     },
                     "resourceType": {
                       "type": "string"
+                    },
+                    "timeAggregation": {
+                      "type": "string",
+                      "defaultValue": "Average"
                     },
                     "metricNamespace": {
                       "type": "string"
@@ -2617,7 +2628,7 @@
                                                     "metricName": "[[parameters('metricName')]",
                                                     "operator": "[[parameters('operator')]",
                                                     "threshold": "[[parameters('threshold')]",
-                                                    "timeAggregation": "Average",
+                                                    "timeAggregation": "[parameters('timeAggregation')]",
                                                     "criterionType": "StaticThresholdCriterion"
                                                   }
                                                 ],
@@ -2738,7 +2749,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "13379690636991033099"
+                              "templateHash": "1887629057415201122"
                             }
                           },
                           "parameters": {
@@ -2857,6 +2868,13 @@
                                 "description": "Policy Definition Role Definition IDs."
                               },
                               "value": "[if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then, 'details'), if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details, 'roleDefinitionIds'), reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details.roleDefinitionIds, createArray()), createArray())]"
+                            },
+                            "policyId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Policy Id"
+                              },
+                              "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name'))]"
                             }
                           }
                         }
@@ -3142,6 +3160,10 @@
                     "policyResourceId": {
                       "type": "string",
                       "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.resourceId.value]"
+                    },
+                    "policyId": {
+                      "type": "string",
+                      "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.policyId.value]"
                     }
                   }
                 }
@@ -3238,7 +3260,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9883467047582186836"
+                      "templateHash": "12910150818715424729"
                     }
                   },
                   "parameters": {
@@ -3274,6 +3296,10 @@
                     },
                     "resourceType": {
                       "type": "string"
+                    },
+                    "timeAggregation": {
+                      "type": "string",
+                      "defaultValue": "Average"
                     },
                     "metricNamespace": {
                       "type": "string"
@@ -3704,7 +3730,7 @@
                                                     "metricName": "[[parameters('metricName')]",
                                                     "operator": "[[parameters('operator')]",
                                                     "threshold": "[[parameters('threshold')]",
-                                                    "timeAggregation": "Average",
+                                                    "timeAggregation": "[parameters('timeAggregation')]",
                                                     "criterionType": "StaticThresholdCriterion"
                                                   }
                                                 ],
@@ -3825,7 +3851,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "13379690636991033099"
+                              "templateHash": "1887629057415201122"
                             }
                           },
                           "parameters": {
@@ -3944,6 +3970,13 @@
                                 "description": "Policy Definition Role Definition IDs."
                               },
                               "value": "[if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then, 'details'), if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details, 'roleDefinitionIds'), reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details.roleDefinitionIds, createArray()), createArray())]"
+                            },
+                            "policyId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Policy Id"
+                              },
+                              "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name'))]"
                             }
                           }
                         }
@@ -4229,6 +4262,10 @@
                     "policyResourceId": {
                       "type": "string",
                       "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.resourceId.value]"
+                    },
+                    "policyId": {
+                      "type": "string",
+                      "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.policyId.value]"
                     }
                   }
                 }
@@ -4325,7 +4362,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9883467047582186836"
+                      "templateHash": "12910150818715424729"
                     }
                   },
                   "parameters": {
@@ -4361,6 +4398,10 @@
                     },
                     "resourceType": {
                       "type": "string"
+                    },
+                    "timeAggregation": {
+                      "type": "string",
+                      "defaultValue": "Average"
                     },
                     "metricNamespace": {
                       "type": "string"
@@ -4791,7 +4832,7 @@
                                                     "metricName": "[[parameters('metricName')]",
                                                     "operator": "[[parameters('operator')]",
                                                     "threshold": "[[parameters('threshold')]",
-                                                    "timeAggregation": "Average",
+                                                    "timeAggregation": "[parameters('timeAggregation')]",
                                                     "criterionType": "StaticThresholdCriterion"
                                                   }
                                                 ],
@@ -4912,7 +4953,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "13379690636991033099"
+                              "templateHash": "1887629057415201122"
                             }
                           },
                           "parameters": {
@@ -5031,6 +5072,13 @@
                                 "description": "Policy Definition Role Definition IDs."
                               },
                               "value": "[if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then, 'details'), if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details, 'roleDefinitionIds'), reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details.roleDefinitionIds, createArray()), createArray())]"
+                            },
+                            "policyId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Policy Id"
+                              },
+                              "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name'))]"
                             }
                           }
                         }
@@ -5316,6 +5364,10 @@
                     "policyResourceId": {
                       "type": "string",
                       "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.resourceId.value]"
+                    },
+                    "policyId": {
+                      "type": "string",
+                      "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.policyId.value]"
                     }
                   }
                 }
@@ -5412,7 +5464,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9883467047582186836"
+                      "templateHash": "12910150818715424729"
                     }
                   },
                   "parameters": {
@@ -5448,6 +5500,10 @@
                     },
                     "resourceType": {
                       "type": "string"
+                    },
+                    "timeAggregation": {
+                      "type": "string",
+                      "defaultValue": "Average"
                     },
                     "metricNamespace": {
                       "type": "string"
@@ -5878,7 +5934,7 @@
                                                     "metricName": "[[parameters('metricName')]",
                                                     "operator": "[[parameters('operator')]",
                                                     "threshold": "[[parameters('threshold')]",
-                                                    "timeAggregation": "Average",
+                                                    "timeAggregation": "[parameters('timeAggregation')]",
                                                     "criterionType": "StaticThresholdCriterion"
                                                   }
                                                 ],
@@ -5999,7 +6055,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "13379690636991033099"
+                              "templateHash": "1887629057415201122"
                             }
                           },
                           "parameters": {
@@ -6118,6 +6174,13 @@
                                 "description": "Policy Definition Role Definition IDs."
                               },
                               "value": "[if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then, 'details'), if(contains(reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details, 'roleDefinitionIds'), reference(extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name')), '2021-06-01').policyRule.then.details.roleDefinitionIds, createArray()), createArray())]"
+                            },
+                            "policyId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Policy Id"
+                              },
+                              "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', parameters('name'))]"
                             }
                           }
                         }
@@ -6403,6 +6466,10 @@
                     "policyResourceId": {
                       "type": "string",
                       "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.resourceId.value]"
+                    },
+                    "policyId": {
+                      "type": "string",
+                      "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', guid(parameters('alertname'))), '2022-09-01').outputs.policyId.value]"
                     }
                   }
                 }
