@@ -9,7 +9,7 @@ resource ag 'Microsoft.Insights/actionGroups@2023-01-01' = {
     name: actiongroupname
     location: location
     tags: {
-      '${solutionTag}': 'AG'
+      '${solutionTag}Component': 'AG'
     }
     properties: {
         groupShortName: groupshortname

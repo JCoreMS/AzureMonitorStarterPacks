@@ -7,7 +7,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
   tags: {
-    '${solutionTag}': 'storageaccount'
+    '${solutionTag}Component': 'storageaccount'
     '${solutionTag}-Version': solutionVersion
   }
   sku: {

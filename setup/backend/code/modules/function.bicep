@@ -34,7 +34,7 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
     azfunctionsiteconfig
   ]
   tags: {
-    '${solutionTag}': 'deploymentScript'
+    '${solutionTag}Component': 'deploymentScript'
     '${solutionTag}-Version': solutionVersion
   }
   location: location
@@ -65,7 +65,7 @@ resource serverfarm 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: '${functionname}-farm'
   location: location
   tags: {
-    '${solutionTag}': 'serverfarm'
+    '${solutionTag}Component': 'serverfarm'
     '${solutionTag}-Version': solutionVersion
   }
   sku: {
@@ -94,7 +94,7 @@ resource azfunctionsite 'Microsoft.Web/sites@2021-03-01' = {
   location: location
   kind: 'functionapp'
   tags: {
-    '${solutionTag}': 'site'
+    '${solutionTag}Component': 'site'
     '${solutionTag}-Version': solutionVersion
   }
   identity: {
@@ -195,7 +195,7 @@ resource deployfunctions 'Microsoft.Web/sites/extensions@2021-02-01' = {
 resource appinsights 'Microsoft.Insights/components@2020-02-02' = {
   name: functionname
   tags: {
-    '${solutionTag}': 'InsightsComponent'
+    '${solutionTag}Component': 'InsightsComponent'
     '${solutionTag}-Version': solutionVersion
   }
   location: appInsightsLocation

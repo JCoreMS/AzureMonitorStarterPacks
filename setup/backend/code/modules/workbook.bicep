@@ -2459,7 +2459,7 @@ var wbConfig='''
 resource workbook 'Microsoft.Insights/workbooks@2022-04-01' = {
   location: location
   tags: {
-    '${solutionTag}': 'mainworkbook'
+    '${solutionTag}Component': 'mainworkbook'
     '${solutionTag}-Version': solutionVersion
   }
   kind: 'shared'

@@ -11,7 +11,7 @@ var tempfilename = '${fileName}.tmp'
 resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'deployscript-MonstarPacks'
   tags: {
-    '${solutionTag}': 'deploymentScript'
+    '${solutionTag}Component': 'deploymentScript'
     '${solutionTag}-Version': solutionVersion
   }
   location: location

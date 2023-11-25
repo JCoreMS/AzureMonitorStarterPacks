@@ -15,7 +15,7 @@ resource monstarvault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   name: kvName
   location: location
   tags: {
-    '${solutionTag}': 'KeyVault'
+    '${solutionTag}Component': 'KeyVault'
     '${solutionTag}-Version': solutionVersion
   }
   properties: {

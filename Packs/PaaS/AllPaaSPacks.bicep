@@ -43,5 +43,7 @@ module StorageAlerts './Storage/monitoring.bicep' = {
     emailreiceversemails: emailreiceversemails
     existingAGRG: existingAGRG
     packtag: 'Storage'
+    grafanaName: grafanaName
+    dceId: dceId
   }
 }

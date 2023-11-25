@@ -21,7 +21,7 @@ var RGroleDefinitionIds=[
 //   name: userIdentityName
 //   location: location
 //   tags: {
-//     '${solutionTag}': userIdentityName
+//     '${solutionTag}Component': ' userIdentityName
 //     '${solutionTag}-Version': solutionVersion
 //   }
 // }

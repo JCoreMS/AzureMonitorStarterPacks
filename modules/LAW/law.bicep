@@ -8,7 +8,7 @@ resource law 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: logAnalyticsWorkspaceName
   location: location
   tags: {
-    '${solutionTag}': 'Log Analytics workspace'
+    '${solutionTag}Component': 'Log Analytics workspace'
   }
   properties: {
     sku: {

@@ -16,7 +16,7 @@ resource logicapp 'Microsoft.Logic/workflows@2019-05-01' = {
   //   logicappConnection
   // ]
   tags: {
-    '${solutionTag}': 'logicapp'
+    '${solutionTag}Component': 'logicapp'
     '${solutionTag}-Version': solutionVersion
   }
 
