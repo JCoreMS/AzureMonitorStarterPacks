@@ -67,3 +67,25 @@ module vWan './Network/vWan/monitoring.bicep' = {
     solutionVersion: solutionVersion
   }
 }
+module LoadBalancers './Network/LoadBalancers/monitoring.bicep' = {
+  name: 'LoadBalancersAlerts'
+  params: {
+    actionGroupName: actionGroupName
+    assignmentLevel: assignmentLevel
+    location: location
+    mgname: mgname
+    resourceGroupId: resourceGroupId
+    solutionTag: solutionTag
+    subscriptionId: subscriptionId
+    useExistingAG: useExistingAG
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+    workspaceId: workspaceId
+    emailreceivers: emailreceivers
+    emailreiceversemails: emailreiceversemails
+    existingAGRG: existingAGRG
+    packtag: 'ALB'
+    solutionVersion: solutionVersion
+    dceId: dceId
+    grafanaName: grafanaName
+  }
+}

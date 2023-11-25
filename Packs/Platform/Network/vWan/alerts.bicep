@@ -39,21 +39,21 @@ var alertlist = [
       query: 'AzureDiagnostics | where Category == "TunnelDiagnosticLog" | where OperationName == "TunnelDisconnected"'
   }
 ]
-// Implements LA based alerts.
-module loganalyticsalerts '../../../../modules/alerts/alerts.bicep' = {
-  name: '${moduleprefix}-Alerts'
-  scope: resourceGroup(subscriptionId, parResourceGroupName)
-  params: {
-    alertlist: alertlist
-    AGId: AGId
-    location: location
-    moduleprefix: moduleprefix
-    packtag: packTag
-    solutionTag: solutionTag
-    solutionVersion: solutionVersion
-    workspaceId: workspaceId
-  }
-}
+// // Implements LA based alerts.
+// module loganalyticsalerts '../../../../modules/alerts/alerts.bicep' = {
+//   name: '${moduleprefix}-Alerts'
+//   scope: resourceGroup(subscriptionId, parResourceGroupName)
+//   params: {
+//     alertlist: alertlist
+//     AGId: AGId
+//     location: location
+//     moduleprefix: moduleprefix
+//     packtag: packTag
+//     solutionTag: solutionTag
+//     solutionVersion: solutionVersion
+//     workspaceId: workspaceId
+//   }
+// }
 // Metric alerts
 module vWanPacketEgressDropCountAlert '../../../../modules/alerts/PaaS/metricAlertDynamic.bicep' = {
   name: '${uniqueString(deployment().name)}-vWanPacketDrop'
