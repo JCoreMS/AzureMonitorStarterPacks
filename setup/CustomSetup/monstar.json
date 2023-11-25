@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "5564640913623618384"
+      "templateHash": "12230216780127599375"
     }
   },
   "parameters": {
@@ -211,7 +211,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "15791631245636415403"
+              "templateHash": "18029722988709468515"
             }
           },
           "parameters": {
@@ -267,7 +267,7 @@
               "name": "[parameters('storageAccountName')]",
               "location": "[parameters('location')]",
               "tags": {
-                "[format('{0}', parameters('solutionTag'))]": "storageaccount",
+                "[format('{0}Component', parameters('solutionTag'))]": "storageaccount",
                 "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
               },
               "sku": {
@@ -331,7 +331,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "8619474227524068963"
+              "templateHash": "13915159005603051737"
             }
           },
           "parameters": {
@@ -360,7 +360,7 @@
               "name": "[parameters('logAnalyticsWorkspaceName')]",
               "location": "[parameters('location')]",
               "tags": {
-                "[format('{0}', parameters('solutionTag'))]": "Log Analytics workspace"
+                "[format('{0}Component', parameters('solutionTag'))]": "Log Analytics workspace"
               },
               "properties": {
                 "sku": {
@@ -423,7 +423,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "7055051547197311339"
+              "templateHash": "14785443253311512567"
             }
           },
           "parameters": {
@@ -817,7 +817,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9894351939986589218"
+                      "templateHash": "14723893181261222418"
                     }
                   },
                   "parameters": {
@@ -889,7 +889,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "17260189257503072595"
+                              "templateHash": "14515326266062875494"
                             }
                           },
                           "parameters": {
@@ -913,7 +913,7 @@
                               "name": "[parameters('userIdentityName')]",
                               "location": "[parameters('location')]",
                               "tags": {
-                                "[format('{0}', parameters('solutionTag'))]": "[parameters('userIdentityName')]",
+                                "[format('{0}Component', parameters('solutionTag'))]": "[parameters('userIdentityName')]",
                                 "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                               }
                             }
@@ -1286,7 +1286,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "11329500131779258432"
+              "templateHash": "11999103809396393660"
             }
           },
           "parameters": {
@@ -1401,7 +1401,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "3181688724060971656"
+                      "templateHash": "13494593106004949997"
                     }
                   },
                   "parameters": {
@@ -1468,7 +1468,7 @@
                       "apiVersion": "2020-10-01",
                       "name": "deployscript-MonstarPacks",
                       "tags": {
-                        "[format('{0}', parameters('solutionTag'))]": "deploymentScript",
+                        "[format('{0}Component', parameters('solutionTag'))]": "deploymentScript",
                         "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                       },
                       "location": "[parameters('location')]",
@@ -1503,7 +1503,7 @@
                       "name": "[format('{0}-farm', parameters('functionname'))]",
                       "location": "[parameters('location')]",
                       "tags": {
-                        "[format('{0}', parameters('solutionTag'))]": "serverfarm",
+                        "[format('{0}Component', parameters('solutionTag'))]": "serverfarm",
                         "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                       },
                       "sku": {
@@ -1534,7 +1534,7 @@
                       "location": "[parameters('location')]",
                       "kind": "functionapp",
                       "tags": {
-                        "[format('{0}', parameters('solutionTag'))]": "site",
+                        "[format('{0}Component', parameters('solutionTag'))]": "site",
                         "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                       },
                       "identity": {
@@ -1643,7 +1643,7 @@
                       "apiVersion": "2020-02-02",
                       "name": "[parameters('functionname')]",
                       "tags": {
-                        "[format('{0}', parameters('solutionTag'))]": "InsightsComponent",
+                        "[format('{0}Component', parameters('solutionTag'))]": "InsightsComponent",
                         "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                       },
                       "location": "[parameters('appInsightsLocation')]",
@@ -1713,7 +1713,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "8748128381032461425"
+                      "templateHash": "12863320514262159468"
                     }
                   },
                   "parameters": {
@@ -1745,7 +1745,7 @@
                       "apiVersion": "2019-05-01",
                       "name": "MonitorStarterPacks-Backend",
                       "tags": {
-                        "[format('{0}', parameters('solutionTag'))]": "logicapp",
+                        "[format('{0}Component', parameters('solutionTag'))]": "logicapp",
                         "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                       },
                       "location": "[parameters('location')]",
@@ -1988,7 +1988,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "2758361864848081780"
+                      "templateHash": "1117289497727095680"
                     }
                   },
                   "parameters": {
@@ -2015,7 +2015,7 @@
                       "name": "[guid('monstar')]",
                       "location": "[parameters('location')]",
                       "tags": {
-                        "[format('{0}', parameters('solutionTag'))]": "mainworkbook",
+                        "[format('{0}Component', parameters('solutionTag'))]": "mainworkbook",
                         "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                       },
                       "kind": "shared",
@@ -2065,7 +2065,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "13556570943843783224"
+                      "templateHash": "18054630487506179865"
                     }
                   },
                   "parameters": {
@@ -2102,7 +2102,7 @@
                       "apiVersion": "2022-08-01",
                       "name": "[parameters('grafanaName')]",
                       "tags": {
-                        "[format('{0}', parameters('solutionTag'))]": "grafana",
+                        "[format('{0}Component', parameters('solutionTag'))]": "grafana",
                         "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                       },
                       "sku": {
@@ -2500,7 +2500,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9894351939986589218"
+                      "templateHash": "14723893181261222418"
                     }
                   },
                   "parameters": {
@@ -2572,7 +2572,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "17260189257503072595"
+                              "templateHash": "14515326266062875494"
                             }
                           },
                           "parameters": {
@@ -2596,7 +2596,7 @@
                               "name": "[parameters('userIdentityName')]",
                               "location": "[parameters('location')]",
                               "tags": {
-                                "[format('{0}', parameters('solutionTag'))]": "[parameters('userIdentityName')]",
+                                "[format('{0}Component', parameters('solutionTag'))]": "[parameters('userIdentityName')]",
                                 "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                               }
                             }
@@ -2862,7 +2862,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "9894351939986589218"
+                      "templateHash": "14723893181261222418"
                     }
                   },
                   "parameters": {
@@ -2934,7 +2934,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "17260189257503072595"
+                              "templateHash": "14515326266062875494"
                             }
                           },
                           "parameters": {
@@ -2958,7 +2958,7 @@
                               "name": "[parameters('userIdentityName')]",
                               "location": "[parameters('location')]",
                               "tags": {
-                                "[format('{0}', parameters('solutionTag'))]": "[parameters('userIdentityName')]",
+                                "[format('{0}Component', parameters('solutionTag'))]": "[parameters('userIdentityName')]",
                                 "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                               }
                             }
@@ -3216,7 +3216,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "4736340622063428816"
+                      "templateHash": "10650475287721847129"
                     }
                   },
                   "parameters": {
@@ -3246,7 +3246,7 @@
                       "name": "[parameters('kvName')]",
                       "location": "[parameters('location')]",
                       "tags": {
-                        "[format('{0}', parameters('solutionTag'))]": "KeyVault",
+                        "[format('{0}Component', parameters('solutionTag'))]": "KeyVault",
                         "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                       },
                       "properties": {
@@ -3476,7 +3476,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "5357687670414804235"
+              "templateHash": "3270169595653472951"
             }
           },
           "parameters": {
@@ -3634,7 +3634,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "3533756642534670523"
+                      "templateHash": "2648273149047081156"
                     }
                   },
                   "parameters": {
@@ -3789,7 +3789,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "14834855249290296823"
+                              "templateHash": "714516131993447297"
                             }
                           },
                           "parameters": {
@@ -3929,7 +3929,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -4008,7 +4008,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -4038,7 +4038,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -6081,7 +6081,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "12685405326171134642"
+                              "templateHash": "17525585850050920396"
                             }
                           },
                           "parameters": {
@@ -6227,7 +6227,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -6306,7 +6306,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -6336,7 +6336,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -8379,7 +8379,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "7687419002651326100"
+                              "templateHash": "8303135229481025139"
                             }
                           },
                           "parameters": {
@@ -8593,7 +8593,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -8672,7 +8672,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -8702,7 +8702,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -12048,7 +12048,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "8455449383526018501"
+                              "templateHash": "5448077175191006554"
                             }
                           },
                           "parameters": {
@@ -12285,7 +12285,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -12364,7 +12364,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -12394,7 +12394,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -15740,7 +15740,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "6099949148479582932"
+                              "templateHash": "476934591311261704"
                             }
                           },
                           "parameters": {
@@ -16027,7 +16027,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -16106,7 +16106,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -16136,7 +16136,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -18736,7 +18736,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "11052784111172660176"
+                              "templateHash": "7008005028073382606"
                             }
                           },
                           "parameters": {
@@ -18905,7 +18905,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -18984,7 +18984,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -19014,7 +19014,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -21141,7 +21141,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "3051878788119255104"
+                              "templateHash": "1775467503827380716"
                             }
                           },
                           "parameters": {
@@ -21300,7 +21300,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -21379,7 +21379,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -21409,7 +21409,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -23528,7 +23528,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "93835514855636001"
+                              "templateHash": "12365039347569988168"
                             }
                           },
                           "parameters": {
@@ -23564,7 +23564,7 @@
                               "apiVersion": "2020-10-01",
                               "name": "deployscript-MonstarPacks",
                               "tags": {
-                                "[format('{0}', parameters('solutionTag'))]": "deploymentScript",
+                                "[format('{0}Component', parameters('solutionTag'))]": "deploymentScript",
                                 "[format('{0}-Version', parameters('solutionTag'))]": "[parameters('solutionVersion')]"
                               },
                               "location": "[parameters('location')]",
@@ -23663,7 +23663,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "11114331547279579013"
+                      "templateHash": "3329873660837310343"
                     }
                   },
                   "parameters": {
@@ -23800,6 +23800,12 @@
                           },
                           "packtag": {
                             "value": "Storage"
+                          },
+                          "grafanaName": {
+                            "value": "[parameters('grafanaName')]"
+                          },
+                          "dceId": {
+                            "value": "[parameters('dceId')]"
                           }
                         },
                         "template": {
@@ -23809,24 +23815,86 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "18070555541421658211"
+                              "templateHash": "11608414748957763746"
                             }
                           },
                           "parameters": {
-                            "workspaceId": {
-                              "type": "string"
-                            },
                             "packtag": {
-                              "type": "string"
+                              "type": "string",
+                              "defaultValue": "Storage"
                             },
                             "solutionTag": {
-                              "type": "string"
+                              "type": "string",
+                              "defaultValue": "MonitorStarterPacks"
+                            },
+                            "solutionVersion": {
+                              "type": "string",
+                              "defaultValue": "0.1.0"
+                            },
+                            "rulename": {
+                              "type": "string",
+                              "defaultValue": "",
+                              "metadata": {
+                                "description": "Name of the DCR rule to be created"
+                              }
+                            },
+                            "actionGroupName": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Name of the Action Group to be used or created."
+                              }
+                            },
+                            "emailreceivers": {
+                              "type": "array",
+                              "defaultValue": [],
+                              "metadata": {
+                                "description": "Email receiver names to be used for the Action Group if being created."
+                              }
+                            },
+                            "emailreiceversemails": {
+                              "type": "array",
+                              "defaultValue": [],
+                              "metadata": {
+                                "description": "Email addresses to be used for the Action Group if being created."
+                              }
+                            },
+                            "useExistingAG": {
+                              "type": "bool",
+                              "defaultValue": false,
+                              "metadata": {
+                                "description": "If set to true, a new Action group will be created"
+                              }
+                            },
+                            "existingAGRG": {
+                              "type": "string",
+                              "defaultValue": "",
+                              "metadata": {
+                                "description": "Name of the existing resource group to be used for the Action Group if existing."
+                              }
                             },
                             "location": {
-                              "type": "string"
+                              "type": "string",
+                              "metadata": {
+                                "description": "location for the deployment."
+                              }
+                            },
+                            "workspaceId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Full resource ID of the log analytics workspace to be used for the deployment."
+                              }
+                            },
+                            "dceId": {
+                              "type": "string",
+                              "metadata": {
+                                "description": "Full resource ID of the data collection endpoint to be used for the deployment."
+                              }
                             },
                             "subscriptionId": {
-                              "type": "string"
+                              "type": "string",
+                              "metadata": {
+                                "description": "Full resource ID of the user managed identity to be used for the deployment"
+                              }
                             },
                             "userManagedIdentityResourceId": {
                               "type": "string"
@@ -23837,26 +23905,10 @@
                             "assignmentLevel": {
                               "type": "string"
                             },
-                            "actionGroupName": {
-                              "type": "string",
-                              "defaultValue": ""
-                            },
-                            "emailreceivers": {
-                              "type": "array",
-                              "defaultValue": []
-                            },
-                            "emailreiceversemails": {
-                              "type": "array",
-                              "defaultValue": []
-                            },
-                            "useExistingAG": {
-                              "type": "bool"
-                            },
-                            "existingAGRG": {
-                              "type": "string",
-                              "defaultValue": ""
-                            },
                             "resourceGroupId": {
+                              "type": "string"
+                            },
+                            "grafanaName": {
                               "type": "string"
                             }
                           },
@@ -23911,7 +23963,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -23990,7 +24042,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -24020,7 +24072,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -25322,7 +25374,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "17787212531787939890"
+                      "templateHash": "6793256929664871727"
                     }
                   },
                   "parameters": {
@@ -25474,10 +25526,22 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "2142463182387686533"
+                              "templateHash": "14568411683003163851"
                             }
                           },
                           "parameters": {
+                            "packtag": {
+                              "type": "string",
+                              "defaultValue": "KeyVault"
+                            },
+                            "solutionTag": {
+                              "type": "string",
+                              "defaultValue": "MonitorStarterPacks"
+                            },
+                            "solutionVersion": {
+                              "type": "string",
+                              "defaultValue": "0.1.0"
+                            },
                             "rulename": {
                               "type": "string",
                               "defaultValue": "",
@@ -25531,18 +25595,6 @@
                                 "description": "Full resource ID of the log analytics workspace to be used for the deployment."
                               }
                             },
-                            "packtag": {
-                              "type": "string",
-                              "defaultValue": "KeyVault"
-                            },
-                            "solutionTag": {
-                              "type": "string",
-                              "defaultValue": "MonitorStarterPacks"
-                            },
-                            "solutionVersion": {
-                              "type": "string",
-                              "defaultValue": "0.1.0"
-                            },
                             "dceId": {
                               "type": "string",
                               "metadata": {
@@ -25572,8 +25624,8 @@
                             }
                           },
                           "variables": {
-                            "resourceType": "Microsoft.KeyVault/vaults",
-                            "resourceGroupName": "[split(parameters('resourceGroupId'), '/')[4]]"
+                            "resourceGroupName": "[split(parameters('resourceGroupId'), '/')[4]]",
+                            "resourceType": "Microsoft.KeyVault/vaults"
                           },
                           "resources": [
                             {
@@ -25622,7 +25674,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -25701,7 +25753,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -25731,7 +25783,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
@@ -27919,7 +27971,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "2293909721587907822"
+                              "templateHash": "7981253187786964982"
                             }
                           },
                           "parameters": {
@@ -28027,7 +28079,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "1962184090603211748"
+                                      "templateHash": "781004553392146039"
                                     }
                                   },
                                   "parameters": {
@@ -28106,7 +28158,7 @@
                                             "_generator": {
                                               "name": "bicep",
                                               "version": "0.20.4.51522",
-                                              "templateHash": "2425853910946393933"
+                                              "templateHash": "8418762768336448356"
                                             }
                                           },
                                           "parameters": {
@@ -28136,7 +28188,7 @@
                                               "name": "[parameters('actiongroupname')]",
                                               "location": "[parameters('location')]",
                                               "tags": {
-                                                "[format('{0}', parameters('solutionTag'))]": "AG"
+                                                "[format('{0}Component', parameters('solutionTag'))]": "AG"
                                               },
                                               "properties": {
                                                 "copy": [
