@@ -7,7 +7,7 @@
         }
 #>
 $currentFolder= Get-Location
-$mainMonstarPacksFiles = @"
+$MonstarPacksFiles = @"
     [
         {
             "Folder":"./setup/CustomSetup",
@@ -16,6 +16,14 @@ $mainMonstarPacksFiles = @"
         {
             "Folder":"./Packs/IaaS",
             "File":"AllIaaSPacks.bicep"
+        },
+        {
+            "Folder":"./Packs/PaaS",
+            "File":"AllPaaSPacks.bicep"
+        },
+        {
+            "Folder":"./Packs/Platform",
+            "File":"AllPlatformPacks.bicep"
         },
         {
             "Folder":"./Packs/IaaS/WinOS",
@@ -63,7 +71,7 @@ $mainMonstarPacksFiles = @"
         }
 ]
 "@ | ConvertFrom-Json
-foreach ($file in $mainMonstarPacksFiles) {
+foreach ($file in $MonstarPacksFiles) {
     Set-Location -Path $file.Folder
     bicep build $file.File
     Set-Location $currentFolder  
