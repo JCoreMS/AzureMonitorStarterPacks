@@ -63,7 +63,7 @@ module ALBUsedSNATPorts '../../../../modules/alerts/PaaS/metricAlertStaticThresh
         parPolicyEffect: 'deployIfNotExists'
         parWindowSize: 'PT1M'
         parThreshold: '900'
-        assignmentSuffix: 'ActALBDipAvl'
+        assignmentSuffix: 'ActUserSNAT'
         AGId: AGId
         parAlertState: parAlertState
         assignmentLevel: assignmentLevel

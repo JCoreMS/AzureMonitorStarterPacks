@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "4924234157513144921"
+      "templateHash": "15481420381681431444"
     }
   },
   "parameters": {
@@ -9086,7 +9086,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "8981013019850576407"
+              "templateHash": "12409323786234414038"
             }
           },
           "parameters": {
@@ -9430,7 +9430,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "11468299477744669209"
+                      "templateHash": "10031081456705878253"
                     }
                   },
                   "parameters": {
@@ -10617,7 +10617,7 @@
                             "value": "900"
                           },
                           "assignmentSuffix": {
-                            "value": "ActALBDipAvl"
+                            "value": "ActUserSNAT"
                           },
                           "AGId": {
                             "value": "[parameters('AGId')]"
