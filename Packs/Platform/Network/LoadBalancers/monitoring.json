@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "12186535281784419256"
+      "templateHash": "14116811752614392764"
     }
   },
   "parameters": {
@@ -355,7 +355,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "14952991178131731089"
+              "templateHash": "16357013888623540626"
             }
           },
           "parameters": {
@@ -3752,13 +3752,13 @@
                 "mode": "Incremental",
                 "parameters": {
                   "alertname": {
-                    "value": "Deploy_ALB_Availability_Alert"
+                    "value": "AMSP - Load Balancer VIP Availability Alert"
                   },
                   "alertDisplayName": {
-                    "value": "[AMSP] Deploy ALB Global Backend Availability Alert"
+                    "value": "[AMSP] Deploy ALB VIP Availability Alert"
                   },
                   "alertDescription": {
-                    "value": "AMSP policy to deploy ALB Global Backend Alert"
+                    "value": "AMSP policy to deploy ALB VIP Availability Alert"
                   },
                   "metricNamespace": {
                     "value": "Microsoft.Network/loadBalancers"
