@@ -64,5 +64,6 @@ module LBAlerts 'Alerts.bicep' = {
     userManagedIdentityResourceId: userManagedIdentityResourceId
     AGId: ag.outputs.actionGroupResourceId
     solutionVersion: solutionVersion
+    location: location
   }
 }

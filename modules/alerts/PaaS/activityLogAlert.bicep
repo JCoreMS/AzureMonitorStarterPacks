@@ -19,10 +19,11 @@ param assignmentLevel string
 param userManagedIdentityResourceId string
 param resourceType string
 param AGId string
+param initiativeMember bool
+
 var parAlertState = 'true'
 
-
-module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
+module ActivityLogAlert '../../alz/deploy.bicep' = {
   name: guid(alertname)
   params: {
       name: alertname
@@ -344,16 +345,16 @@ module ActivityLogKeyVaultDeleteAlert '../../alz/deploy.bicep' = {
   }
 }
 
-module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' =  {
+module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = if (!initiativeMember)  {
   name: guid('${alertname}-${assignmentSuffix}')
   dependsOn: [
-      ActivityLogKeyVaultDeleteAlert
+    ActivityLogAlert
   ]
   params: {
     location: policyLocation
     mgname: mgname
     packtag: packTag
-    policydefinitionId: ActivityLogKeyVaultDeleteAlert.outputs.resourceId
+    policydefinitionId: ActivityLogAlert.outputs.resourceId
     resourceType: resourceType
     solutionTag: solutionTag
     subscriptionId: subscriptionId 
@@ -364,4 +365,5 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' =  {
   }
 }
 
-output policyResourceId string = ActivityLogKeyVaultDeleteAlert.outputs.resourceId
+output policyResourceId string = ActivityLogAlert.outputs.resourceId
+output policyId string = ActivityLogAlert.outputs.policyId

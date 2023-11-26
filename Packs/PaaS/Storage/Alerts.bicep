@@ -45,6 +45,7 @@ module KeyVaultLatencyAlert '../../../modules/alerts/PaaS/metricAlertStaticThres
         AGId: AGId
         metricName: 'Availability'
         operator: 'LessThan'
+        initiativeMember: false
     }
 }
 

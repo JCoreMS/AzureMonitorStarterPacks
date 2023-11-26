@@ -22,6 +22,7 @@ param metricNamespace string
 param AGId string
 param metricName string
 param operator string
+param initiativeMember bool //will mostly true
 
 param policyLocation string
 param deploymentRoleDefinitionIds array = [
@@ -521,7 +522,7 @@ module metricAlert '../../alz/deploy.bicep' = {
     }
 }
 
-module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = {
+module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = if(!initiativeMember) {
   name: guid('${alertname}-${assignmentSuffix}')
   dependsOn: [
     metricAlert

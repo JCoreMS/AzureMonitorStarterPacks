@@ -25,6 +25,7 @@ param operator string
 param minFailingPeriodsToAlert string
 param numberOfEvaluationPeriods string
 param alertSensitivity string
+param initiativeMember bool
 
 param policyLocation string
 param deploymentRoleDefinitionIds array = [
@@ -565,7 +566,7 @@ module metricAlert '../../alz/deploy.bicep' = {
     }
 }
 
-module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = {
+module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = if (!initiativeMember) {
   name: guid('${alertname}-${assignmentSuffix}')
   dependsOn: [
     metricAlert
@@ -586,3 +587,4 @@ module policyassignment '../../../modules/policies/mg/policiesDiag.bicep' = {
 }
 
 output policyResourceId string = metricAlert.outputs.resourceId
+output policyId string = metricAlert.outputs.policyId

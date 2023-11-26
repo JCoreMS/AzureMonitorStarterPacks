@@ -100,5 +100,7 @@ module KVAlert 'Alerts.bicep' = {
     assignmentLevel: assignmentLevel
     userManagedIdentityResourceId: userManagedIdentityResourceId
     AGId: ag.outputs.actionGroupResourceId
+    solutionVersion: solutionVersion
+    location: location
   }
 }

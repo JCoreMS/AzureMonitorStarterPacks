@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "12896298662816622911"
+      "templateHash": "14423124410840543249"
     }
   },
   "parameters": {
@@ -157,7 +157,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "1871784050247953016"
+              "templateHash": "4532973622862570358"
             }
           },
           "parameters": {
@@ -501,7 +501,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "6513630081880520236"
+                      "templateHash": "11509417133799173706"
                     }
                   },
                   "parameters": {
@@ -629,6 +629,9 @@
                           },
                           "operator": {
                             "value": "LessThan"
+                          },
+                          "initiativeMember": {
+                            "value": false
                           }
                         },
                         "template": {
@@ -638,7 +641,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "12910150818715424729"
+                              "templateHash": "6924277819672918933"
                             }
                           },
                           "parameters": {
@@ -690,6 +693,9 @@
                             },
                             "operator": {
                               "type": "string"
+                            },
+                            "initiativeMember": {
+                              "type": "bool"
                             },
                             "policyLocation": {
                               "type": "string"
@@ -1361,6 +1367,7 @@
                               }
                             },
                             {
+                              "condition": "[not(parameters('initiativeMember'))]",
                               "type": "Microsoft.Resources/deployments",
                               "apiVersion": "2022-09-01",
                               "name": "[guid(format('{0}-{1}', parameters('alertname'), parameters('assignmentSuffix')))]",

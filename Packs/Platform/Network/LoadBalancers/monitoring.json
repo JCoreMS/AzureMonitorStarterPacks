@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "11332248354851691524"
+      "templateHash": "12186535281784419256"
     }
   },
   "parameters": {
@@ -343,6 +343,9 @@
           },
           "solutionVersion": {
             "value": "[parameters('solutionVersion')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
           }
         },
         "template": {
@@ -352,7 +355,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "15779643064131662756"
+              "templateHash": "14952991178131731089"
             }
           },
           "parameters": {
@@ -387,6 +390,9 @@
               "type": "string"
             },
             "AGId": {
+              "type": "string"
+            },
+            "location": {
               "type": "string"
             },
             "deploymentRoleDefinitionIds": {
@@ -489,6 +495,9 @@
                   },
                   "deploymentRoleDefinitionIds": {
                     "value": "[parameters('deploymentRoleDefinitionIds')]"
+                  },
+                  "initiativeMember": {
+                    "value": true
                   }
                 },
                 "template": {
@@ -498,7 +507,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "12910150818715424729"
+                      "templateHash": "6924277819672918933"
                     }
                   },
                   "parameters": {
@@ -550,6 +559,9 @@
                     },
                     "operator": {
                       "type": "string"
+                    },
+                    "initiativeMember": {
+                      "type": "bool"
                     },
                     "policyLocation": {
                       "type": "string"
@@ -1221,6 +1233,7 @@
                       }
                     },
                     {
+                      "condition": "[not(parameters('initiativeMember'))]",
                       "type": "Microsoft.Resources/deployments",
                       "apiVersion": "2022-09-01",
                       "name": "[guid(format('{0}-{1}', parameters('alertname'), parameters('assignmentSuffix')))]",
@@ -1591,6 +1604,9 @@
                   },
                   "deploymentRoleDefinitionIds": {
                     "value": "[parameters('deploymentRoleDefinitionIds')]"
+                  },
+                  "initiativeMember": {
+                    "value": true
                   }
                 },
                 "template": {
@@ -1600,7 +1616,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "12910150818715424729"
+                      "templateHash": "6924277819672918933"
                     }
                   },
                   "parameters": {
@@ -1652,6 +1668,9 @@
                     },
                     "operator": {
                       "type": "string"
+                    },
+                    "initiativeMember": {
+                      "type": "bool"
                     },
                     "policyLocation": {
                       "type": "string"
@@ -2323,6 +2342,7 @@
                       }
                     },
                     {
+                      "condition": "[not(parameters('initiativeMember'))]",
                       "type": "Microsoft.Resources/deployments",
                       "apiVersion": "2022-09-01",
                       "name": "[guid(format('{0}-{1}', parameters('alertname'), parameters('assignmentSuffix')))]",
@@ -2693,6 +2713,9 @@
                   },
                   "deploymentRoleDefinitionIds": {
                     "value": "[parameters('deploymentRoleDefinitionIds')]"
+                  },
+                  "initiativeMember": {
+                    "value": true
                   }
                 },
                 "template": {
@@ -2702,7 +2725,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "12910150818715424729"
+                      "templateHash": "6924277819672918933"
                     }
                   },
                   "parameters": {
@@ -2754,6 +2777,9 @@
                     },
                     "operator": {
                       "type": "string"
+                    },
+                    "initiativeMember": {
+                      "type": "bool"
                     },
                     "policyLocation": {
                       "type": "string"
@@ -3425,6 +3451,7 @@
                       }
                     },
                     {
+                      "condition": "[not(parameters('initiativeMember'))]",
                       "type": "Microsoft.Resources/deployments",
                       "apiVersion": "2022-09-01",
                       "name": "[guid(format('{0}-{1}', parameters('alertname'), parameters('assignmentSuffix')))]",
@@ -3795,6 +3822,9 @@
                   },
                   "deploymentRoleDefinitionIds": {
                     "value": "[parameters('deploymentRoleDefinitionIds')]"
+                  },
+                  "initiativeMember": {
+                    "value": true
                   }
                 },
                 "template": {
@@ -3804,7 +3834,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "12910150818715424729"
+                      "templateHash": "6924277819672918933"
                     }
                   },
                   "parameters": {
@@ -3856,6 +3886,9 @@
                     },
                     "operator": {
                       "type": "string"
+                    },
+                    "initiativeMember": {
+                      "type": "bool"
                     },
                     "policyLocation": {
                       "type": "string"
@@ -4527,6 +4560,7 @@
                       }
                     },
                     {
+                      "condition": "[not(parameters('initiativeMember'))]",
                       "type": "Microsoft.Resources/deployments",
                       "apiVersion": "2022-09-01",
                       "name": "[guid(format('{0}-{1}', parameters('alertname'), parameters('assignmentSuffix')))]",
@@ -4844,6 +4878,18 @@
                   "version": {
                     "value": "[parameters('solutionVersion')]"
                   },
+                  "assignmentLevel": {
+                    "value": "[parameters('assignmentLevel')]"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "subscriptionId": {
+                    "value": "[parameters('subscriptionId')]"
+                  },
+                  "userManagedIdentityResourceId": {
+                    "value": "[parameters('userManagedIdentityResourceId')]"
+                  },
                   "policyDefinitions": {
                     "value": [
                       {
@@ -4868,7 +4914,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "10449877746342651045"
+                      "templateHash": "16561300358654601566"
                     }
                   },
                   "parameters": {
@@ -4909,6 +4955,18 @@
                     },
                     "policyDefinitions": {
                       "type": "array"
+                    },
+                    "assignmentLevel": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "userManagedIdentityResourceId": {
+                      "type": "string"
+                    },
+                    "subscriptionId": {
+                      "type": "string"
                     }
                   },
                   "resources": [
@@ -4928,6 +4986,179 @@
                         "policyDefinitions": "[parameters('policyDefinitions')]",
                         "policyType": "Custom"
                       }
+                    },
+                    {
+                      "condition": "[equals(parameters('assignmentLevel'), 'managementGroup')]",
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2022-09-01",
+                      "name": "[format('assignment-{0}', parameters('initiativeName'))]",
+                      "location": "[deployment().location]",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "policyDefinitionId": {
+                            "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policySetDefinitions', parameters('initiativeName'))]"
+                          },
+                          "location": {
+                            "value": "[parameters('location')]"
+                          },
+                          "assignmentName": {
+                            "value": "[format('[AMSP]AMA-{0}-Set', parameters('initiativeName'))]"
+                          },
+                          "solutionTag": {
+                            "value": "[parameters('solutionTag')]"
+                          },
+                          "userManagedIdentityResourceId": {
+                            "value": "[parameters('userManagedIdentityResourceId')]"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "metadata": {
+                            "_generator": {
+                              "name": "bicep",
+                              "version": "0.20.4.51522",
+                              "templateHash": "18204016525654709950"
+                            }
+                          },
+                          "parameters": {
+                            "policyDefinitionId": {
+                              "type": "string"
+                            },
+                            "assignmentName": {
+                              "type": "string"
+                            },
+                            "location": {
+                              "type": "string"
+                            },
+                            "solutionTag": {
+                              "type": "string"
+                            },
+                            "userManagedIdentityResourceId": {
+                              "type": "string"
+                            }
+                          },
+                          "variables": {
+                            "loc2": "[trim(parameters('location'))]"
+                          },
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/policyAssignments",
+                              "apiVersion": "2022-06-01",
+                              "name": "[parameters('assignmentName')]",
+                              "identity": {
+                                "type": "UserAssigned",
+                                "userAssignedIdentities": {
+                                  "[format('{0}', parameters('userManagedIdentityResourceId'))]": {}
+                                }
+                              },
+                              "location": "[variables('loc2')]",
+                              "properties": {
+                                "policyDefinitionId": "[parameters('policyDefinitionId')]",
+                                "displayName": "[parameters('assignmentName')]",
+                                "enforcementMode": "Default",
+                                "metadata": {
+                                  "createdBy": "[parameters('solutionTag')]"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "dependsOn": [
+                        "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policySetDefinitions', parameters('initiativeName'))]"
+                      ]
+                    },
+                    {
+                      "condition": "[not(equals(parameters('assignmentLevel'), 'managementGroup'))]",
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2022-09-01",
+                      "name": "[format('assignment--{0}', parameters('initiativeName'))]",
+                      "subscriptionId": "[parameters('subscriptionId')]",
+                      "location": "[deployment().location]",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "policyDefinitionId": {
+                            "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policySetDefinitions', parameters('initiativeName'))]"
+                          },
+                          "location": {
+                            "value": "[parameters('location')]"
+                          },
+                          "assignmentName": {
+                            "value": "[format('[AMSP]AMA-{0}-Set', parameters('initiativeName'))]"
+                          },
+                          "solutionTag": {
+                            "value": "[parameters('solutionTag')]"
+                          },
+                          "userManagedIdentityResourceId": {
+                            "value": "[parameters('userManagedIdentityResourceId')]"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "metadata": {
+                            "_generator": {
+                              "name": "bicep",
+                              "version": "0.20.4.51522",
+                              "templateHash": "15632908880880169790"
+                            }
+                          },
+                          "parameters": {
+                            "policyDefinitionId": {
+                              "type": "string"
+                            },
+                            "assignmentName": {
+                              "type": "string"
+                            },
+                            "location": {
+                              "type": "string"
+                            },
+                            "solutionTag": {
+                              "type": "string"
+                            },
+                            "userManagedIdentityResourceId": {
+                              "type": "string"
+                            }
+                          },
+                          "variables": {
+                            "loc2": "[trim(parameters('location'))]"
+                          },
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/policyAssignments",
+                              "apiVersion": "2022-06-01",
+                              "name": "[parameters('assignmentName')]",
+                              "identity": {
+                                "type": "UserAssigned",
+                                "userAssignedIdentities": {
+                                  "[format('{0}', parameters('userManagedIdentityResourceId'))]": {}
+                                }
+                              },
+                              "location": "[variables('loc2')]",
+                              "properties": {
+                                "policyDefinitionId": "[parameters('policyDefinitionId')]",
+                                "displayName": "[parameters('assignmentName')]",
+                                "enforcementMode": "Default",
+                                "metadata": {
+                                  "createdBy": "[parameters('solutionTag')]"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "dependsOn": [
+                        "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policySetDefinitions', parameters('initiativeName'))]"
+                      ]
                     }
                   ],
                   "outputs": {

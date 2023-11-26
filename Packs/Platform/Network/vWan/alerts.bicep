@@ -84,6 +84,8 @@ module vWanPacketEgressDropCountAlert '../../../../modules/alerts/PaaS/metricAle
       AGId: AGId
       metricName: 'TunnelEgressPacketDropCount'
       operator: 'GreaterThan'
+      initiativeMember: true
+      
   }
 }
 
@@ -114,6 +116,7 @@ module vWanTunnelIngressBytes '../../../../modules/alerts/PaaS/metricAlertStatic
       AGId: AGId
       metricName: 'tunnelingressbytes'
       operator: 'LessThan'
+      initiativeMember: true
   }
 }
 
@@ -144,6 +147,7 @@ module TunnelEgressBytes '../../../../modules/alerts/PaaS/metricAlertStaticThres
       AGId: AGId
       metricName: 'tunnelegressbytes'
       operator: 'LessThan'
+      initiativeMember: true
   }
 }
 module TunnelAverageBandwidthAlert '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
@@ -173,6 +177,7 @@ module TunnelAverageBandwidthAlert '../../../../modules/alerts/PaaS/metricAlertS
       AGId: AGId
       metricName: 'tunnelaveragebandwidth'
       operator: 'LessThan'
+      initiativeMember: true
   }
 }
 module BGPPeerStatus '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
@@ -202,8 +207,38 @@ module BGPPeerStatus '../../../../modules/alerts/PaaS/metricAlertStaticThreshold
       AGId: AGId
       metricName: 'bgppeerstatus'
       operator: 'LessThan'
+      initiativeMember: true
   }
 }
 
+module policySet '../../../../modules/policies/mg/policySetGeneric.bicep' = {
+  name: 'vWan-PolicySet'
+  params: {
+      initiativeDescription: 'AMSP policy to deploy vWan policies'
+      initiativeDisplayName: '[AMSP] vWan policies'
+      initiativeName: 'AMSP-vWan-PolicySet'
+      solutionTag: solutionTag
+      category: 'Monitoring'
+      version: solutionVersion
+      assignmentLevel: assignmentLevel
+      location: location
+      subscriptionId: subscriptionId
+      userManagedIdentityResourceId: userManagedIdentityResourceId
+      policyDefinitions: [
+          {
+              policyDefinitionId: BGPPeerStatus.outputs.policyId
+          }
+          {
+              policyDefinitionId: TunnelAverageBandwidthAlert.outputs.policyId
+          }
+          {
+              policyDefinitionId: TunnelEgressBytes.outputs.policyId
+          }
+          {
+              policyDefinitionId: vWanTunnelIngressBytes.outputs.policyId
+          }
+      ]
+  }
+}
 
 

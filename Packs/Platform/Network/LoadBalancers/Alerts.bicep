@@ -10,6 +10,7 @@ param parResourceGroupName string
 param assignmentLevel string
 param userManagedIdentityResourceId string
 param AGId string
+param location string
 
 param deploymentRoleDefinitionIds array = [
     '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c'
@@ -46,6 +47,7 @@ module ALBDipPathAvail '../../../../modules/alerts/PaaS/metricAlertStaticThresho
         subscriptionId: subscriptionId
         userManagedIdentityResourceId: userManagedIdentityResourceId
         deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
+        initiativeMember: true
     }
 }
 
@@ -76,6 +78,7 @@ module ALBUsedSNATPorts '../../../../modules/alerts/PaaS/metricAlertStaticThresh
         subscriptionId: subscriptionId
         userManagedIdentityResourceId: userManagedIdentityResourceId
         deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
+        initiativeMember: true
     }
 }
 module ALBGlobalBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
@@ -105,14 +108,15 @@ module ALBGlobalBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticT
         subscriptionId: subscriptionId
         userManagedIdentityResourceId: userManagedIdentityResourceId
         deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
+        initiativeMember: true
     }
 }
 module ALBBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThreshold.bicep' = {
     name: '${uniqueString(deployment().name)}-ALBBackendAvailabilityAlert'
     params: {
-        alertname: 'Deploy_ALB_Availability_Alert'
-        alertDisplayName: '[AMSP] Deploy ALB Global Backend Availability Alert'
-        alertDescription: 'AMSP policy to deploy ALB Global Backend Alert'
+        alertname: 'AMSP - Load Balancer VIP Availability Alert'
+        alertDisplayName: '[AMSP] Deploy ALB VIP Availability Alert'
+        alertDescription: 'AMSP policy to deploy ALB VIP Availability Alert'
         metricNamespace: 'Microsoft.Network/loadBalancers'
         parAlertSeverity: '0'
         parAutoMitigate: 'false'
@@ -134,6 +138,7 @@ module ALBBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThresho
         subscriptionId: subscriptionId
         userManagedIdentityResourceId: userManagedIdentityResourceId
         deploymentRoleDefinitionIds: deploymentRoleDefinitionIds
+        initiativeMember: true
     }
 }
 module policySet '../../../../modules/policies/mg/policySetGeneric.bicep' = {
@@ -145,6 +150,10 @@ module policySet '../../../../modules/policies/mg/policySetGeneric.bicep' = {
         solutionTag: solutionTag
         category: 'Monitoring'
         version: solutionVersion
+        assignmentLevel: assignmentLevel
+        location: location
+        subscriptionId: subscriptionId
+        userManagedIdentityResourceId: userManagedIdentityResourceId
         policyDefinitions: [
             {
                 policyDefinitionId: ALBDipPathAvail.outputs.policyId

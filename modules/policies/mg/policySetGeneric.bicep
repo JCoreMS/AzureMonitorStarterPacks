@@ -18,6 +18,10 @@ param solutionTag string
 param category string = 'Monitoring' 
 param version string = '1.0.0'
 param policyDefinitions array
+param assignmentLevel string
+param location string
+param userManagedIdentityResourceId string
+param subscriptionId string
 
 resource policySetDef 'Microsoft.Authorization/policySetDefinitions@2021-06-01' = {
   name: initiativeName
@@ -34,4 +38,39 @@ resource policySetDef 'Microsoft.Authorization/policySetDefinitions@2021-06-01' 
     policyType: 'Custom'
   }
 }
+
+module assignment './assignment.bicep' = if (assignmentLevel == 'managementGroup'){
+  name: 'assignment-${initiativeName}'
+  dependsOn: [
+    policySetDef
+  ]
+  params: {
+    policyDefinitionId: policySetDef.id
+    location: location
+    assignmentName: '[AMSP]AMA-${initiativeName}-Set'
+    solutionTag: solutionTag
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+    // roledefinitionIds: [
+    //   '/providers/microsoft.authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c' 
+    // ]
+  }
+}
+module assignmentsub '../subscription/assignment.bicep' = if (assignmentLevel != 'managementGroup') {
+  name: 'assignment--${initiativeName}'
+  dependsOn: [
+    policySetDef
+  ]
+  scope: subscription(subscriptionId)
+  params: {
+    policyDefinitionId: policySetDef.id
+    location: location
+    assignmentName: '[AMSP]AMA-${initiativeName}-Set'
+    solutionTag: solutionTag
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+    // roledefinitionIds: [
+    //   '/providers/microsoft.authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c' 
+    // ]
+  }
+}
+
 output policySetDefId string = policySetDef.id
