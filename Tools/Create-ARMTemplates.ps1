@@ -26,6 +26,10 @@ $MonstarPacksFiles = @"
         "File":"AllPlatformPacks.bicep"
     },
     {
+        "Folder":"./Packs",
+        "File":"AllPacks.bicep"
+    },
+    {
         "Folder":"./Packs/IaaS/WinOS",
         "File":"monitoring.bicep"
     },
