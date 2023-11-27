@@ -1,5 +1,5 @@
 targetScope = 'managementGroup'
-param packtag string = 'OperAI'
+param packtag string = 'OpenAI'
 param solutionTag string = 'MonitorStarterPacks'
 param solutionVersion string = '0.1.0'
 @description('Name of the DCR rule to be created')
@@ -50,8 +50,8 @@ module ag '../../../modules/actiongroups/ag.bicep' = {
   }
 }
 
-module LBAlerts 'Alerts.bicep' = {
-  name: 'LB-Alerts'
+module Alerts 'Alerts.bicep' = {
+  name: '${packtag}-Alerts'
   params: {
     packTag: packtag
     policyLocation: location

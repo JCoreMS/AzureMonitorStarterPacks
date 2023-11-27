@@ -86,6 +86,7 @@ module metricAlert '../../alz/deploy.bicep' = {
             Category: 'Monitoring'
             source: 'https://github.com/Azure/AzureMonitorStarterPacks'
             '${solutionTag}': packTag
+            initiativeMember: initiativeMember
         }
         parameters: {
             severity: {

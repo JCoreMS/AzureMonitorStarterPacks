@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "14116811752614392764"
+      "templateHash": "12086759827989553075"
     }
   },
   "parameters": {
@@ -355,7 +355,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "16357013888623540626"
+              "templateHash": "4954761809353669465"
             }
           },
           "parameters": {
@@ -507,7 +507,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "6924277819672918933"
+                      "templateHash": "6063666027420487405"
                     }
                   },
                   "parameters": {
@@ -662,7 +662,8 @@
                               "version": "1.0.0",
                               "Category": "Monitoring",
                               "source": "https://github.com/Azure/AzureMonitorStarterPacks",
-                              "[format('{0}', parameters('solutionTag'))]": "[parameters('packTag')]"
+                              "[format('{0}', parameters('solutionTag'))]": "[parameters('packTag')]",
+                              "initiativeMember": "[parameters('initiativeMember')]"
                             }
                           },
                           "parameters": {
@@ -1616,7 +1617,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "6924277819672918933"
+                      "templateHash": "6063666027420487405"
                     }
                   },
                   "parameters": {
@@ -1771,7 +1772,8 @@
                               "version": "1.0.0",
                               "Category": "Monitoring",
                               "source": "https://github.com/Azure/AzureMonitorStarterPacks",
-                              "[format('{0}', parameters('solutionTag'))]": "[parameters('packTag')]"
+                              "[format('{0}', parameters('solutionTag'))]": "[parameters('packTag')]",
+                              "initiativeMember": "[parameters('initiativeMember')]"
                             }
                           },
                           "parameters": {
@@ -2725,7 +2727,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "6924277819672918933"
+                      "templateHash": "6063666027420487405"
                     }
                   },
                   "parameters": {
@@ -2880,7 +2882,8 @@
                               "version": "1.0.0",
                               "Category": "Monitoring",
                               "source": "https://github.com/Azure/AzureMonitorStarterPacks",
-                              "[format('{0}', parameters('solutionTag'))]": "[parameters('packTag')]"
+                              "[format('{0}', parameters('solutionTag'))]": "[parameters('packTag')]",
+                              "initiativeMember": "[parameters('initiativeMember')]"
                             }
                           },
                           "parameters": {
@@ -3834,7 +3837,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "6924277819672918933"
+                      "templateHash": "6063666027420487405"
                     }
                   },
                   "parameters": {
@@ -3989,7 +3992,8 @@
                               "version": "1.0.0",
                               "Category": "Monitoring",
                               "source": "https://github.com/Azure/AzureMonitorStarterPacks",
-                              "[format('{0}', parameters('solutionTag'))]": "[parameters('packTag')]"
+                              "[format('{0}', parameters('solutionTag'))]": "[parameters('packTag')]",
+                              "initiativeMember": "[parameters('initiativeMember')]"
                             }
                           },
                           "parameters": {

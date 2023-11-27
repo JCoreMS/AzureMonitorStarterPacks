@@ -47,3 +47,26 @@ module StorageAlerts './Storage/monitoring.bicep' = {
     dceId: dceId
   }
 }
+
+module OpenAI './OpenAI/monitoring.bicep' = {
+  name: 'OpenAIAlerts'
+  params: {
+    actionGroupName: actionGroupName
+    assignmentLevel: assignmentLevel
+    location: location
+    mgname: mgname
+    resourceGroupId: resourceGroupId
+    solutionTag: solutionTag
+    subscriptionId: subscriptionId
+    useExistingAG: useExistingAG
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+    workspaceId: workspaceId
+    emailreceivers: emailreceivers
+    emailreiceversemails: emailreiceversemails
+    existingAGRG: existingAGRG
+    packtag: 'OpenAI'
+    grafanaName: grafanaName
+    dceId: dceId
+  }
+}
+

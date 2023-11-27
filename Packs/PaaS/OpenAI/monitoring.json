@@ -5,13 +5,13 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "16948550337369145775"
+      "templateHash": "49090904970466258"
     }
   },
   "parameters": {
     "packtag": {
       "type": "string",
-      "defaultValue": "Storage"
+      "defaultValue": "OpenAI"
     },
     "solutionTag": {
       "type": "string",
@@ -103,7 +103,7 @@
     }
   },
   "variables": {
-    "resourceType": "Microsoft.Storage/storageAccounts",
+    "resourceType": "Microsoft.Network/loadBalancers",
     "resourceGroupName": "[split(parameters('resourceGroupId'), '/')[4]]"
   },
   "resources": [
@@ -303,7 +303,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "Storage-Alerts",
+      "name": "[format('{0}-Alerts', parameters('packtag'))]",
       "location": "[deployment().location]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -349,7 +349,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "18438358464561576756"
+              "templateHash": "170076458574040157"
             }
           },
           "parameters": {
@@ -389,6 +389,12 @@
                 "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
               ]
             },
+            "parResourceGroupTags": {
+              "type": "object",
+              "defaultValue": {
+                "environment": "test"
+              }
+            },
             "parAlertState": {
               "type": "string",
               "defaultValue": "true"
@@ -398,7 +404,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
-              "name": "[format('{0}-PercentAvailability', uniqueString(deployment().name))]",
+              "name": "[format('{0}-OAIClErrors', uniqueString(deployment().name))]",
               "location": "[deployment().location]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -406,6 +412,54 @@
                 },
                 "mode": "Incremental",
                 "parameters": {
+                  "alertname": {
+                    "value": "AMSP - Alert on Client Errors over threshold"
+                  },
+                  "alertDisplayName": {
+                    "value": "[AMSP] Alert on Client Errors over threshold"
+                  },
+                  "alertDescription": {
+                    "value": "AMSP policy to deploy Alert on Client Errors over threshold"
+                  },
+                  "metricNamespace": {
+                    "value": "Microsoft.CognitiveServices/accounts"
+                  },
+                  "metricName": {
+                    "value": "ClientErrors"
+                  },
+                  "operator": {
+                    "value": "GreaterThan"
+                  },
+                  "parAlertSeverity": {
+                    "value": "3"
+                  },
+                  "parAutoMitigate": {
+                    "value": "false"
+                  },
+                  "parEvaluationFrequency": {
+                    "value": "PT15M"
+                  },
+                  "parPolicyEffect": {
+                    "value": "deployIfNotExists"
+                  },
+                  "parWindowSize": {
+                    "value": "PT15M"
+                  },
+                  "parThreshold": {
+                    "value": "20"
+                  },
+                  "assignmentSuffix": {
+                    "value": "ActOAIClErr"
+                  },
+                  "timeAggregation": {
+                    "value": "Total"
+                  },
+                  "AGId": {
+                    "value": "[parameters('AGId')]"
+                  },
+                  "parAlertState": {
+                    "value": "[parameters('parAlertState')]"
+                  },
                   "assignmentLevel": {
                     "value": "[parameters('assignmentLevel')]"
                   },
@@ -432,51 +486,6 @@
                   },
                   "deploymentRoleDefinitionIds": {
                     "value": "[parameters('deploymentRoleDefinitionIds')]"
-                  },
-                  "alertname": {
-                    "value": "AMSP_Deploy_SA_Latency_Alert"
-                  },
-                  "alertDisplayName": {
-                    "value": "[AMSP] Storage Account Availability Alert"
-                  },
-                  "alertDescription": {
-                    "value": "Metric Alert for Storage Account Availability"
-                  },
-                  "metricNamespace": {
-                    "value": "Microsoft.Storage/storageAccounts"
-                  },
-                  "parAlertSeverity": {
-                    "value": "1"
-                  },
-                  "parAlertState": {
-                    "value": "[parameters('parAlertState')]"
-                  },
-                  "parAutoMitigate": {
-                    "value": "true"
-                  },
-                  "parEvaluationFrequency": {
-                    "value": "PT5M"
-                  },
-                  "parPolicyEffect": {
-                    "value": "deployIfNotExists"
-                  },
-                  "parWindowSize": {
-                    "value": "PT5M"
-                  },
-                  "parThreshold": {
-                    "value": "90"
-                  },
-                  "assignmentSuffix": {
-                    "value": "AvailSA"
-                  },
-                  "AGId": {
-                    "value": "[parameters('AGId')]"
-                  },
-                  "metricName": {
-                    "value": "Availability"
-                  },
-                  "operator": {
-                    "value": "LessThan"
                   },
                   "initiativeMember": {
                     "value": false

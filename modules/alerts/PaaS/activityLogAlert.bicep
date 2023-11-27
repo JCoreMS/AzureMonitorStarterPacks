@@ -35,6 +35,7 @@ module ActivityLogAlert '../../alz/deploy.bicep' = {
           Category: 'ActivityLog'
           source: 'https://github.com/Azure/ALZ-Monitor/'
           '${solutionTag}': packTag
+          initiativeMember: initiativeMember
       }
       parameters: {
           tagName: {
