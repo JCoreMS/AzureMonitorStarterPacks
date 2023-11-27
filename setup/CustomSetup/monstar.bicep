@@ -19,7 +19,11 @@ param createNewStorageAccount bool = false
 param resourceGroupId string = ''
 
 // Packs` stuff
-param deployPacks bool = false
+param deployAllPacks bool
+param deployIaaSPacks bool
+param deployPaaSPacks bool
+param deployPlatformPacks bool
+
 @description('Name of the Action Group to be used or created.')
 param actionGroupName string = ''
 @description('Email receiver names to be used for the Action Group if being created.')
@@ -111,7 +115,7 @@ module backend '../backend/code/backend.bicep' = {
   }
 }
 
-module AllPacks '../../Packs/AllPacks.bicep' = if (deployPacks) {
+module AllPacks '../../Packs/AllPacks.bicep' = if (deployAllPacks || deployIaaSPacks || deployPaaSPacks || deployPlatformPacks) {
   name: 'DeployAllPacks'
   dependsOn: [
     backend
@@ -133,7 +137,9 @@ module AllPacks '../../Packs/AllPacks.bicep' = if (deployPacks) {
     emailreiceversemails: emailreiceversemails
     existingAGRG: existingAGRG
     grafanaName: grafanaName
-    LogAnalyticsResourceId: createNewLogAnalyticsWS ? logAnalytics.outputs.lawresourceid : existingLogAnalyticsWSId
-    packsUserManagedResourceId: backend.outputs.packsUserManagedResourceId
+    deployAllIaaSPacks: deployIaaSPacks
+    deployAllPaaSPacks: deployPaaSPacks
+    deployAllPacks: deployAllPacks
+    deployAllPlatformPacks: deployPlatformPacks
   }
 }

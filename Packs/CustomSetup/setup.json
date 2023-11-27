@@ -144,78 +144,6 @@
                             "visible": "[equals(steps('Configuration').ResourceGroupStatus, 'Existing')]"
                         },
                         {
-                            "name": "ActionGroupStatus",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Use New or Existing Action Group",
-                            "toolTip": "This will be the Action Group to receive alert emails.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "New",
-                                        "value": "New"
-                                    },
-                                    {
-                                        "label": "Existing",
-                                        "value": "Existing"
-                                    }
-                                ],
-                                "required": true
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "existingAG",
-                            "type": "Microsoft.Common.DropDown",
-                            "label": "Existing Action Group",
-                            "multiselect": false,
-                            "defaultValue": "",
-                            "toolTip": "Action Group to receive alerts.",
-                            "filter": true,
-                            "filterPlaceholder": "Filter Resource Groups...",
-                            "defaultDescription": "A value for selection",
-                            "constraints": {
-                                "allowedValues": "[map(steps('Configuration').ActionGroupsApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.id, '\"}')))]",
-                                "required": true
-                            },
-                            "visible": "[equals(steps('Configuration').ActionGroupStatus, 'Existing')]"
-                        },
-                        {
-                            "name": "NewActionGroupName",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "New Action Group Name",
-                            "subLabel": "",
-                            "defaultValue": "",
-                            "toolTip": "",
-                            "constraints": {
-                                "required": true
-                            },
-                            "visible": "[equals(steps('Configuration').ActionGroupStatus, 'New')]"
-                        },
-                        {
-                            "name": "emailreceivers",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Email Receiver(s)",
-                            "subLabel": "",
-                            "defaultValue": "",
-                            "toolTip": "",
-                            "constraints": {
-                                "required": true
-                            },
-                            "visible": "[equals(steps('Configuration').ActionGroupStatus, 'New')]"
-                        },
-                        {
-                            "name": "emailreceiversemails",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Email Receiver(s) email(s)",
-                            "subLabel": "",
-                            "defaultValue": "",
-                            "toolTip": "",
-                            "constraints": {
-                                "required": true
-                            },
-                            "visible": "[equals(steps('Configuration').ActionGroupStatus, 'New')]"
-                        },
-                        {
                             "name": "dataCollectionEndpointId",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Select data collection endpoint.",
@@ -281,6 +209,151 @@
                             "visible": true
                         }                     
                     ]
+                },
+                {
+                    "name": "Packs",
+                    "label": "Packs",
+                    "elements": [
+                        {
+                            "name": "ActionGroupsApi",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "GET",
+                                "path": "[concat(steps('Configuration').subscriptionId, '/providers/Microsoft.Insights/actionGroups?api-version=2021-09-01')]"
+                            }
+                        },
+                        {
+                            "name": "deployAllPacks",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Deploy All Packs",
+                            "toolTip": "Select to deploy all packs.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false,
+                                "validationMessage": "Select to deploy the available packs to the selected environment."
+                            }
+                        },
+                        {
+                            "name": "deployIaaSPacks",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Deploy All IaaS Packs",
+                            "toolTip": "Select to deploy all packs.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false,
+                                "validationMessage": "Select to deploy the available IaaS packs to the selected environment."
+                            },
+                            "visible": "[equals(steps('Packs').deployAllPacks, false)]"
+                        },
+                        {
+                            "name": "deployPaaSPacks",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Deploy All PaaS Packs",
+                            "toolTip": "Select to deploy all PaaS packs like Storage, OpenAI, etc.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false,
+                                "validationMessage": "Select to deploy the available PaaS packs to the selected environment."
+                            },
+                            "visible": "[equals(steps('Packs').deployAllPacks, false)]"
+                        },
+                        {
+                            "name": "deployPlatformPacks",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Deploy All Platform Packs",
+                            "toolTip": "Select to deploy all platform packs, like KeyVault, Network, etc.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false,
+                                "validationMessage": "Select to deploy the available platform packs to the selected environment."
+                            },
+                            "visible": "[equals(steps('Packs').deployAllPacks, false)]"
+                        },
+                        {
+                            "name":"packsText",
+                            "type": "Microsoft.Common.TextBlock",
+							"options": {
+								"text": "When selected, all packs available will be deployed.",
+								"link": {
+									"label": "Learn more",
+									"uri": "https://github.com/Azure/AzureMonitorStarterPacks/tree/main/Packs#readme"
+								}
+							},
+                            "visible": "[equals(steps('Packs').deployPacks, true)]"
+                        },
+                        {
+                            "name": "ActionGroupStatus",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Use New or Existing Action Group",
+                            "toolTip": "This will be the Action Group to receive alert emails.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "New",
+                                        "value": "New"
+                                    },
+                                    {
+                                        "label": "Existing",
+                                        "value": "Existing"
+                                    }
+                                ],
+                                "required": true
+                            },
+                            "visible": "[or(equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployAllPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true))]"
+                        },
+                        {
+                            "name": "existingAG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Existing Action Group",
+                            "multiselect": false,
+                            "defaultValue": "",
+                            "toolTip": "Action Group to receive alerts.",
+                            "filter": true,
+                            "filterPlaceholder": "Filter Resource Groups...",
+                            "defaultDescription": "A value for selection",
+                            "constraints": {
+                                "allowedValues": "[map(steps('Packs').ActionGroupsApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.id, '\"}')))]",
+                                "required": true
+                            },
+                            "visible": "[and(or(equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployAllPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true)),equals(steps('Packs').ActionGroupStatus, 'Existing'))]"
+                        },
+                        {
+                            "name": "NewActionGroupName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "New Action Group Name",
+                            "subLabel": "",
+                            "defaultValue": "",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": true
+                            },
+                            "visible": "[and(or(equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployAllPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true)),equals(steps('Packs').ActionGroupStatus, 'New'))]"
+                        },
+                        {
+                            "name": "emailreceivers",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Email Receiver(s)",
+                            "subLabel": "",
+                            "defaultValue": "",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": true
+                            },
+                            "visible": "[and(or(equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployAllPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true)),equals(steps('Packs').ActionGroupStatus, 'New'))]"
+                        },
+                        {
+                            "name": "emailreceiversemails",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Email Receiver(s) email(s)",
+                            "subLabel": "",
+                            "defaultValue": "",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": true
+                            },
+                            "visible": "[and(or(equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployAllPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true)),equals(steps('Packs').ActionGroupStatus, 'New'))]"
+                        }
+                    ]
                 }
             ]
         },
@@ -296,12 +369,16 @@
                 "solutionVersion":"1.0.0",
                 "dceId":"[steps('Configuration').dataCollectionEndpointId]",
                 "userManagedIdentityResourceId":"[steps('Configuration').userManagedIdentitiesId]",
-                "actionGroupName":"[if(equals(steps('Configuration').ActionGroupStatus, 'New'), steps('Configuration').NewActionGroupName, last(split(steps('Configuration').existingAG,'/')))]",
-                "emailreceivers":"[if(equals(steps('Configuration').ActionGroupStatus, 'New'), steps('Configuration').emailreceivers,'')]",
-                "emailreiceversemails":"[if(equals(steps('Configuration').ActionGroupStatus, 'New'), steps('Configuration').emailreceiversemails,'')]",
-                "existingAGRG":"[if(equals(steps('Configuration').ActionGroupStatus, 'New'), steps('Configuration').NewActionGroupName, last(take(split(steps('Configuration').existingAG,'/'),5)))]",
-                "useExistingAG":"[if(equals(steps('Configuration').ActionGroupStatus, 'New'), 'false', 'true')]",
-                "grafanaName": "[concat('AMSP',first(split(last(split(steps('Configuration').subscriptionId,'/')),'-')))]"
+                "actionGroupName":"[if(equals(steps('Packs').ActionGroupStatus, 'New'), steps('Packs').NewActionGroupName, last(split(steps('Packs').existingAG,'/')))]",
+                "emailreceivers":"[if(equals(steps('Packs').ActionGroupStatus, 'New'), steps('Packs').emailreceivers,'')]",
+                "emailreiceversemails":"[if(equals(steps('Packs').ActionGroupStatus, 'New'), steps('Packs').emailreceiversemails,'')]",
+                "existingAGRG":"[if(equals(steps('Packs').ActionGroupStatus, 'New'), steps('Packs').NewActionGroupName, last(take(split(steps('Packs').existingAG,'/'),5)))]",
+                "useExistingAG":"[if(equals(steps('Packs').ActionGroupStatus, 'New'), 'false', 'true')]",
+                "grafanaName": "[concat('AMSP',first(split(last(split(steps('Configuration').subscriptionId,'/')),'-')))]",
+                "deployAllIaaSPacks": "[steps('Packs').deployIaaSPacks]",
+                "deployAllPaaSPacks": "[steps('Packs').deployPaaSPacks]",
+                "deployAllPlatformPacks": "[steps('Packs').deployPlatformPacks]",
+                "deployAllPacks": "[steps('Packs').deployAllPacks]"
             },
             "kind": "ManagementGroup",
             "location": "[steps('basics').resourceScope.location.name]",

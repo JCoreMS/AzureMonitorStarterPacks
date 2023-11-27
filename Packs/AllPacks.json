@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "1844825399375482587"
+      "templateHash": "11761211155085250442"
     }
   },
   "parameters": {
@@ -87,10 +87,23 @@
     },
     "grafanaName": {
       "type": "string"
+    },
+    "deployAllPacks": {
+      "type": "bool"
+    },
+    "deployAllIaaSPacks": {
+      "type": "bool"
+    },
+    "deployAllPlatformPacks": {
+      "type": "bool"
+    },
+    "deployAllPaaSPacks": {
+      "type": "bool"
     }
   },
   "resources": [
     {
+      "condition": "[or(parameters('deployAllIaaSPacks'), parameters('deployAllPacks'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "DeployAllIaaSPacks",
@@ -20120,6 +20133,7 @@
       }
     },
     {
+      "condition": "[or(parameters('deployAllPaaSPacks'), parameters('deployAllPacks'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "DeployAllPaaSPacks",
@@ -23441,6 +23455,7 @@
       }
     },
     {
+      "condition": "[or(parameters('deployAllPlatformPacks'), parameters('deployAllPacks'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "DeployAllPlatformPacks",

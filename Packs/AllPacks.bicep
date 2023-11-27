@@ -25,8 +25,12 @@ param subscriptionId string
 param resourceGroupId string
 param assignmentLevel string
 param grafanaName string
+param deployAllPacks bool
+param deployAllIaaSPacks bool
+param deployAllPlatformPacks bool
+param deployAllPaaSPacks bool
 
-module AllIaaSPacks './IaaS/AllIaaSPacks.bicep' = {
+module AllIaaSPacks './IaaS/AllIaaSPacks.bicep' = if(deployAllIaaSPacks || deployAllPacks) {
   name: 'DeployAllIaaSPacks'
   params: {
     assignmentLevel: assignmentLevel
@@ -48,7 +52,7 @@ module AllIaaSPacks './IaaS/AllIaaSPacks.bicep' = {
   }
 }
 
-module AllPaaSPacks './PaaS/AllPaaSPacks.bicep' = {
+module AllPaaSPacks './PaaS/AllPaaSPacks.bicep' = if(deployAllPaaSPacks || deployAllPacks) {
   name: 'DeployAllPaaSPacks'
   params: {
     assignmentLevel: assignmentLevel
@@ -70,7 +74,7 @@ module AllPaaSPacks './PaaS/AllPaaSPacks.bicep' = {
   }
 }
 
-module AllPlatformPacks './Platform/AllPlatformPacks.bicep' = {
+module AllPlatformPacks './Platform/AllPlatformPacks.bicep' = if(deployAllPlatformPacks || deployAllPacks){
   name: 'DeployAllPlatformPacks'
   params: {
     assignmentLevel: assignmentLevel

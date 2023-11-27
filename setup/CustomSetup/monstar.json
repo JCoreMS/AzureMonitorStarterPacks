@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "10936003096776799743"
+      "templateHash": "1792510099189820430"
     }
   },
   "parameters": {
@@ -62,9 +62,17 @@
       "type": "string",
       "defaultValue": ""
     },
-    "deployPacks": {
-      "type": "bool",
-      "defaultValue": false
+    "deployAllPacks": {
+      "type": "bool"
+    },
+    "deployIaaSPacks": {
+      "type": "bool"
+    },
+    "deployPaaSPacks": {
+      "type": "bool"
+    },
+    "deployPlatformPacks": {
+      "type": "bool"
     },
     "actionGroupName": {
       "type": "string",
@@ -3409,7 +3417,7 @@
       ]
     },
     {
-      "condition": "[parameters('deployPacks')]",
+      "condition": "[or(or(or(parameters('deployAllPacks'), parameters('deployIaaSPacks')), parameters('deployPaaSPacks')), parameters('deployPlatformPacks'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "DeployAllPacks",
@@ -3464,9 +3472,17 @@
           "grafanaName": {
             "value": "[parameters('grafanaName')]"
           },
-          "LogAnalyticsResourceId": "[if(parameters('createNewLogAnalyticsWS'), createObject('value', reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('subscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'logAnalytics-Deployment'), '2022-09-01').outputs.lawresourceid.value), createObject('value', parameters('existingLogAnalyticsWSId')))]",
-          "packsUserManagedResourceId": {
-            "value": "[reference(extensionResourceId(managementGroup().id, 'Microsoft.Resources/deployments', 'backend'), '2022-09-01').outputs.packsUserManagedResourceId.value]"
+          "deployAllIaaSPacks": {
+            "value": "[parameters('deployIaaSPacks')]"
+          },
+          "deployAllPaaSPacks": {
+            "value": "[parameters('deployPaaSPacks')]"
+          },
+          "deployAllPacks": {
+            "value": "[parameters('deployAllPacks')]"
+          },
+          "deployAllPlatformPacks": {
+            "value": "[parameters('deployPlatformPacks')]"
           }
         },
         "template": {
@@ -3476,7 +3492,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "12924904572411667083"
+              "templateHash": "11761211155085250442"
             }
           },
           "parameters": {
@@ -3559,15 +3575,22 @@
             "grafanaName": {
               "type": "string"
             },
-            "packsUserManagedResourceId": {
-              "type": "string"
+            "deployAllPacks": {
+              "type": "bool"
             },
-            "LogAnalyticsResourceId": {
-              "type": "string"
+            "deployAllIaaSPacks": {
+              "type": "bool"
+            },
+            "deployAllPlatformPacks": {
+              "type": "bool"
+            },
+            "deployAllPaaSPacks": {
+              "type": "bool"
             }
           },
           "resources": [
             {
+              "condition": "[or(parameters('deployAllIaaSPacks'), parameters('deployAllPacks'))]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
               "name": "DeployAllIaaSPacks",
@@ -3603,10 +3626,10 @@
                     "value": "[parameters('useExistingAG')]"
                   },
                   "userManagedIdentityResourceId": {
-                    "value": "[parameters('packsUserManagedResourceId')]"
+                    "value": "[parameters('userManagedIdentityResourceId')]"
                   },
                   "workspaceId": {
-                    "value": "[parameters('LogAnalyticsResourceId')]"
+                    "value": "[parameters('workspaceId')]"
                   },
                   "actionGroupName": {
                     "value": "[parameters('actionGroupName')]"
@@ -23597,6 +23620,7 @@
               }
             },
             {
+              "condition": "[or(parameters('deployAllPaaSPacks'), parameters('deployAllPacks'))]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
               "name": "DeployAllPaaSPacks",
@@ -23632,10 +23656,10 @@
                     "value": "[parameters('useExistingAG')]"
                   },
                   "userManagedIdentityResourceId": {
-                    "value": "[parameters('packsUserManagedResourceId')]"
+                    "value": "[parameters('userManagedIdentityResourceId')]"
                   },
                   "workspaceId": {
-                    "value": "[parameters('LogAnalyticsResourceId')]"
+                    "value": "[parameters('workspaceId')]"
                   },
                   "actionGroupName": {
                     "value": "[parameters('actionGroupName')]"
@@ -26918,6 +26942,7 @@
               }
             },
             {
+              "condition": "[or(parameters('deployAllPlatformPacks'), parameters('deployAllPacks'))]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
               "name": "DeployAllPlatformPacks",
@@ -26953,10 +26978,10 @@
                     "value": "[parameters('useExistingAG')]"
                   },
                   "userManagedIdentityResourceId": {
-                    "value": "[parameters('packsUserManagedResourceId')]"
+                    "value": "[parameters('userManagedIdentityResourceId')]"
                   },
                   "workspaceId": {
-                    "value": "[parameters('LogAnalyticsResourceId')]"
+                    "value": "[parameters('workspaceId')]"
                   },
                   "actionGroupName": {
                     "value": "[parameters('actionGroupName')]"
