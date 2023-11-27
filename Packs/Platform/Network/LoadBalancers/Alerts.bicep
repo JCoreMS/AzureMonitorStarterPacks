@@ -142,11 +142,11 @@ module ALBBackendAvail '../../../../modules/alerts/PaaS/metricAlertStaticThresho
     }
 }
 module policySet '../../../../modules/policies/mg/policySetGeneric.bicep' = {
-    name: 'KV-PolicySet'
+    name: 'LB-PolicySet'
     params: {
-        initiativeDescription: 'AMSP policy to deploy Key Vault policies'
-        initiativeDisplayName: '[AMSP] Key Vault policies'
-        initiativeName: 'AMSP-KV-PolicySet'
+        initiativeDescription: 'AMSP Initiative to deploy Load Balancer Alert Policies'
+        initiativeDisplayName: '[AMSP] Load Balancer Alerting policies'
+        initiativeName: 'AMSP-LB-PolicySet'
         solutionTag: solutionTag
         category: 'Monitoring'
         version: solutionVersion

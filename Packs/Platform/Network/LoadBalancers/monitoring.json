@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "12086759827989553075"
+      "templateHash": "17493502454207462725"
     }
   },
   "parameters": {
@@ -355,7 +355,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "4954761809353669465"
+              "templateHash": "6685345554748965323"
             }
           },
           "parameters": {
@@ -4856,7 +4856,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
-              "name": "KV-PolicySet",
+              "name": "LB-PolicySet",
               "location": "[deployment().location]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -4865,13 +4865,13 @@
                 "mode": "Incremental",
                 "parameters": {
                   "initiativeDescription": {
-                    "value": "AMSP policy to deploy Key Vault policies"
+                    "value": "AMSP Initiative to deploy Load Balancer Alert Policies"
                   },
                   "initiativeDisplayName": {
-                    "value": "[AMSP] Key Vault policies"
+                    "value": "[AMSP] Load Balancer Alerting policies"
                   },
                   "initiativeName": {
-                    "value": "AMSP-KV-PolicySet"
+                    "value": "AMSP-LB-PolicySet"
                   },
                   "solutionTag": {
                     "value": "[parameters('solutionTag')]"
