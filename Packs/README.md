@@ -9,7 +9,7 @@ To deploy all packs, click the icon below:
 
 To deploy all IaaS packs, click the icon below:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FFehseCorp%2FAzureMonitorStarterPacks%2FvWan%2FPacks%2FIaaS/AllIaaSPacks.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FFehseCorp%2FAzureMonitorStarterPacks%2FvWan%2FPacks%2FCustomSetup%2Fsetup.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FFehseCorp%2FAzureMonitorStarterPacks%2FvWan%2FPacks%2FIaaS%2FAllIaaSPacks.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FFehseCorp%2FAzureMonitorStarterPacks%2FvWan%2FPacks%2FCustomSetup%2Fsetup.json)
 
 To deploy all PaaS packs, click the icon below:
 

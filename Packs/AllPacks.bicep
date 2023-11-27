@@ -25,8 +25,6 @@ param subscriptionId string
 param resourceGroupId string
 param assignmentLevel string
 param grafanaName string
-param packsUserManagedResourceId string
-param LogAnalyticsResourceId string
 
 module AllIaaSPacks './IaaS/AllIaaSPacks.bicep' = {
   name: 'DeployAllIaaSPacks'
@@ -39,8 +37,8 @@ module AllIaaSPacks './IaaS/AllIaaSPacks.bicep' = {
     solutionVersion: solutionVersion
     subscriptionId: subscriptionId
     useExistingAG: useExistingAG
-    userManagedIdentityResourceId: packsUserManagedResourceId
-    workspaceId: LogAnalyticsResourceId
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+    workspaceId: workspaceId
     actionGroupName: actionGroupName
     resourceGroupId: resourceGroupId
     emailreceivers: emailreceivers
@@ -61,8 +59,8 @@ module AllPaaSPacks './PaaS/AllPaaSPacks.bicep' = {
     solutionVersion: solutionVersion
     subscriptionId: subscriptionId
     useExistingAG: useExistingAG
-    userManagedIdentityResourceId: packsUserManagedResourceId
-    workspaceId: LogAnalyticsResourceId
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+    workspaceId: workspaceId
     actionGroupName: actionGroupName
     resourceGroupId: resourceGroupId
     emailreceivers: emailreceivers
@@ -83,8 +81,8 @@ module AllPlatformPacks './Platform/AllPlatformPacks.bicep' = {
     solutionVersion: solutionVersion
     subscriptionId: subscriptionId
     useExistingAG: useExistingAG
-    userManagedIdentityResourceId: packsUserManagedResourceId
-    workspaceId: LogAnalyticsResourceId
+    userManagedIdentityResourceId: userManagedIdentityResourceId
+    workspaceId: workspaceId
     actionGroupName: actionGroupName
     resourceGroupId: resourceGroupId
     emailreceivers: emailreceivers
