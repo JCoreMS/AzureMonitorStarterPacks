@@ -3,7 +3,7 @@ param workspaceId string
 param AGId string
 param packtag string
 param Tags object
-param moduleprefix string = 'AMSP-IIS'
+param moduleprefix string = 'AMSP-WIN-IIS'
 // Alert list
 
 var alertlist = [

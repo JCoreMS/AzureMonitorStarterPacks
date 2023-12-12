@@ -5,6 +5,9 @@ param packtag string = 'WinOS'
 param rulename string = 'AMSP-Windows-OS'
 param actionGroupResourceId string
 @description('location for the deployment.')
+param mgname string // this the last part of the management group id
+param subscriptionId string
+param resourceGroupId string
 param location string //= resourceGroup().location
 @description('Full resource ID of the log analytics workspace to be used for the deployment.')
 param workspaceId string
@@ -12,9 +15,7 @@ param solutionTag string
 param solutionVersion string
 param dceId string
 param userManagedIdentityResourceId string
-param mgname string // this the last part of the management group id
-param subscriptionId string
-param resourceGroupId string
+
 param assignmentLevel string
 param customerTags object
 
@@ -25,45 +26,6 @@ var Tags = (customerTags=={}) ? {'${solutionTag}': packtag
 },customerTags['All'])
 var ruleshortname = 'VMI-OS'
 var resourceGroupName = split(resourceGroupId, '/')[4]
-
-// Action Group
-// module ag '../../../modules/actiongroups/ag.bicep' =  {
-//   name: 'actiongroup'
-//   params: {
-//     actionGroupName: actionGroupName
-//     existingAGRG: existingAGRG
-//     emailreceiver: emailreceiver
-//     emailreiceversemail: emailreiceversemail
-//     useExistingAG: useExistingAG
-//     newRGresourceGroup: resourceGroupName
-//     solutionTag: solutionTag
-//     subscriptionId: subscriptionId
-//     location: location
-//     Tags: Tags
-//     //location: location defailt is global
-//   }
-// }
-
-// // Alerts - Event viewer based alerts. Depend on the event viewer logs being enabled on the VMs events are being sent to the workspace via DCRs.
-// module eventAlerts 'eventAlerts.bicep' = {
-//   name: 'eventAlerts-${packtag}'
-//   params: {
-//     AGId: ag.outputs.actionGroupResourceId
-//     location: location
-//     workspaceId: workspaceId
-//     packtag: packtag
-//     solutionTag: solutionTag
-//     solutionVersion: solutionVersion
-
-//   }
-// } 
-
-// This option uses an existing VMI rule but this can be a tad problematic.
-// resource vmInsightsDCR 'Microsoft.Insights/dataCollectionRules@2021-09-01-preview' existing = if(enableInsightsAlerts == 'true') {
-//   name: insightsRuleName
-//   scope: resourceGroup(insightsRuleRg)
-// }
-// So, let's create an Insights rule for the VMs that should be the same as the usual VMInsights.
 
 module vmInsightsDCR '../../../modules/DCRs/DefaultVMI-rule.bicep' = {
   name: 'vmInsightsDCR-${packtag}'
@@ -105,20 +67,6 @@ module policysetup '../../../modules/policies/mg/policies.bicep' = {
     subscriptionId: subscriptionId
   }
 }
-// // Grafana upload and install
-// module grafana 'ds.bicep' = {
-//   name: 'grafana'
-//   scope: resourceGroup(subscriptionId, resourceGroupName)
-//   params: {
-//     fileName: 'grafana.json'
-//     grafanaName: grafanaName
-//     location: location
-//     resourceGroupName: resourceGroupName
-//     solutionTag: solutionTag
-//     solutionVersion: solutionVersion
-//     packsManagedIdentityResourceId: userManagedIdentityResourceId
-//   }
-// }
 
 // Azure recommended Alerts for VMs
 // These are the (very) basic recommeded alerts for VM, based on platform metrics

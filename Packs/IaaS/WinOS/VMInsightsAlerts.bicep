@@ -89,26 +89,3 @@ module alertsnew '../../../modules/alerts/alerts.bicep' = {
     workspaceId: workspaceId
   }
 }
-//   module InsightsAlerts '../../../modules/alerts/alert.bicep' = [for alert in alertlist:  {
-//     name: '${moduleprefix}-${alert.alertRuleName}'
-//     params: {
-//       location: location
-//       actionGroupResourceId: AGId
-//       alertRuleDescription: alert.alertRuleDescription
-//       alertRuleDisplayName: '${moduleprefix}-${alert.alertRuleDisplayName}'
-//       alertRuleName: '${moduleprefix}-${alert.alertRuleName}'
-//       alertRuleSeverity: alert.alertRuleSeverity
-//       autoMitigate: alert.autoMitigate
-//       evaluationFrequency: alert.evaluationFrequency
-//       windowSize: alert.windowSize
-//       scope: workspaceId
-//       query: alert.query
-//       packtag: packtag
-//       solutionTag: solutionTag
-//       solutionVersion: solutionVersion
-//       alertType: alert.alertType
-//       metricMeasureColumn: alert.alertType == 'Aggregated' ? alert.metricMeasureColumn : null
-//       operator: alert.alertType == 'Aggregated' ? alert.operator : null
-//       threshold: alert.alertType == 'Aggregated' ? alert.threshold : null
-//     }
-// }]
