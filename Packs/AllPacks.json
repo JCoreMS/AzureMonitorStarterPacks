@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.20.4.51522",
-      "templateHash": "17765383027627056345"
+      "templateHash": "15621172321136226578"
     }
   },
   "parameters": {
@@ -23522,7 +23522,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.20.4.51522",
-              "templateHash": "12005972055329658089"
+              "templateHash": "15565262591941214649"
             }
           },
           "parameters": {
@@ -23674,7 +23674,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.20.4.51522",
-                      "templateHash": "901844358001937869"
+                      "templateHash": "9196234406436507915"
                     }
                   },
                   "parameters": {
@@ -24024,7 +24024,7 @@
                             "_generator": {
                               "name": "bicep",
                               "version": "0.20.4.51522",
-                              "templateHash": "17702351360575821417"
+                              "templateHash": "239563024778042976"
                             }
                           },
                           "parameters": {
@@ -24152,7 +24152,7 @@
                                     "_generator": {
                                       "name": "bicep",
                                       "version": "0.20.4.51522",
-                                      "templateHash": "11920105390791824908"
+                                      "templateHash": "11852489381738989525"
                                     }
                                   },
                                   "parameters": {
@@ -24320,7 +24320,7 @@
                                                 "allOf": [
                                                   {
                                                     "field": "type",
-                                                    "equals": "microsoft.keyvault/vaults"
+                                                    "equals": "[parameters('resourceType')]"
                                                   },
                                                   {
                                                     "field": "[[concat('tags[', parameters('tagName'), ']')]",

@@ -104,7 +104,7 @@ module ActivityLogAlert '../../alz/deploy.bicep' = {
               allOf: [
                   {
                       field: 'type'
-                      equals: 'microsoft.keyvault/vaults'
+                      equals: resourceType
                   }
                   {
                       field: '[concat(\'tags[\', parameters(\'tagName\'), \']\')]'
