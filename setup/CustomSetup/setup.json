@@ -589,16 +589,52 @@
                             }
                         },
                         {
+                            "name": "deployIaaSPacks",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Deploy All IaaS Packs",
+                            "toolTip": "Select to deploy all IaaS packs.",
+                            "defaultValue": false,
+							"visible": "[equals(steps('Packs').deployPacks, false)]",
+                            "constraints": {
+                                "required": false,
+                                "validationMessage": "Select to deploy the available IaaS packs to the selected environment."
+                            }
+                        },                        
+                        {
+                            "name": "deployPaaSPacks",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Deploy All PaaS Packs",
+                            "toolTip": "Select to deploy all PaaS packs.",
+                            "defaultValue": false,
+                            "constraints": {
+                                "required": false,
+                                "validationMessage": "Select to deploy the available PaaS packs to the selected environment."
+                            },
+							"visible": "[equals(steps('Packs').deployPacks, false)]"
+                        },
+                        {
+                            "name": "deployPlatformPacks",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Deploy All Platform Packs",
+                            "toolTip": "Select to deploy all Platform packs.",
+                            "defaultValue": false,
+							"visible": "[equals(steps('Packs').deployPacks, false)]",
+                            "constraints": {
+                                "required": false,
+                                "validationMessage": "Select to deploy the available Platform packs to the selected environment."
+                            }
+                        },
+                        {
                             "name":"packsText",
                             "type": "Microsoft.Common.TextBlock",
 							"options": {
-								"text": "When selected, all packs available will be deployed.",
+								"text": "When selected, all packs or all packs of a specific type  will be deployed.",
 								"link": {
 									"label": "Learn more",
 									"uri": "https://github.com/Azure/AzureMonitorStarterPacks/tree/main/Packs#readme"
 								}
 							},
-                            "visible": "[equals(steps('Packs').deployPacks, true)]"
+                            "visible": "[or(equals(steps('Packs').deployPacks, true),equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true))]"
                         },
                         {
                             "name": "ActionGroupStatus",
@@ -618,7 +654,7 @@
                                 ],
                                 "required": true
                             },
-                            "visible": "[equals(steps('Packs').deployPacks, true)]"
+                            "visible": "[or(equals(steps('Packs').deployPacks, true),equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true))]"
                         },
                         {
                             "name": "existingAG",
@@ -634,7 +670,7 @@
                                 "allowedValues": "[map(steps('Configuration').ActionGroupsApi.value, (item) => parse(concat('{\"label\":\"', item.name, '\",\"value\":\"', item.id, '\"}')))]",
                                 "required": true
                             },
-                            "visible": "[and(equals(steps('Packs').deployPacks, true),equals(steps('Packs').ActionGroupStatus, 'Existing'))]"
+                            "visible": "[and(or(equals(steps('Packs').deployPacks, true),equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true)),equals(steps('Packs').ActionGroupStatus, 'Existing'))]"
                         },
                         {
                             "name": "NewActionGroupName",
@@ -646,7 +682,7 @@
                             "constraints": {
                                 "required": true
                             },
-                            "visible": "[and(equals(steps('Packs').deployPacks, true),equals(steps('Packs').ActionGroupStatus, 'New'))]"
+                            "visible": "[and(or(equals(steps('Packs').deployPacks, true),equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true)),equals(steps('Packs').ActionGroupStatus, 'New'))]"
                         },
                         {
                             "name": "emailreceivers",
@@ -658,7 +694,7 @@
                             "constraints": {
                                 "required": true
                             },
-                            "visible": "[and(equals(steps('Packs').deployPacks, true),equals(steps('Packs').ActionGroupStatus, 'New'))]"
+                            "visible": "[and(or(equals(steps('Packs').deployPacks, true),equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true)),equals(steps('Packs').ActionGroupStatus, 'New'))]"
                         },
                         {
                             "name": "emailreceiversemails",
@@ -670,7 +706,7 @@
                             "constraints": {
                                 "required": true
                             },
-                            "visible": "[and(equals(steps('Packs').deployPacks, true),equals(steps('Packs').ActionGroupStatus, 'New'))]"
+                            "visible": "[and(or(equals(steps('Packs').deployPacks, true),equals(steps('Packs').deployIaaSPacks, true),equals(steps('Packs').deployPaaSPacks, true),equals(steps('Packs').deployPlatformPacks, true)),equals(steps('Packs').ActionGroupStatus, 'New'))]"
                         }
                     ]
                 }
@@ -685,6 +721,9 @@
                 "assignmentLevel": "[steps('Configuration').assignmentLevel]",
                 "deployAMApolicy": "[steps('Configuration').deployAMAPolicy]",
                 "deployPacks": "[steps('Packs').deployPacks]",
+                "deployIaaSPacks": "[steps('Packs').deployIaaSPacks]",
+                "deployPaaSPacks": "[steps('Packs').deployPaaSPacks]",
+                "deployPlatformPacks": "[steps('Packs').deployPlatformPacks]",
                 "grafanaLocation": "[steps('Configuration').grafanaLocation]",
                 "grafanaName": "[concat('AMSP',first(split(last(split(steps('Configuration').subscriptionId,'/')),'-')))]",
                 "storageAccountName": "[if(equals(steps('Configuration').storageAccountStatus,'New'),steps('Configuration').storageAccountNameNew,last(split(steps('Configuration').existingStorageAccount, '/')))]",
