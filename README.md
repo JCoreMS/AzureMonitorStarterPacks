@@ -10,7 +10,7 @@
 
 - Create a framework for collaboration that will make it easy to add new monitored technologies. 
 
-For a detailed solution anatomy, please refer to [Solution Anatomy](./Docs/solution-anatomy.md)
+For a detailed solution anatomy, please refer to [Solution Anatomy](./Docs/readme.md)
 
 ## Pre-requisites and recommendations
 
@@ -22,6 +22,10 @@ For a detailed solution anatomy, please refer to [Solution Anatomy](./Docs/solut
 The Main solution can be deployed by clicking the link below.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzureMonitorStarterPacks%2Fmain%2Fsetup%2FCustomSetup%2Fmonstar.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzureMonitorStarterPacks%2Fmain%2Fsetup%2FCustomSetup%2Fsetup.json)
+
+### Deploy to Azure Gov
+
+[![Deploy to Azure Gov](https://aka.ms/deploytoazuregovbutton)](https://portal.azure.us/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzureMonitorStarterPacks%2Fmain%2Fsetup%2FCustomSetup%2Fmonstar.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzureMonitorStarterPacks%2Fmain%2Fsetup%2FCustomSetup%2Fsetupgov.json)
 
 ## Starter Packs
 
