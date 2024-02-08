@@ -866,11 +866,11 @@
                                     "defaultValue": "Monster-LA-AVD",
                                     "toolTip": "Log Analytics Workspace Name for AVD Insights.",
                                     "constraints": {
-                                        "required": "[equals(steps('Configuration').SectionAVDLAW.LAWStatusAVD, 'New')]",
+                                        "required": "[equals(steps('Packs').SectionAVDLAW.LAWStatusAVD, 'New')]",
                                         "regex": "",
                                         "validationMessage": ""
                                     },
-                                    "visible": "[equals(steps('Configuration').SectionAVDLAW.LAWStatusAVD, 'New')]"
+                                    "visible": "[equals(steps('Packs').SectionAVDLAW.LAWStatusAVD, 'New')]"
                                 },
                                 {
                                     "name": "LogAnalyticsWorkspaceAVDResource",
@@ -879,13 +879,13 @@
                                     "toolTip": "Log Analytics Workspace from/in which data will be read and stored.",
                                     "resourceType": "Microsoft.OperationalInsights/workspaces",
                                     "constraints": {
-                                        "required": "[equals(steps('Configuration').SectionAVDLAW.LAWStatusAVD, 'Existing')]"
+                                        "required": "[equals(steps('Packs').SectionAVDLAW.LAWStatusAVD, 'Existing')]"
                                     },
                                     "infoMessages": [],
-                                    "visible": "[equals(steps('Configuration').SectionAVDLAW.LAWStatusAVD, 'Existing')]"
+                                    "visible": "[equals(steps('Packs').SectionAVDLAW.LAWStatusAVD, 'Existing')]"
                                 }
                             ],
-                            "visible": "[equals(steps('Configuration').AVDLawSeperate, true)]"
+                            "visible": "[equals(steps('Packs').AVDLawSeperate, true)]"
                         },
                         {
                             "name": "AVDInfoBox",
