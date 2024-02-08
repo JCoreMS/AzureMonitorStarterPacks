@@ -13,6 +13,10 @@ param assignmentLevel string
 param newLogAnalyticsWSName string = ''
 param createNewLogAnalyticsWS bool
 param existingLogAnalyticsWSId string = ''
+param seperateLAWforAVD bool = false
+param newLogAnalyticsWSNameAVD string = ''
+param createNewLogAnalyticsWSAVD bool
+param existingLogAnalyticsWSIdAVD string = ''
 param deployAMApolicy bool
 //param currentUserIdObject string // This is to automatically assign permissions to Grafana.
 //param functionName string
@@ -100,19 +104,20 @@ module logAnalytics '../../modules/LAW/law.bicep' = if (createNewLogAnalyticsWS)
   }
 }
 
-// module logAnalyticsAVD '../../modules/LAW/law.bicep' = if (createNewLogAnalyticsWSAVD) {
-//   name: 'logAnalytics-AVD-Deployment'
-//   scope: resourceGroup(subscriptionId, resourceGroupName)
-//   dependsOn: [
-//     resourgeGroup
-//   ]
-//   params: {
-//     location: location
-//     logAnalyticsWorkspaceName: newLogAnalyticsWSNameAVD
-//     Tags: Tags
-//     createNewLogAnalyticsWS: createNewLogAnalyticsWSAVD
-//   }
-// }
+// Needed for DCR for AVD
+module logAnalyticsAVD '../../modules/LAW/law.bicep' = if (createNewLogAnalyticsWSAVD) {
+  name: 'logAnalytics-AVD-Deployment'
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  dependsOn: [
+    resourgeGroup
+  ]
+  params: {
+    location: location
+    logAnalyticsWorkspaceName: newLogAnalyticsWSNameAVD
+    Tags: Tags
+    createNewLogAnalyticsWS: createNewLogAnalyticsWSAVD
+  }
+}
 
 // AMA policy - conditionally deploy it
 module AMAPolicy '../AMAPolicy/amapoliciesmg.bicep' = if (deployAMApolicy) {
@@ -214,7 +219,7 @@ module AllPacks '../../Packs/AllPacks.bicep' = if (deployPacks) {
     useExistingAG: useExistingAG
     userManagedIdentityResourceId: backend.outputs.packsUserManagedResourceId
     workspaceId: createNewLogAnalyticsWS ? logAnalytics.outputs.lawresourceid : existingLogAnalyticsWSId
-    //workspaceIdAVD: seperateLAWforAVD ? (createNewLogAnalyticsWSAVD ? logAnalyticsAVD.outputs.lawresourceid : existingLogAnalyticsWSIdAVD) : ''
+    workspaceIdAVD: seperateLAWforAVD ? (createNewLogAnalyticsWSAVD ? logAnalyticsAVD.outputs.lawresourceid : existingLogAnalyticsWSIdAVD) : ''
     actionGroupName: actionGroupName
     resourceGroupId: createNewResourceGroup ? resourgeGroup.outputs.newResourceGroupId : resourceGroupId
     emailreceiver: emailreceiver
