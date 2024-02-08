@@ -36,6 +36,8 @@ param assignmentLevel string
 // param grafanaName string
 param customerTags object 
 param instanceName string
+
+
 var rulename = 'AMP-${instanceName}-${packtag}'
 var tempTags ={
   '${solutionTag}': packtag
@@ -52,6 +54,7 @@ var workspaceFriendlyName = split(workspaceId, '/')[8]
 var resourceGroupName = split(resourceGroupId, '/')[4]
 var kind= 'Windows'
 
+var moduleprefix = 'AMP-${instanceName}-${packtag}'
 
 // the xpathqueries define which counters are collected
 var xPathQueries=[
@@ -92,6 +95,7 @@ var performanceCounters60 = [
 
 var resourceTypes = [
   'Microsoft.DesktopVirtualization/workspaces'
+  'Microsoft.DesktopVirtualization/applicationGroups'
   'Microsoft.DesktopVirtualization/hostpools'
 ]
 // var tempTags ={
@@ -105,24 +109,22 @@ var resourceTypes = [
 
 // Alerts - the module below creates the alerts and associates them with the action group
 
-module Alerts 'alerts.bicep' = {
-  name: 'Alerts-${packtag}'
+/* module dsAVDHostPoolMapAlerts 'dsAVDHostMapping.bicep' = {
+  name: 'linked_ds-AVDHostMapping-${uniqueString(deployment().name)}'
+  scope: resourceGroup(subscriptionId, parResourceGroupName)
   params: {
-    location: location
     avdLogAlertsUri: avdLogAlertsUri
-    instanceName: instanceName
-    workspaceId: workspaceId
     AGId: actionGroupResourceId
-    templateUri: templateUri
-    userManagedIdentityResourceId: userManagedIdentityResourceId
+    location: location
+    moduleprefix: moduleprefix
     packtag: packtag
     primaryScriptUri: primaryScriptUri
+    templateUri: templateUri
+    workspaceId: workspaceId
+    userManagedIdentityResourceId: userManagedIdentityResourceId
     Tags: Tags
-    parResourceGroupName: parResourceGroupName
-    subscriptionId: subscriptionId
   }
-}
-
+} */
 
 // DCRs
 // DCR - the module below ingests the performance counters and the XPath queries and creates the DCR

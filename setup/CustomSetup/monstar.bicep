@@ -1,8 +1,8 @@
 targetScope = 'managementGroup'
 
-// param _artifactsLocation string = 'https://raw.githubusercontent.com/JCoreMS/AzureMonitorStarterPacks/JCore-AVD/'
-// @secure()
-// param _artifactsLocationSasToken string = ''
+param _artifactsLocation string = 'https://raw.githubusercontent.com/JCoreMS/AzureMonitorStarterPacks/JCore-AVD/'
+@secure()
+param _artifactsLocationSasToken string = ''
 
 param mgname string
 param subscriptionId string
@@ -180,6 +180,8 @@ module backend '../backend/code/backend.bicep' = {
   params: {
     appInsightsLocation: location
 //    currentUserIdObject: currentUserIdObject
+    _artifactsLocation: _artifactsLocation
+    _artifactsLocationSasToken: _artifactsLocationSasToken
     functionname: functionName
     lawresourceid: createNewLogAnalyticsWS ? logAnalytics.outputs.lawresourceid : existingLogAnalyticsWSId
     location: location
