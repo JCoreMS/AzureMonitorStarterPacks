@@ -3,8 +3,8 @@ using namespace System.Net
 
 # Input bindings are passed in via param block.
 param($Request, $TriggerMetadata)
-$RepoUrl = "https://raw.githubusercontent.com/JCoreMS/AzureMonitorStarterPacks/AVDMerge/"
-$LogAnalyticsWS = "/subscriptions/8a0ecebc-0e1d-4e8f-8cb8-8a92f49455b9/resourceGroups/rg-eastus2-AVDLab-Manage/providers/Microsoft.OperationalInsights/workspaces/law-eastus2-AVDLab"
+$RepoUrl = $env:ARTIFACTS_LOCATION
+
 # Function to add AMA to a VM or arc machine
 # The tags added to the extension are copied from the resource.
 function Install-azMonitorAgent {
@@ -78,18 +78,20 @@ function Install-azMonitorAgent {
 function Add-Agent {
     param (
         [Parameter(Mandatory = $true)]
-        [string]$resource,
+        [string]$resourceId,
         [Parameter(Mandatory = $true)]
-        [string]$ResourceOS
+        [string]$ResourceOS,
+        [Parameter(Mandatory = $true)]
+        [string]$location
     )
-    $resourceName = $resource.split('/')[8]
-    $resourceGroupName = $resource.Split('/')[4]
+    $resourceName = $resourceId.split('/')[8]
+    $resourceGroupName = $resourceId.Split('/')[4]
     # VM Extension setup
-    $resourceSubcriptionId = $resource.split('/')[2]
+    $resourceSubcriptionId = $resourceId.split('/')[2]
 
     "Adding agent to $resourceName in $resourceGroupName RG in $resourceSubcriptionId sub. Checking if it's already installed..."
     if ($ResourceOS -eq 'Linux') {
-        if ($resource.split('/')[7] -eq 'virtualMachines') {
+        if ($resourceId.split('/')[7] -eq 'virtualMachines') {
             $agentstatus = Get-AzVMExtension -ResourceGroupName $resourceGroupName -vmName $resourceName -Name "AzureMonitorLinuxAgent" -ErrorAction SilentlyContinue
         }
         else {
@@ -97,7 +99,7 @@ function Add-Agent {
         }
     }
     else {
-        if ($resource.split('/')[7] -eq 'virtualMachines') {
+        if ($resourceId.split('/')[7] -eq 'virtualMachines') {
             $agentstatus = Get-AzVMExtension -ResourceGroupName $resourceGroupName -vmName $resourceName -Name "AzureMonitorWindowsAgent" -ErrorAction SilentlyContinue
         }
         else {
@@ -111,10 +113,10 @@ function Add-Agent {
         "Agent not installed. Installing..."
         if ($ResourceOS -eq 'Linux') {
             # 
-            if ($resource.split('/')[7] -eq 'virtualMachines') {
+            if ($resourceId.split('/')[7] -eq 'virtualMachines') {
                 # Virtual machine - add extension
                 
-                install-azmonitorAgent -subscriptionId $resourceSubcriptionId -resourceGroupName $resourceGroupName -vmName $resourceName -location $resource.Location `
+                install-azmonitorAgent -subscriptionId $resourceSubcriptionId -resourceGroupName $resourceGroupName -vmName $resourceName -location $location `
                     -ExtensionName "AzureMonitorLinuxAgent" -ExtensionTypeHandlerVersion "1.27" 
                 #$agent=Set-AzVMExtension -ResourceGroupName $resourceGroupName -vmName $resourceName -Name "AzureMonitorLinuxAgent" -Publisher "Microsoft.Azure.Monitor" -ExtensionType "AzureMonitorLinuxAgent" -TypeHandlerVersion "1.0" -Location $resource.Location -EnableAutomaticUpgrade $true
             }
@@ -122,14 +124,14 @@ function Add-Agent {
                 # Arc machine -add extension
                 Set-AzContext -SubscriptionId $resourceSubcriptionId
                 $tags = get-azvm -Name $resourceName -ResourceGroupName $resourceGroupName | Select-Object -ExpandProperty tags | ConvertTo-Json
-                $agent = New-AzConnectedMachineExtension -Name AzureMonitorLinuxAgent -ExtensionType AzureMonitorLinuxAgent -Publisher Microsoft.Azure.Monitor -ResourceGroupName $resourceGroupName-MachineName $resourceName -Location $resource.Location -EnableAutomaticUpgrade -Tag $tags
+                $agent = New-AzConnectedMachineExtension -Name AzureMonitorLinuxAgent -ExtensionType AzureMonitorLinuxAgent -Publisher Microsoft.Azure.Monitor -ResourceGroupName $resourceGroupName-MachineName $resourceName -Location $location -EnableAutomaticUpgrade -Tag $tags
             }
         }
         else {
             # Windows
-            if ($resource.split('/')[7] -eq 'virtualMachines') {
+            if ($resourceId.split('/')[7] -eq 'virtualMachines') {
                 # Virtual machine - add extension
-                install-azmonitorAgent -subscriptionId $resourceSubcriptionId -resourceGroupName $resourceGroupName -vmName $resourceName -location $resource.Location `
+                install-azmonitorAgent -subscriptionId $resourceSubcriptionId -resourceGroupName $resourceGroupName -vmName $resourceName -location $location `
                     -ExtensionName "AzureMonitorWindowsAgent" -ExtensionTypeHandlerVersion "1.2"
                 #$agent=Set-AzVMExtension -ResourceGroupName $resourceGroupName -vmName $resourceName -Name "AzureMonitorWindowsAgent" -Publisher "Microsoft.Azure.Monitor" -ExtensionType "AzureMonitorWindowsAgent" -TypeHandlerVersion "1.0" -Location $resource.Location -ForceRerun -ForceUpdateTag -EnableAutomaticUpgrade $true
             }
@@ -137,7 +139,7 @@ function Add-Agent {
                 # Arc machine -add extension
                 Set-AzContext -SubscriptionId $resourceSubcriptionId
                 $tags = get-azvm -Name $resourceName -ResourceGroupName $resourceGroupName | Select-Object -ExpandProperty tags | ConvertTo-Json
-                $agent = New-AzConnectedMachineExtension -Name AzureMonitorWindowsAgent -ExtensionType AzureMonitorWindowsAgent -Publisher Microsoft.Azure.Monitor -ResourceGroupName $resourceGroupName-MachineName $resourceName -Location $resource.Location -EnableAutomaticUpgrade -Tag $tags
+                $agent = New-AzConnectedMachineExtension -Name AzureMonitorWindowsAgent -ExtensionType AzureMonitorWindowsAgent -Publisher Microsoft.Azure.Monitor -ResourceGroupName $resourceGroupName-MachineName $resourceName -Location $location -EnableAutomaticUpgrade -Tag $tags
             }
         }
         if ($agent) {
@@ -323,6 +325,8 @@ function Config-AVD {
         [object]$TagValue
     )
     $hostPoolName = $hostPoolName.ToLower()  # ensures case sensitivity with search
+    $LogAnalyticsWS = $Request.Body.AltLAW
+
     # Graph Query to map host pool resources (App Group, Workspace, VMs, etc)
     "AVD - Perform an Azure Graph Query to map Host Pool's App Group, Workspace and VM resources and status. ($hostPoolName)"
     $MapResourcesQuery = @"
@@ -367,7 +371,7 @@ resources
 | extend VMsubId = split(id, '/')[2]
 | extend VmOS = properties.storageProfile.imageReference.publisher
 | extend VmStatus = properties.extended.instanceView.powerState.displayStatus
-| project VmName, VmRG, VMResId, VMsubId, VmOS, VmStatus
+| project VmName, VmRG, VMResId, VMsubId, VmOS, VmStatus, location
 "@
 
     $AVDResources = Search-AzGraph -Query $MapResourcesQuery
@@ -399,7 +403,7 @@ resources
             Add-Tag -resourceId $vmInfo.VMResId -TagName $TagName -TagValue $TagValue
             If ($vmInfo.VmStatus -eq 'VM Running') {
                 "AVD - Installing AMA agent on VM ($vmName)"
-                Add-Agent -resource $vmInfo.VMResId -ResourceOS $vmInfo.VmOS
+                Add-Agent -resourceId $vmInfo.VMResId -ResourceOS $vmInfo.VmOS -location $vmInfo.location
             }
             else { "AVD - AMA Agent NOT installed (VM $vmName Not Running!)" }
         }
@@ -473,7 +477,7 @@ if ($resources) {
                     Add-Tag -resourceId $resource.Resource -TagName $TagName -TagValue $TagValue
                     # Add Agent
                     if ($TagValue -eq 'VMI') {
-                        Add-Agent -resource $resource.Resource -ResourceOS $resource.OS
+                        Add-Agent -resourceId $resource.Resource -ResourceOS $resource.OS -location $resource.location
                     }
                     # Add Tag Based condition.
                     if ($TagValue -eq 'Avd') {
