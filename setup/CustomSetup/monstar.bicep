@@ -1,6 +1,6 @@
 targetScope = 'managementGroup'
 
-param _artifactsLocation string = 'https://raw.githubusercontent.com/JCoreMS/AzureMonitorStarterPacks/JCore-AVD/'
+param _artifactsLocation string = 'https://raw.githubusercontent.com/JCoreMS/AzureMonitorStarterPacks/AVDMerge/'
 @secure()
 param _artifactsLocationSasToken string = ''
 
