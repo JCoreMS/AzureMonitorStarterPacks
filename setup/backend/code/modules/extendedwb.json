@@ -195,7 +195,9 @@
                   "timeContext": {
                     "durationMs": 86400000
                   },
-                  "value": []
+                  "value": [
+                    "/subscriptions/8a0ecebc-0e1d-4e8f-8cb8-8a92f49455b9"
+                  ]
                 },
                 {
                   "id": "1efb8bbe-532a-491b-b3c4-55f1402ee280",
@@ -220,7 +222,7 @@
                   },
                   "queryType": 1,
                   "resourceType": "microsoft.resources/tenants",
-                  "value": "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/rg-MonstarPacks/providers/Microsoft.Logic/workflows/AMP-prod-LogicApp"
+                  "value": "/subscriptions/8a0ecebc-0e1d-4e8f-8cb8-8a92f49455b9/resourceGroups/rg-eastus2-Monitoring/providers/Microsoft.Logic/workflows/AMP-prod-LogicApp"
                 },
                 {
                   "id": "16d48fd3-189f-4604-9582-da7cf5c93d7c",
@@ -236,7 +238,7 @@
                     "showDefault": false
                   },
                   "queryType": 1,
-                  "value": "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/rg-MonstarPacks/providers/Microsoft.Web/sites/AMP-prod-6c64f9ed-Function"
+                  "value": "/subscriptions/8a0ecebc-0e1d-4e8f-8cb8-8a92f49455b9/resourceGroups/rg-eastus2-Monitoring/providers/Microsoft.Web/sites/AMP-prod-8a0ecebc-Function"
                 },
                 {
                   "id": "c9fbafc9-2806-4c24-8d34-18f7cae66299",
@@ -271,7 +273,7 @@
                   },
                   "queryType": 1,
                   "resourceType": "microsoft.resourcegraph/resources",
-                  "value": "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/rg-MonstarPacks/providers/Microsoft.OperationalInsights/workspaces/Monster-LAW"
+                  "value": "/subscriptions/8a0ecebc-0e1d-4e8f-8cb8-8a92f49455b9/resourceGroups/rg-eastus2-Monitoring/providers/Microsoft.OperationalInsights/workspaces/law-eastus2-monitoring"
                 },
                 {
                   "id": "ea93902e-9856-4bd4-998d-ea88378907a7",
@@ -294,7 +296,7 @@
                   },
                   "queryType": 1,
                   "resourceType": "microsoft.resources/tenants",
-                  "value": "/subscriptions/6c64f9ed-88d2-4598-8de6-7a9527dc16ca/resourceGroups/rg-MonstarPacks/providers/Microsoft.Dashboard/grafana/AMSP123"
+                  "value": "/subscriptions/8a0ecebc-0e1d-4e8f-8cb8-8a92f49455b9/resourceGroups/rg-eastus2-Monitoring/providers/Microsoft.Dashboard/grafana/AMSP"
                 }
               ],
               "style": "above",
@@ -1878,9 +1880,9 @@
                         "version": "KqlParameterItem/1.0",
                         "name": "AvdLAWPaaS",
                         "label": "Select AVD Log Analytics Workspace",
-                        "type": 2,
+                        "type": 5,
                         "isGlobal": true,
-                        "query": "resources\n| where type =~ \"Microsoft.OperationalInsights/workspaces\"\n| summarize by name",
+                        "query": "resources\n| where type =~ \"Microsoft.OperationalInsights/workspaces\"\n| summarize by id",
                         "crossComponentResources": [
                           "value::tenant"
                         ],
@@ -1893,7 +1895,7 @@
                         },
                         "queryType": 1,
                         "resourceType": "microsoft.resources/tenants",
-                        "value": null
+                        "value": "/subscriptions/8a0ecebc-0e1d-4e8f-8cb8-8a92f49455b9/resourceGroups/rg-eastus2-AVDLab-Manage/providers/Microsoft.OperationalInsights/workspaces/law-eastus2-AVDLab"
                       }
                     ],
                     "style": "pills",
@@ -1936,7 +1938,7 @@
                               "value": "addTag"
                             }
                           ],
-                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"AddTag\",\n    \"Resources\": [{paastotag}],\n    \"Pack\": \"{PackTagsPaaS}\",\n    \"PackType\": \"PaaS\"\n  }\n}",
+                          "body": "{ \n  \"function\": \"tagmgmt\",\n  \"functionBody\" : {\n    \"Action\":\"AddTag\",\n    \"Resources\": [{paastotag}],\n    \"Pack\": \"{PackTagsPaaS}\",\n    \"PackType\": \"PaaS\",\n    \"altLAW\": \"{AvdLAWPaaS}\"\n  }\n}",
                           "httpMethod": "POST",
                           "title": "Enable Monitoring Packs",
                           "description": "# This will enable the pack for the following servers:\n{paastotag}\n\nby adding the {PackTagsPaaS} Pack(s) to the resource(s).",
@@ -4668,7 +4670,7 @@
     }
   ],
   "fallbackResourceIds": [
-    "Azure Monitor"
+    "/subscriptions/8a0ecebc-0e1d-4e8f-8cb8-8a92f49455b9/resourcegroups/rg-eastus2-monitoring/providers/microsoft.operationalinsights/workspaces/law-eastus2-monitoring"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
