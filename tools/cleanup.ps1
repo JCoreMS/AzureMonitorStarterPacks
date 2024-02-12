@@ -81,7 +81,7 @@ if ($RemoveDiscovery -or $RemoveAll) {
     | where ruleId =~
 '@
     # Remove DCRs and associations
-    $DCRs=Get-AzDataCollectionRule -ResourceGroupName $RG | where-object {$_.Tag.MonitoringPackType -eq "Discovery"} -ErrorAction SilentlyContinue
+    $DCRs=Get-AzDataCollectionRule -ResourceGroupName $RG | where-object {$_.Tags.MonitoringPackType -eq "Discovery"} -ErrorAction SilentlyContinue
     foreach ($DCR in $DCRs)
     {
         $searchQuery=$query + "'$($DCR.Id)'"
@@ -150,7 +150,6 @@ if ($RemoveDiscovery -or $RemoveAll) {
     
     # uninstall VM Apps
     # find the gallery
-
     Get-AzGallery -ResourceGroupName $RG | Where-Object {$_.Tags.MonitorStarterPacksComponents -ne $null} | ForEach-Object {
     "Finding apps..."
     $galleryApps=Get-AzGalleryApplication -GalleryName $_.Name -ResourceGroupName $RG
@@ -223,30 +222,6 @@ if ($RemovePacks -or $RemoveAll) {
     #     "Removing packs with tag $RemoveTag."
     #     $pols=$pols | where-object {$_.properties.Metadata.MonitorStarterPacks -eq $RemoveTag}
     # }
-    # Remove policy sets and assignments
-    "Removing AMA policy set."
-    $inits=Get-AzPolicySetDefinition | where-object {$_.properties.Metadata.MonitorStarterPacks -ne $null}
-    foreach ($init in $inits) {
-        "Removing policy set $($init.PolicySetDefinitionId)"
-        #$assignments=Get-AzPolicyAssignment -PolicyDefinitionId $init.PolicySetDefinitionId
-        $query=@"
-        policyresources
-        | where type == "microsoft.authorization/policyassignments"
-        | extend AssignmentDisplayName=properties.displayName,scope=properties.scope,PolicyId=tostring(properties.policyDefinitionId)
-        | where PolicyId == '$($init.PolicySetDefinitionId)'
-"@
-        $assignments=Search-AzGraph -Query $query
-        if ($assignments.count -ne 0)
-        {
-            "Removing assignments for $($pol.PolicyDefinitionId)"
-            foreach ($assignment in $assignments) {
-                "Removing assignment for $($assignment.name)"
-                Remove-AzPolicyAssignment -Id $assignment.id
-            }
-        }
-        Remove-AzPolicySetDefinition -Id $init.PolicySetDefinitionId -Force
-    }
-
     foreach ($pack in $packs) {
         "Removing pack $pack."
         foreach ($pol in ($pols | Where-Object {$_.properties.Metadata.MonitorStarterPacks -eq $pack}) ) {
@@ -292,16 +267,14 @@ if ($RemovePacks -or $RemoveAll) {
             }
         }
     }
-    # If something remains, clear all dead assignments in the current subscription
-    #Get-AzRoleAssignment -scope "/subscriptions/$((Get-AzContext).Subscription)" | where-object {$_.ObjectType -eq 'unknown'}  | where-object {$_.Scope -eq "/subscriptions/$((Get-AzContext).Subscription)"} | Remove-AzRoleAssignment
-    # remove DCR associations
-    $dcrs=Get-AzDataCollectionRule -ResourceGroupName $RG | Where-Object {($_.tag | convertfrom-json).MonitorStarterPacks -ne $null} 
-    # retrive unique list of packs installed
-    if ($dcrs) {
-        $packs=($dcrs.tag | convertfrom-json).MonitorStarterPacks | select -Unique
-        foreach ($pack in $packs) {
-            "Removing pack $pack from DCRs."
-            $query=@'
+        # If something remains, clear all dead assignments in the current subscription
+        #Get-AzRoleAssignment -scope "/subscriptions/$((Get-AzContext).Subscription)" | where-object {$_.ObjectType -eq 'unknown'}  | where-object {$_.Scope -eq "/subscriptions/$((Get-AzContext).Subscription)"} | Remove-AzRoleAssignment
+        # remove DCR associations
+        $dcrs=Get-AzDataCollectionRule -ResourceGroupName $RG | Where-Object {$_.tags.MonitorStarterPacks -ne $null} 
+        # retrive unique list of packs installed
+        $packs=$dcrs.tags.MonitorStarterPacks | Select-Object -Unique
+    foreach ($pack in $packs) {
+        $query=@'
 insightsresources
 | where type == "microsoft.insights/datacollectionruleassociations"
 | extend resourceId=split(id,'/providers/Microsoft.Insights/')[0]
@@ -309,37 +282,30 @@ insightsresources
 | project rulename=split(properties.dataCollectionRuleId,"/")[8],resourceName=split(resourceId,"/")[8],resourceId, ruleId=properties.dataCollectionRuleId, name
 | where ruleId =~
 '@
-            $DCRs=Get-AzDataCollectionRule -ResourceGroupName $RG | where-object {($_.Tag | convertfrom-json).MonitorStarterPacks -eq $pack}
-            "Found $($DCRs.count) for $pack pack."
-            foreach ($DCR in $DCRs)
-            {
-                "Working on $($DCR.name)"
-                $searchQuery=$query + "'$($DCR.Id)'"
-                "Looking for associations."
-                $dcras=Search-AzGraph -Query $searchQuery -UseTenantScope
-                "Found $($dcras.count) for $($DCR.Name)."
-                foreach ($dcra in $dcras) {
-                    "Removing DCR association $($dcra.rulename) for $($dcra.resourceId)"
-                    Remove-AzDataCollectionRuleAssociation -TargetResourceId $dcra.resourceId -AssociationName $dcra.name
-                }
-                "Removing DCR $($DCR.Name)"
-                Remove-AzDataCollectionRule -ResourceGroupName $DCR.Id.Split('/')[4] -Name $DCR.Name
+        $DCRs=Get-AzDataCollectionRule -ResourceGroupName $RG | where-object {$_.Tags.MonitorStarterPacks -eq $pack}
+        # if ($RemoveTag) {
+        #     $DCRs=$DCRs | where-object {$_.Tags.MonitorStarterPacks -eq $RemoveTag}
+        # }
+        foreach ($DCR in $DCRs)
+        {
+            $searchQuery=$query + "'$($DCR.Id)'"
+            $dcras=Search-AzGraph -Query $searchQuery -UseTenantScope
+            foreach ($dcra in $dcras) {
+                "Removing DCR association $($dcra.rulename) for $($dcra.resourceId)"
+                Remove-AzDataCollectionRuleAssociation -TargetResourceId $dcra.resourceId -AssociationName $dcra.name
             }
-            # remove DCRs
-            #Get-AzDataCollectionRule -ResourceGroupName $RG | Remove-AzDataCollectionRule
-            # remove Tags from VMs.
-            # remove monitor extensions (optional)
-            # remove alert rules
-            $Alerts=Get-AzResource -ResourceType "microsoft.insights/scheduledqueryrules" -ResourceGroupName $RG | Where-Object {$_.Tags.MonitorStarterPacks -eq $pack}
-            # if ($RemoveTag) {
-            #     $Alerts=$Alerts | where-object {$_.Tags.MonitorStarterPacks -eq $RemoveTag}
-            # }
-            "Found $($Alerts.count) alerts for pack $pack"
-            $Alerts | Remove-AzResource -Force -AsJob
+            Remove-AzDataCollectionRule -ResourceGroupName $DCR.Id.Split('/')[4] -Name $DCR.Name
         }
-    }
-    else {
-        "No DCRs found in $RG resource group."
+        # remove DCRs
+        #Get-AzDataCollectionRule -ResourceGroupName $RG | Remove-AzDataCollectionRule
+        # remove Tags from VMs.
+        # remove monitor extensions (optional)
+        # remove alert rules
+        $Alerts=Get-AzResource -ResourceType "microsoft.insights/scheduledqueryrules" -ResourceGroupName $RG | Where-Object {$_.Tags.MonitorStarterPacks -eq $pack}
+        # if ($RemoveTag) {
+        #     $Alerts=$Alerts | where-object {$_.Tags.MonitorStarterPacks -eq $RemoveTag}
+        # }
+        $Alerts | Remove-AzResource -Force -AsJob
     }
 }
 else {
